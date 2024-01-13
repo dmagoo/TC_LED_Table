@@ -1,0 +1,28 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "PlatformIO",
+			"task": "Build",
+			"problemMatcher": [
+				"$platformio"
+			],
+			"group": "build",
+			"label": "PlatformIO: Build"
+		},
+		{
+            "label": "Run Python Script",
+            "type": "shell",
+            "command": "python",
+            "args": [
+                "${workspaceFolder}/scripts/parse_config_csv.py",
+                "${workspaceFolder}/scripts/config.csv",
+                "${workspaceFolder}/data/config/config.global.json"
+			],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+	]
+}																																													

@@ -11,7 +11,7 @@
 			"label": "PlatformIO: Build"
 		},
 		{
-            "label": "Run Python Script",
+            "label": "Run Config Builder",
             "type": "shell",
             "command": "python",
             "args": [

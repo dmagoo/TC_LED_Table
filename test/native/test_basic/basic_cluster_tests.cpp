@@ -8,17 +8,9 @@
 
 #include "windows/AsciiUtils.h"
 
-#include "../test_utils.h"
+#include "../make_cluster_config.h"
 
 #define PIXELS_PER_NODE 8
-
-void setUp(void) {
-    // This will run before each test
-}
-
-void tearDown(void) {
-    // This will run after each test
-}
 
 void test_create_cluster() {
     std::vector<NodeConfig> nodeConfigs = makeNodeConfigs();

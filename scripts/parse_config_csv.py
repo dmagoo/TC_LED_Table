@@ -30,14 +30,49 @@ def parse_config_csv(file_input):
 
     return config
 
+def generate_cpp_code(config):
+    cpp_code = "#include \"test_utils.h\"\n\n"
+    cpp_code += "std::vector<ClusterConfig> makeClusterConfigs() {\n"
+    cpp_code += "    return {\n"
+    for cluster_id, cluster in config['clusters'].items():
+        cpp_code += f"        ClusterConfig({cluster_id}, makeNodeConfigs({cluster_id})),\n"
+    cpp_code += "    };\n"
+    cpp_code += "}\n\n"
+    cpp_code += "std::vector<NodeConfig> makeNodeConfigs(int clusterId) {\n"
+    cpp_code += "    switch(clusterId) {\n"
+    for cluster_id, cluster in config['clusters'].items():
+        cpp_code += f"    case {cluster_id}:\n"
+        cpp_code += "        return {\n"
+        for node in cluster['nodes']:
+            nodeId = node['nodeId']
+            ledCount = node['ledCount']
+            ringCoords = ', '.join(str(x) for x in node['ringCoordinates'])
+            cubeCoords = ', '.join(str(x) for x in node['cubeCoordinates'])
+            cartesian2dCoords = ', '.join(str(x) for x in node['cartesian2dCoordinates'])
+            cpp_code += f"            NodeConfig({nodeId}, {ledCount}, {{{ringCoords}}}, {{{cubeCoords}}}, {{{cartesian2dCoords}}}),\n"
+        cpp_code += "        };\n"
+    cpp_code += "    }\n"
+    cpp_code += "    return {};\n"
+    cpp_code += "}\n"
+    return cpp_code
+
 if __name__ == "__main__":
     if len(sys.argv) > 2:
         input_file_path = sys.argv[1]
         output_file_path = sys.argv[2]
         config = parse_config_csv(input_file_path)
-
-        with open(output_file_path, 'w') as json_file:
-            json.dump(config, json_file, indent=4)
+        
+        # Change output mode based on file extension
+        if output_file_path.endswith('.json'):
+            with open(output_file_path, 'w') as json_file:
+                json.dump(config, json_file, indent=4)
+        elif output_file_path.endswith('.cpp'):
+            cpp_code = generate_cpp_code(config)
+            with open(output_file_path, 'w') as cpp_file:
+                cpp_file.write(cpp_code)
+        else:
+            print("Error: Unsupported output file format. Please use .json or .cpp extension.")
+            sys.exit(1)
     else:
         print("Error: Missing required arguments. Usage: parse_config_csv.py <input_csv_path> <output_json_path>")
         sys.exit(1)

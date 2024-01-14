@@ -33,8 +33,7 @@
                         0
                     ],
                     "cartesian2dCoordinates": [
-                        0.0,
-                        1.0
+                        100.0
                     ]
                 },
                 {
@@ -50,8 +49,8 @@
                         -1
                     ],
                     "cartesian2dCoordinates": [
-                        1.0,
-                        0.5
+                        100.0,
+                        50.0
                     ]
                 },
                 {
@@ -67,8 +66,8 @@
                         -1
                     ],
                     "cartesian2dCoordinates": [
-                        1.0,
-                        -0.5
+                        100.0,
+                        -50.0
                     ]
                 },
                 {
@@ -85,7 +84,7 @@
                     ],
                     "cartesian2dCoordinates": [
                         0.0,
-                        -1.0
+                        -100.0
                     ]
                 },
                 {
@@ -101,8 +100,8 @@
                         1
                     ],
                     "cartesian2dCoordinates": [
-                        -1.0,
-                        -0.5
+                        -100.0,
+                        -50.0
                     ]
                 },
                 {
@@ -118,8 +117,8 @@
                         1
                     ],
                     "cartesian2dCoordinates": [
-                        -1.0,
-                        0.5
+                        -100.0,
+                        50.0
                     ]
                 }
             ]
@@ -134,8 +133,15 @@
                         2,
                         11
                     ],
-                    "cubeCoordinates": [],
-                    "cartesian2dCoordinates": []
+                    "cubeCoordinates": [
+                        1,
+                        1,
+                        -1
+                    ],
+                    "cartesian2dCoordinates": [
+                        -100.0,
+                        150.0
+                    ]
                 },
                 {
                     "nodeId": 8,
@@ -144,8 +150,15 @@
                         3,
                         17
                     ],
-                    "cubeCoordinates": [],
-                    "cartesian2dCoordinates": []
+                    "cubeCoordinates": [
+                        2,
+                        1,
+                        -3
+                    ],
+                    "cartesian2dCoordinates": [
+                        -100.0,
+                        250.0
+                    ]
                 },
                 {
                     "nodeId": 9,
@@ -154,57 +167,132 @@
                         3,
                         0
                     ],
-                    "cubeCoordinates": [],
-                    "cartesian2dCoordinates": []
+                    "cubeCoordinates": [
+                        3,
+                        0,
+                        -3
+                    ],
+                    "cartesian2dCoordinates": [
+                        300.0
+                    ]
                 },
                 {
                     "nodeId": 10,
                     "ledCount": 8,
-                    "ringCoordinates": [],
-                    "cubeCoordinates": [],
-                    "cartesian2dCoordinates": []
+                    "ringCoordinates": [
+                        2,
+                        0
+                    ],
+                    "cubeCoordinates": [
+                        2,
+                        0,
+                        0
+                    ],
+                    "cartesian2dCoordinates": [
+                        200.0
+                    ]
                 },
                 {
                     "nodeId": 11,
                     "ledCount": 8,
-                    "ringCoordinates": [],
-                    "cubeCoordinates": [],
-                    "cartesian2dCoordinates": []
+                    "ringCoordinates": [
+                        3,
+                        1
+                    ],
+                    "cubeCoordinates": [
+                        3,
+                        1,
+                        -2
+                    ],
+                    "cartesian2dCoordinates": [
+                        100.0,
+                        250.0
+                    ]
                 },
                 {
                     "nodeId": 12,
                     "ledCount": 8,
-                    "ringCoordinates": [],
-                    "cubeCoordinates": [],
-                    "cartesian2dCoordinates": []
+                    "ringCoordinates": [
+                        2,
+                        1
+                    ],
+                    "cubeCoordinates": [
+                        2,
+                        1,
+                        -1
+                    ],
+                    "cartesian2dCoordinates": [
+                        100.0,
+                        150.0
+                    ]
                 },
                 {
                     "nodeId": 13,
                     "ledCount": 8,
-                    "ringCoordinates": [],
-                    "cubeCoordinates": [],
-                    "cartesian2dCoordinates": []
+                    "ringCoordinates": [
+                        3,
+                        2
+                    ],
+                    "cubeCoordinates": [
+                        3,
+                        2,
+                        -1
+                    ],
+                    "cartesian2dCoordinates": [
+                        200.0,
+                        200.0
+                    ]
                 },
                 {
                     "nodeId": 14,
                     "ledCount": 8,
-                    "ringCoordinates": [],
-                    "cubeCoordinates": [],
-                    "cartesian2dCoordinates": []
+                    "ringCoordinates": [
+                        2,
+                        2
+                    ],
+                    "cubeCoordinates": [
+                        2,
+                        -2,
+                        0
+                    ],
+                    "cartesian2dCoordinates": [
+                        200.0,
+                        100.0
+                    ]
                 },
                 {
                     "nodeId": 15,
                     "ledCount": 8,
-                    "ringCoordinates": [],
-                    "cubeCoordinates": [],
-                    "cartesian2dCoordinates": []
+                    "ringCoordinates": [
+                        3,
+                        3
+                    ],
+                    "cubeCoordinates": [
+                        3,
+                        -3,
+                        1
+                    ],
+                    "cartesian2dCoordinates": [
+                        300.0,
+                        150.0
+                    ]
                 },
                 {
                     "nodeId": 16,
                     "ledCount": 8,
-                    "ringCoordinates": [],
-                    "cubeCoordinates": [],
-                    "cartesian2dCoordinates": []
+                    "ringCoordinates": [
+                        3,
+                        4
+                    ],
+                    "cubeCoordinates": [
+                        2,
+                        3,
+                        1
+                    ],
+                    "cartesian2dCoordinates": [
+                        300.0,
+                        50.0
+                    ]
                 }
             ]
         },
@@ -214,72 +302,172 @@
                 {
                     "nodeId": 17,
                     "ledCount": 8,
-                    "ringCoordinates": [],
-                    "cubeCoordinates": [],
-                    "cartesian2dCoordinates": []
+                    "ringCoordinates": [
+                        2,
+                        3
+                    ],
+                    "cubeCoordinates": [
+                        -2,
+                        1,
+                        1
+                    ],
+                    "cartesian2dCoordinates": [
+                        200.0,
+                        0.0
+                    ]
                 },
                 {
                     "nodeId": 18,
                     "ledCount": 8,
-                    "ringCoordinates": [],
-                    "cubeCoordinates": [],
-                    "cartesian2dCoordinates": []
+                    "ringCoordinates": [
+                        3,
+                        5
+                    ],
+                    "cubeCoordinates": [
+                        -3,
+                        2,
+                        1
+                    ],
+                    "cartesian2dCoordinates": [
+                        300.0,
+                        -50.0
+                    ]
                 },
                 {
                     "nodeId": 19,
                     "ledCount": 8,
-                    "ringCoordinates": [],
-                    "cubeCoordinates": [],
-                    "cartesian2dCoordinates": []
+                    "ringCoordinates": [
+                        3,
+                        6
+                    ],
+                    "cubeCoordinates": [
+                        -3,
+                        3,
+                        0
+                    ],
+                    "cartesian2dCoordinates": [
+                        300.0,
+                        -150.0
+                    ]
                 },
                 {
                     "nodeId": 20,
                     "ledCount": 8,
-                    "ringCoordinates": [],
-                    "cubeCoordinates": [],
-                    "cartesian2dCoordinates": []
+                    "ringCoordinates": [
+                        2,
+                        4
+                    ],
+                    "cubeCoordinates": [
+                        -2,
+                        2,
+                        0
+                    ],
+                    "cartesian2dCoordinates": [
+                        200.0,
+                        -100.0
+                    ]
                 },
                 {
                     "nodeId": 21,
                     "ledCount": 8,
-                    "ringCoordinates": [],
-                    "cubeCoordinates": [],
-                    "cartesian2dCoordinates": []
+                    "ringCoordinates": [
+                        3,
+                        7
+                    ],
+                    "cubeCoordinates": [
+                        -2,
+                        3,
+                        -1
+                    ],
+                    "cartesian2dCoordinates": [
+                        200.0,
+                        -200.0
+                    ]
                 },
                 {
                     "nodeId": 22,
                     "ledCount": 8,
-                    "ringCoordinates": [],
-                    "cubeCoordinates": [],
-                    "cartesian2dCoordinates": []
+                    "ringCoordinates": [
+                        2,
+                        5
+                    ],
+                    "cubeCoordinates": [
+                        -1,
+                        2,
+                        -1
+                    ],
+                    "cartesian2dCoordinates": [
+                        100.0,
+                        -150.0
+                    ]
                 },
                 {
                     "nodeId": 23,
                     "ledCount": 8,
-                    "ringCoordinates": [],
-                    "cubeCoordinates": [],
-                    "cartesian2dCoordinates": []
+                    "ringCoordinates": [
+                        3,
+                        8
+                    ],
+                    "cubeCoordinates": [
+                        -1,
+                        3,
+                        -2
+                    ],
+                    "cartesian2dCoordinates": [
+                        100.0,
+                        -250.0
+                    ]
                 },
                 {
                     "nodeId": 24,
                     "ledCount": 8,
-                    "ringCoordinates": [],
-                    "cubeCoordinates": [],
-                    "cartesian2dCoordinates": []
+                    "ringCoordinates": [
+                        2,
+                        6
+                    ],
+                    "cubeCoordinates": [
+                        0,
+                        2,
+                        -2
+                    ],
+                    "cartesian2dCoordinates": [
+                        0.0,
+                        -200.0
+                    ]
                 },
                 {
                     "nodeId": 25,
                     "ledCount": 8,
-                    "ringCoordinates": [],
-                    "cubeCoordinates": [],
-                    "cartesian2dCoordinates": []
+                    "ringCoordinates": [
+                        3,
+                        9
+                    ],
+                    "cubeCoordinates": [
+                        0,
+                        3,
+                        -3
+                    ],
+                    "cartesian2dCoordinates": [
+                        0.0,
+                        -300.0
+                    ]
                 },
                 {
                     "nodeId": 26,
                     "ledCount": 8,
-                    "ringCoordinates": [],
-                    "cubeCoordinates": [],
-                    "cartesian2dCoordinates": []
+                    "ringCoordinates": [
+                        3,
+                        10
+                    ],
+                    "cubeCoordinates": [
+                        1,
+                        2,
+                        3
+                    ],
+                    "cartesian2dCoordinates": [
+                        -100.0,
+                        -250.0
+                    ]
                 }
             ]
         },
@@ -289,72 +477,172 @@
                 {
                     "nodeId": 27,
                     "ledCount": 8,
-                    "ringCoordinates": [],
-                    "cubeCoordinates": [],
-                    "cartesian2dCoordinates": []
+                    "ringCoordinates": [
+                        2,
+                        7
+                    ],
+                    "cubeCoordinates": [
+                        1,
+                        2,
+                        1
+                    ],
+                    "cartesian2dCoordinates": [
+                        -100.0,
+                        -150.0
+                    ]
                 },
                 {
                     "nodeId": 28,
                     "ledCount": 8,
-                    "ringCoordinates": [],
-                    "cubeCoordinates": [],
-                    "cartesian2dCoordinates": []
+                    "ringCoordinates": [
+                        3,
+                        11
+                    ],
+                    "cubeCoordinates": [
+                        1,
+                        3,
+                        2
+                    ],
+                    "cartesian2dCoordinates": [
+                        -200.0,
+                        -200.0
+                    ]
                 },
                 {
                     "nodeId": 29,
                     "ledCount": 8,
-                    "ringCoordinates": [],
-                    "cubeCoordinates": [],
-                    "cartesian2dCoordinates": []
+                    "ringCoordinates": [
+                        3,
+                        12
+                    ],
+                    "cubeCoordinates": [
+                        0,
+                        -3,
+                        3
+                    ],
+                    "cartesian2dCoordinates": [
+                        -300.0,
+                        -150.0
+                    ]
                 },
                 {
                     "nodeId": 30,
                     "ledCount": 8,
-                    "ringCoordinates": [],
-                    "cubeCoordinates": [],
-                    "cartesian2dCoordinates": []
+                    "ringCoordinates": [
+                        2,
+                        8
+                    ],
+                    "cubeCoordinates": [
+                        0,
+                        -2,
+                        2
+                    ],
+                    "cartesian2dCoordinates": [
+                        -200.0,
+                        -100.0
+                    ]
                 },
                 {
                     "nodeId": 31,
                     "ledCount": 8,
-                    "ringCoordinates": [],
-                    "cubeCoordinates": [],
-                    "cartesian2dCoordinates": []
+                    "ringCoordinates": [
+                        3,
+                        13
+                    ],
+                    "cubeCoordinates": [
+                        -1,
+                        2,
+                        3
+                    ],
+                    "cartesian2dCoordinates": [
+                        -300.0,
+                        -50.0
+                    ]
                 },
                 {
                     "nodeId": 32,
                     "ledCount": 8,
-                    "ringCoordinates": [],
-                    "cubeCoordinates": [],
-                    "cartesian2dCoordinates": []
+                    "ringCoordinates": [
+                        2,
+                        9
+                    ],
+                    "cubeCoordinates": [
+                        -1,
+                        1,
+                        2
+                    ],
+                    "cartesian2dCoordinates": [
+                        -200.0,
+                        0.0
+                    ]
                 },
                 {
                     "nodeId": 33,
                     "ledCount": 8,
-                    "ringCoordinates": [],
-                    "cubeCoordinates": [],
-                    "cartesian2dCoordinates": []
+                    "ringCoordinates": [
+                        3,
+                        14
+                    ],
+                    "cubeCoordinates": [
+                        -2,
+                        1,
+                        3
+                    ],
+                    "cartesian2dCoordinates": [
+                        -300.0,
+                        50.0
+                    ]
                 },
                 {
                     "nodeId": 34,
                     "ledCount": 8,
-                    "ringCoordinates": [],
-                    "cubeCoordinates": [],
-                    "cartesian2dCoordinates": []
+                    "ringCoordinates": [
+                        2,
+                        10
+                    ],
+                    "cubeCoordinates": [
+                        -2,
+                        0,
+                        2
+                    ],
+                    "cartesian2dCoordinates": [
+                        -200.0,
+                        100.0
+                    ]
                 },
                 {
                     "nodeId": 35,
                     "ledCount": 8,
-                    "ringCoordinates": [],
-                    "cubeCoordinates": [],
-                    "cartesian2dCoordinates": []
+                    "ringCoordinates": [
+                        3,
+                        15
+                    ],
+                    "cubeCoordinates": [
+                        -3,
+                        0,
+                        3
+                    ],
+                    "cartesian2dCoordinates": [
+                        -300.0,
+                        150.0
+                    ]
                 },
                 {
                     "nodeId": 36,
                     "ledCount": 8,
-                    "ringCoordinates": [],
-                    "cubeCoordinates": [],
-                    "cartesian2dCoordinates": []
+                    "ringCoordinates": [
+                        3,
+                        16
+                    ],
+                    "cubeCoordinates": [
+                        -3,
+                        1,
+                        2
+                    ],
+                    "cartesian2dCoordinates": [
+                        -200.0,
+                        200.0
+                    ]
                 }
             ]
         }

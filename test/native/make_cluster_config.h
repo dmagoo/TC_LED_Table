@@ -4,6 +4,9 @@
 #include <vector>
 #include "native/ClusterConfig.h"
 #include "native/NodeConfig.h"
+#include "native/coordinates/RingCoordinate.h"
+#include "native/coordinates/CubeCoordinate.h"
+#include "native/coordinates/Cartesian2dCoordinate.h"
 
 std::vector<ClusterConfig> makeClusterConfigs();
 std::vector<NodeConfig> makeNodeConfigs(int clusterId = 0);

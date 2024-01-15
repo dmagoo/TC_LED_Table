@@ -31,7 +31,7 @@ def parse_config_csv(file_input):
     return config
 
 def generate_cpp_code(config):
-    cpp_code = "#include \"test_utils.h\"\n\n"
+    cpp_code = "#include \"make_cluster_config.h\"\n\n"
     cpp_code += "std::vector<ClusterConfig> makeClusterConfigs() {\n"
     cpp_code += "    return {\n"
     for cluster_id, cluster in config['clusters'].items():
@@ -43,13 +43,20 @@ def generate_cpp_code(config):
     for cluster_id, cluster in config['clusters'].items():
         cpp_code += f"    case {cluster_id}:\n"
         cpp_code += "        return {\n"
-        for node in cluster['nodes']:
+        nodes = cluster['nodes']
+        for i, node in enumerate(nodes):
             nodeId = node['nodeId']
             ledCount = node['ledCount']
             ringCoords = ', '.join(str(x) for x in node['ringCoordinates'])
             cubeCoords = ', '.join(str(x) for x in node['cubeCoordinates'])
             cartesian2dCoords = ', '.join(str(x) for x in node['cartesian2dCoordinates'])
-            cpp_code += f"            NodeConfig({nodeId}, {ledCount}, {{{ringCoords}}}, {{{cubeCoords}}}, {{{cartesian2dCoords}}}),\n"
+            cpp_code += f"            NodeConfig({nodeId}, {ledCount},\n"
+            cpp_code += f"                RingCoordinate({ringCoords}),\n"
+            cpp_code += f"                CubeCoordinate({cubeCoords}),\n"
+            cpp_code += f"                Cartesian2dCoordinate({cartesian2dCoords}))"
+            if i < len(nodes) - 1:
+                cpp_code += ","
+            cpp_code += "\n"
         cpp_code += "        };\n"
     cpp_code += "    }\n"
     cpp_code += "    return {};\n"

@@ -49,3 +49,26 @@ int ClusterManager::getNodeId(const Cartesian2dCoordinate &coords) const {
     return -1; // Handle not found
 }
 
+RingCoordinate ClusterManager::getRingCoordinate(int nodeId) const {
+    auto it = nodeIdToRingCoordinate.find(nodeId);
+    if (it != nodeIdToRingCoordinate.end()) {
+        return it->second;
+    }
+    return RingCoordinate();
+}
+
+CubeCoordinate ClusterManager::getCubeCoordinate(int nodeId) const {
+    auto it = nodeIdToCubeCoordinate.find(nodeId);
+    if (it != nodeIdToCubeCoordinate.end()) {
+        return it->second;
+    }
+    return CubeCoordinate();
+}
+
+Cartesian2dCoordinate ClusterManager::getCartesian2dCoordinate(int nodeId) const {
+    auto it = nodeIdToCartesian2dCoordinate.find(nodeId);
+    if (it != nodeIdToCartesian2dCoordinate.end()) {
+        return it->second;
+    }
+    return Cartesian2dCoordinate();
+}

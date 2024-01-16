@@ -32,18 +32,6 @@ void Cluster::initializePixelBuffer() {
     pixelBuffer.resize(totalPixels, 0); // Initialize pixelBuffer with default color (0) and fixed size
 }
 
-void Cluster::setNodeColor(int nodeId, int32_t color) {
-    auto it = nodeIdToIndex.find(nodeId);
-    if (it != nodeIdToIndex.end()) {
-        Node &node = nodes[it->second];
-        int startIndex = node.getStartIndex();
-        int ledCount = node.getPixelCount();
-
-        // Use std::fill_n to set the color for the range of LEDs
-        std::fill_n(pixelBuffer.begin() + startIndex, ledCount, color);
-    }
-}
-
 void Cluster::setNodePixel(int nodeId, int ledIndex, int32_t color) {
     auto it = nodeIdToIndex.find(nodeId);
     if (it != nodeIdToIndex.end()) {

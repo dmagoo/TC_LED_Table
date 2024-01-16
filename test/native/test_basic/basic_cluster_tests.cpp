@@ -2,13 +2,13 @@
 #include <unity.h>
 #include <vector>
 
+#include "windows/AsciiUtils.h"
+
 #include "native/Cluster.h"
 #include "native/Node.h"
 #include "native/NodeConfig.h"
 
-#include "windows/AsciiUtils.h"
-
-#include "../make_cluster_config.h"
+#include "config/make_cluster_config.h"
 
 #define PIXELS_PER_NODE 8
 
@@ -34,7 +34,7 @@ void test_pixel_buffer_fill_node() {
     int32_t color1 = 0xFF0000FF; // Example color 1
     int32_t color2 = 0x00FF00FF; // Example color 2
     for (int i = 0; i < nodeConfigs.size(); ++i) {
-        cluster.setNodeColor(i, (i % 2 == 0) ? color1 : color2);
+        cluster.fillNode(i, (i % 2 == 0) ? color1 : color2);
     }
 
     // Test: Check buffer size and contents

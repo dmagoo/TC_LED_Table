@@ -8,7 +8,7 @@
 #include "native/ClusterManager.h"
 #include "windows/AsciiUtils.h"
 
-#include "../make_cluster_config.h"
+#include "config/make_cluster_config.h"
 
 #define PIXELS_PER_NODE 8
 

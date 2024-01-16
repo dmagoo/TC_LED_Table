@@ -1,3 +1,0 @@
-#include "Coordinates.h"
-
-// Implement any coordinate-related functions here...

@@ -30,6 +30,8 @@ public:
     ClusterManager(const std::vector<ClusterConfig> &clusterConfigs);
     const Cluster* getClusterById(int clusterId) const;
 
+    int getClusterIdFromNodeId(int nodeId) const;
+
     int getNodeId(const RingCoordinate &coords) const;
     int getNodeId(const CubeCoordinate &coords) const;
     int getNodeId(const Cartesian2dCoordinate &coords) const;

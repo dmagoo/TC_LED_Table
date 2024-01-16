@@ -46,14 +46,6 @@ public:
     void setNodePixel(int nodeId, int pixelIndex, int32_t color);
 
     /**
-     * Sets the color for all pixels in a node.
-     * 
-     * @param nodeId The ID of the node.
-     * @param color The color to set for all pixels.
-     */
-    void setNodeColor(int nodeId, int32_t color);
-
-    /**
      * Queues a new color at the start of a node's pixel range, pushing other colors forward.
      * The color at the end is removed and returned.
      * 

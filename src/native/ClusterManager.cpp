@@ -5,6 +5,9 @@ ClusterManager::ClusterManager(const std::vector<ClusterConfig> &clusterConfigs)
         clusters.emplace_back(clusterConfig.clusterId, clusterConfig.nodeConfigs);
         clusterIdToIndexMap[clusterConfig.clusterId] = clusters.size() - 1;
         for (const auto &nodeConfig : clusterConfig.nodeConfigs) {
+
+            nodeIdToClusterIdMap[nodeConfig.getId()] = clusterConfig.clusterId;
+
             ringCoordinateToNodeId[nodeConfig.getRingCoordinates()] = nodeConfig.getId();
             cubeCoordinateToNodeId[nodeConfig.getCubeCoordinates()] = nodeConfig.getId();
             cartesian2dCoordinateToNodeId[nodeConfig.getCartesian2dCoordinates()] = nodeConfig.getId();
@@ -24,6 +27,14 @@ const Cluster *ClusterManager::getClusterById(int clusterId) const {
     return nullptr; // Or handle the error as appropriate
 }
 
+int ClusterManager::getClusterIdFromNodeId(int nodeId) const {
+    auto it = nodeIdToClusterIdMap.find(nodeId);
+    if (it != nodeIdToClusterIdMap.end()) {
+        return it->second;
+    }
+    return -1; // Handle not found
+
+}
 
 int ClusterManager::getNodeId(const RingCoordinate &coords) const {
     auto it = ringCoordinateToNodeId.find(coords);

@@ -23,20 +23,20 @@ public:
     void fillNode(Cartesian2dCoordinate coordinate, int32_t color);
     void fillNode(CubeCoordinate coordinate, int32_t color);
 
-    void setNodePixel(int nodeId, int32_t color);
-    void setNodePixel(RingCoordinate coordinate, int32_t color);
-    void setNodePixel(Cartesian2dCoordinate coordinate, int32_t color);
-    void setNodePixel(CubeCoordinate coordinate, int32_t color);
+    void setNodePixel(int nodeId, int pixelIndex, int32_t color);
+    void setNodePixel(RingCoordinate coordinate, int pixelIndex, int32_t color);
+    void setNodePixel(Cartesian2dCoordinate coordinate, int pixelIndex, int32_t color);
+    void setNodePixel(CubeCoordinate coordinate, int pixelIndex, int32_t color);
 
     int32_t queueNodePixel(int nodeId, int32_t color);
     int32_t queueNodePixel(RingCoordinate coordinate, int32_t color);
     int32_t queueNodePixel(Cartesian2dCoordinate coordinate, int32_t color);
     int32_t queueNodePixel(CubeCoordinate coordinate, int32_t color);
 
-    int32_t dequeueNodePixel(int nodeId);
-    int32_t dequeueNodePixel(RingCoordinate coordinate);
-    int32_t dequeueNodePixel(Cartesian2dCoordinate coordinate);
-    int32_t dequeueNodePixel(CubeCoordinate coordinate);
+    int32_t dequeueNodePixel(int nodeId, int32_t color);
+    int32_t dequeueNodePixel(RingCoordinate coordinate, int32_t color);
+    int32_t dequeueNodePixel(Cartesian2dCoordinate coordinate, int32_t color);
+    int32_t dequeueNodePixel(CubeCoordinate coordinate, int32_t color);
 
 private:
     ClusterManager& clusterManager;

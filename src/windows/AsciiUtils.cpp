@@ -40,21 +40,19 @@ std::string nodeBufferToAscii(const Cluster& cluster, int nodeId) {
     // ... (rest of the function implementation, same as before) ...
 
     // Top row (North, North-East, East)
+    asciiArt << convertColorToAnsiCode(nodeBuffer[7]) <<  std::setw(3) << (nodeBuffer[7] ? 'x' : 'o') << " ";
     asciiArt << convertColorToAnsiCode(nodeBuffer[0]) <<  std::setw(3) << (nodeBuffer[0] ? 'x' : 'o') << " ";
-    asciiArt << convertColorToAnsiCode(nodeBuffer[1]) <<  std::setw(3) << (nodeBuffer[1] ? 'x' : 'o') << " ";
-    asciiArt << convertColorToAnsiCode(nodeBuffer[2]) <<  std::setw(3) << (nodeBuffer[2] ? 'x' : 'o') << "\n";
+    asciiArt << convertColorToAnsiCode(nodeBuffer[1]) <<  std::setw(3) << (nodeBuffer[1] ? 'x' : 'o') << "\n";
 
     // Middle row (West, Node ID, East)
-    asciiArt << convertColorToAnsiCode(nodeBuffer[7]) <<  std::setw(3) << (nodeBuffer[7] ? 'x' : 'o') << " ";
+    asciiArt << convertColorToAnsiCode(nodeBuffer[6]) <<  std::setw(3) << (nodeBuffer[6] ? 'x' : 'o') << " ";
     asciiArt << std::setw(3) << nodeId << " ";
-    asciiArt << convertColorToAnsiCode(nodeBuffer[3]) <<  std::setw(3) << (nodeBuffer[3] ? 'x' : 'o') << "\n";
+    asciiArt << convertColorToAnsiCode(nodeBuffer[2]) <<  std::setw(3) << (nodeBuffer[2] ? 'x' : 'o') << "\n";
 
     // Bottom row (South-West, South, South-East)
-    asciiArt << convertColorToAnsiCode(nodeBuffer[6]) <<  std::setw(3) << (nodeBuffer[6] ? 'x' : 'o') << " ";
     asciiArt << convertColorToAnsiCode(nodeBuffer[5]) <<  std::setw(3) << (nodeBuffer[5] ? 'x' : 'o') << " ";
-    asciiArt << convertColorToAnsiCode(nodeBuffer[4]) <<  std::setw(3) << (nodeBuffer[4] ? 'x' : 'o') << "\n";
-
-
+    asciiArt << convertColorToAnsiCode(nodeBuffer[4]) <<  std::setw(3) << (nodeBuffer[4] ? 'x' : 'o') << " ";
+    asciiArt << convertColorToAnsiCode(nodeBuffer[3]) <<  std::setw(3) << (nodeBuffer[3] ? 'x' : 'o') << "\n";
 
     // Reset to default color at the end
     asciiArt << "\033[0m";

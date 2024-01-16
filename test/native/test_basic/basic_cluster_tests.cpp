@@ -39,21 +39,20 @@ void test_pixel_buffer_fill_node() {
 
     // Test: Check buffer size and contents
     std::vector<int32_t> buffer = cluster.getPixelBuffer();
-    int totalPixelCount = PIXELS_PER_NODE*nodeConfigs.size();
+    int totalPixelCount = PIXELS_PER_NODE * nodeConfigs.size();
     TEST_ASSERT_EQUAL_INT(totalPixelCount, buffer.size());
 
     for (int i = 0; i < buffer.size(); ++i) {
-        int nodeIndex = (int)i/PIXELS_PER_NODE;
+        int nodeIndex = (int)i / PIXELS_PER_NODE;
         int32_t expectedColor = (nodeIndex % 2 == 0) ? color1 : color2;
         TEST_ASSERT_EQUAL_HEX32(expectedColor, buffer[i]);
     }
 
-std::string asciiArt =  nodeBufferToAscii(cluster, 0);
-std::cout << asciiArt;
+    std::string asciiArt = nodeBufferToAscii(cluster, 0);
+    std::cout << asciiArt;
 
-asciiArt =  nodeBufferToAscii(cluster, 1);
-std::cout << asciiArt;
-
+    asciiArt = nodeBufferToAscii(cluster, 1);
+    std::cout << asciiArt;
 }
 
 void run_basic_cluster_tests(int argc, char **argv) {

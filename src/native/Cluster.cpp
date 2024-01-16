@@ -63,7 +63,7 @@ int32_t Cluster::queueNodeColor(int nodeId, int32_t color) {
     return 0; // Modify as needed
 }
 
-int32_t Cluster::dequeueNodeColor(int nodeId) {
+int32_t Cluster::dequeueNodeColor(int nodeId, int32_t color) {
     auto it = nodeIdToIndex.find(nodeId);
     if (it != nodeIdToIndex.end()) {
         Node &node = nodes[it->second];
@@ -76,7 +76,7 @@ int32_t Cluster::dequeueNodeColor(int nodeId) {
             std::rotate(pixelBuffer.begin() + startIndex,
                         pixelBuffer.begin() + startIndex + 1,
                         pixelBuffer.begin() + startIndex + ledCount);
-            pixelBuffer[startIndex + ledCount - 1] = 0; // Default color
+            pixelBuffer[startIndex + ledCount - 1] = color; // Default color
             return removedColor;
         }
     }

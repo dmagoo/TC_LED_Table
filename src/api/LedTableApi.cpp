@@ -1,4 +1,5 @@
 #include "LedTableApi.h"
+#include <iostream>
 
 template<typename CommandType, typename... Args>
 void LedTableApi::performClusterOperationReturningVoid(int nodeId, Args... args) {
@@ -30,34 +31,27 @@ int32_t LedTableApi::performClusterOperationReturningColor(int nodeId, Args... a
 }
 
 
-
 // Explicit template instantiations for all the command types you use
 template void LedTableApi::performClusterOperationReturningVoid<FillNodeCommand, int32_t>(int, int32_t);
 template int32_t LedTableApi::performClusterOperationReturningColor<QueueNodePixelCommand, int32_t>(int, int32_t);
-template int32_t LedTableApi::performClusterOperationReturningColor<DequeueNodePixelCommand>(int);
+template int32_t LedTableApi::performClusterOperationReturningColor<DequeueNodePixelCommand>(int, int32_t);
 
 // Template specialization for RingCoordinate
 template<>
 int LedTableApi::convertToNodeId<RingCoordinate>(const RingCoordinate& coordinate) {
-    // Implement the actual conversion logic here
-    // Return the nodeId corresponding to the RingCoordinate
-    return 0;
+    return clusterManager.getNodeId(coordinate);
 }
 
 // Template specialization for Cartesian2dCoordinate
 template<>
 int LedTableApi::convertToNodeId<Cartesian2dCoordinate>(const Cartesian2dCoordinate& coordinate) {
-    // Implement the actual conversion logic here
-    // Return the nodeId corresponding to the Cartesian2dCoordinate
-    return 0;
+    return clusterManager.getNodeId(coordinate);
 }
 
-// Template specialization for Cartesian2dCoordinate
+// Template specialization for CubeCoordinate
 template<>
 int LedTableApi::convertToNodeId<CubeCoordinate>(const CubeCoordinate& coordinate) {
-    // Implement the actual conversion logic here
-    // Return the nodeId corresponding to the CubeCoordinate
-    return 0;
+    return clusterManager.getNodeId(coordinate);
 }
 
 
@@ -65,42 +59,46 @@ int LedTableApi::convertToNodeId<CubeCoordinate>(const CubeCoordinate& coordinat
 
 // Implementations of the public API methods using the template function
 void LedTableApi::fillNode(int nodeId, int32_t color) {
+std::cout << "in root fill with node: " << nodeId << std::endl;
     performClusterOperationReturningVoid<FillNodeCommand>(nodeId, color);
 }
 
 void LedTableApi::fillNode(RingCoordinate coordinate, int32_t color) {
     int nodeId = convertToNodeId(coordinate);
+std::cout << "in ring fill with node: " << nodeId << std::endl;
     performClusterOperationReturningVoid<FillNodeCommand>(nodeId, color);
 }
 
 void LedTableApi::fillNode(CubeCoordinate coordinate, int32_t color) {
     int nodeId = convertToNodeId(coordinate);
+std::cout << "in cube fill with node: " << nodeId << std::endl;
     performClusterOperationReturningVoid<FillNodeCommand>(nodeId, color);
 }
 
 void LedTableApi::fillNode(Cartesian2dCoordinate coordinate, int32_t color) {
     int nodeId = convertToNodeId(coordinate);
+std::cout << "in cart2d fill with node: " << nodeId << std::endl;
     performClusterOperationReturningVoid<FillNodeCommand>(nodeId, color);
 }
 
 // Implementations of the public API methods using the template function
-void LedTableApi::setNodePixel(int nodeId, int32_t color) {
-    performClusterOperationReturningVoid<SetNodePixelCommand>(nodeId, color);
+void LedTableApi::setNodePixel(int nodeId, int pixelIndex, int32_t color) {
+    performClusterOperationReturningVoid<SetNodePixelCommand>(nodeId, pixelIndex, color);
 }
 
-void LedTableApi::setNodePixel(RingCoordinate coordinate, int32_t color) {
+void LedTableApi::setNodePixel(RingCoordinate coordinate, int pixelIndex, int32_t color) {
     int nodeId = convertToNodeId(coordinate);
-    performClusterOperationReturningVoid<SetNodePixelCommand>(nodeId, color);
+    performClusterOperationReturningVoid<SetNodePixelCommand>(nodeId, pixelIndex, color);
 }
 
-void LedTableApi::setNodePixel(CubeCoordinate coordinate, int32_t color) {
+void LedTableApi::setNodePixel(CubeCoordinate coordinate, int pixelIndex, int32_t color) {
     int nodeId = convertToNodeId(coordinate);
-    performClusterOperationReturningVoid<SetNodePixelCommand>(nodeId, color);
+    performClusterOperationReturningVoid<SetNodePixelCommand>(nodeId, pixelIndex, color);
 }
 
-void LedTableApi::setNodePixel(Cartesian2dCoordinate coordinate, int32_t color) {
+void LedTableApi::setNodePixel(Cartesian2dCoordinate coordinate, int pixelIndex, int32_t color) {
     int nodeId = convertToNodeId(coordinate);
-    performClusterOperationReturningVoid<SetNodePixelCommand>(nodeId, color);
+    performClusterOperationReturningVoid<SetNodePixelCommand>(nodeId, pixelIndex, color);
 }
 
 // Implementations of the public API methods using the template function
@@ -124,23 +122,23 @@ int32_t LedTableApi::queueNodePixel(Cartesian2dCoordinate coordinate, int32_t co
 }
 
 // Implementations of the public API methods using the template function
-int32_t LedTableApi::dequeueNodePixel(int nodeId) {
-    return performClusterOperationReturningColor<DequeueNodePixelCommand>(nodeId);
+int32_t LedTableApi::dequeueNodePixel(int nodeId, int32_t color) {
+    return performClusterOperationReturningColor<DequeueNodePixelCommand>(nodeId, color);
 }
 
-int32_t LedTableApi::dequeueNodePixel(RingCoordinate coordinate) {
+int32_t LedTableApi::dequeueNodePixel(RingCoordinate coordinate, int32_t color) {
     int nodeId = convertToNodeId(coordinate);
-    return performClusterOperationReturningColor<DequeueNodePixelCommand>(nodeId);
+    return performClusterOperationReturningColor<DequeueNodePixelCommand>(nodeId, color);
 }
 
-int32_t LedTableApi::dequeueNodePixel(CubeCoordinate coordinate) {
+int32_t LedTableApi::dequeueNodePixel(CubeCoordinate coordinate, int32_t color) {
     int nodeId = convertToNodeId(coordinate);
-    return performClusterOperationReturningColor<DequeueNodePixelCommand>(nodeId);
+    return performClusterOperationReturningColor<DequeueNodePixelCommand>(nodeId, color);
 }
 
-int32_t LedTableApi::dequeueNodePixel(Cartesian2dCoordinate coordinate) {
+int32_t LedTableApi::dequeueNodePixel(Cartesian2dCoordinate coordinate, int32_t color) {
     int nodeId = convertToNodeId(coordinate);
-    return performClusterOperationReturningColor<DequeueNodePixelCommand>(nodeId);
+    return performClusterOperationReturningColor<DequeueNodePixelCommand>(nodeId, color);
 }
 
 void LedTableApi::setSuppressMessages(bool newValue) {}

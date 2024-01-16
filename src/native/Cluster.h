@@ -57,12 +57,13 @@ public:
 
     /**
      * Removes the first color in a node's pixel range and pushes other colors back.
-     * A default color is added at the end of the range.
+     * The new color is added at the end of the range.
      * 
      * @param nodeId The ID of the node.
+     * @param color The new color to queue.
      * @return The color that was removed from the start of the queue.
      */
-    int32_t dequeueNodeColor(int nodeId);
+    int32_t dequeueNodeColor(int nodeId, int32_t color);
 
     /**
      * Retrieves a pointer to a Node object by its ID.

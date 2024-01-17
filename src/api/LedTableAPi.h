@@ -18,25 +18,30 @@ public:
 
     void setSuppressRefresh(bool newValue);
 
-    void fillNode(int nodeId, int32_t color);
-    void fillNode(RingCoordinate coordinate, int32_t color);
-    void fillNode(Cartesian2dCoordinate coordinate, int32_t color);
-    void fillNode(CubeCoordinate coordinate, int32_t color);
+    void fillNode(int nodeId, RGBW color);
+    void fillNode(RingCoordinate coordinate, RGBW color);
+    void fillNode(Cartesian2dCoordinate coordinate, RGBW color);
+    void fillNode(CubeCoordinate coordinate, RGBW color);
 
-    void setNodePixel(int nodeId, int pixelIndex, int32_t color);
-    void setNodePixel(RingCoordinate coordinate, int pixelIndex, int32_t color);
-    void setNodePixel(Cartesian2dCoordinate coordinate, int pixelIndex, int32_t color);
-    void setNodePixel(CubeCoordinate coordinate, int pixelIndex, int32_t color);
+    void fillNode(int nodeId, const std::vector<RGBW>& colors, RGBW padcolor);
+    void fillNode(RingCoordinate coordinate, const std::vector<RGBW>& colors, RGBW padcolor);
+    void fillNode(Cartesian2dCoordinate coordinate, const std::vector<RGBW>& colors, RGBW padcolor);
+    void fillNode(CubeCoordinate coordinate, const std::vector<RGBW>& colors, RGBW padcolor);
 
-    int32_t queueNodePixel(int nodeId, int32_t color);
-    int32_t queueNodePixel(RingCoordinate coordinate, int32_t color);
-    int32_t queueNodePixel(Cartesian2dCoordinate coordinate, int32_t color);
-    int32_t queueNodePixel(CubeCoordinate coordinate, int32_t color);
+    void setNodePixel(int nodeId, int pixelIndex, RGBW color);
+    void setNodePixel(RingCoordinate coordinate, int pixelIndex, RGBW color);
+    void setNodePixel(Cartesian2dCoordinate coordinate, int pixelIndex, RGBW color);
+    void setNodePixel(CubeCoordinate coordinate, int pixelIndex, RGBW color);
 
-    int32_t dequeueNodePixel(int nodeId, int32_t color);
-    int32_t dequeueNodePixel(RingCoordinate coordinate, int32_t color);
-    int32_t dequeueNodePixel(Cartesian2dCoordinate coordinate, int32_t color);
-    int32_t dequeueNodePixel(CubeCoordinate coordinate, int32_t color);
+    RGBW queueNodePixel(int nodeId, RGBW color);
+    RGBW queueNodePixel(RingCoordinate coordinate, RGBW color);
+    RGBW queueNodePixel(Cartesian2dCoordinate coordinate, RGBW color);
+    RGBW queueNodePixel(CubeCoordinate coordinate, RGBW color);
+
+    RGBW dequeueNodePixel(int nodeId, RGBW color);
+    RGBW dequeueNodePixel(RingCoordinate coordinate, RGBW color);
+    RGBW dequeueNodePixel(Cartesian2dCoordinate coordinate, RGBW color);
+    RGBW dequeueNodePixel(CubeCoordinate coordinate, RGBW color);
 
 private:
     ClusterManager& clusterManager;
@@ -48,7 +53,7 @@ private:
     void performClusterOperationReturningVoid(int nodeId, Args... args);
 
     template<typename CommandType, typename... Args>
-    int32_t performClusterOperationReturningColor(int nodeId, Args... args);
+    RGBW performClusterOperationReturningColor(int nodeId, Args... args);
 
 };
 

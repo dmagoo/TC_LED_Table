@@ -3,7 +3,7 @@
 #include <iomanip>
 
 // Function to convert the color to an ANSI escape code
-std::string convertColorToAnsiCode(int32_t color) {
+std::string convertColorToAnsiCode(RGBW color) {
     // Your color conversion logic goes here
     // For example, using basic primary colors:
     if (color & 0x00FF0000) { // Red component is present
@@ -17,7 +17,7 @@ std::string convertColorToAnsiCode(int32_t color) {
 }
 
 // Function to convert the color to a 24-bit ANSI escape code (True Color)
-std::string convertColorToAnsiCodeWIP(int32_t color) {
+std::string convertColorToAnsiCodeWIP(RGBW color) {
     int red = (color >> 16) & 0xFF;  // Extract the red component
     int green = (color >> 8) & 0xFF;  // Extract the green component
     int blue = color & 0xFF;          // Extract the blue component

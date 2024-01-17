@@ -2,8 +2,8 @@
 #include <unity.h>
 #include <vector>
 
+#include "native/LedTableTypes.h"
 #include "windows/AsciiUtils.h"
-
 #include "native/Cluster.h"
 #include "native/Node.h"
 #include "native/NodeConfig.h"
@@ -31,20 +31,20 @@ void test_pixel_buffer_fill_node() {
     std::vector<NodeConfig> nodeConfigs = makeNodeConfigs();
     Cluster cluster(0, nodeConfigs);
 
-    int32_t color1 = 0xFF0000FF; // Example color 1
-    int32_t color2 = 0x00FF00FF; // Example color 2
+    RGBW color1 = 0xFF0000FF; // Example color 1
+    RGBW color2 = 0x00FF00FF; // Example color 2
     for (int i = 0; i < nodeConfigs.size(); ++i) {
         cluster.fillNode(i, (i % 2 == 0) ? color1 : color2);
     }
 
     // Test: Check buffer size and contents
-    std::vector<int32_t> buffer = cluster.getPixelBuffer();
+    std::vector<RGBW> buffer = cluster.getPixelBuffer();
     int totalPixelCount = PIXELS_PER_NODE * nodeConfigs.size();
     TEST_ASSERT_EQUAL_INT(totalPixelCount, buffer.size());
 
     for (int i = 0; i < buffer.size(); ++i) {
         int nodeIndex = (int)i / PIXELS_PER_NODE;
-        int32_t expectedColor = (nodeIndex % 2 == 0) ? color1 : color2;
+        RGBW expectedColor = (nodeIndex % 2 == 0) ? color1 : color2;
         TEST_ASSERT_EQUAL_HEX32(expectedColor, buffer[i]);
     }
 

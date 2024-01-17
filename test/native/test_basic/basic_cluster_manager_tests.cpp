@@ -2,6 +2,7 @@
 #include <unity.h>
 #include <vector>
 
+#include "native/LedTableTypes.h"
 #include "native/Cluster.h"
 #include "native/Node.h"
 #include "native/NodeConfig.h"

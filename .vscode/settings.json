@@ -56,7 +56,8 @@
         "forward_list": "cpp",
         "ratio": "cpp",
         "valarray": "cpp",
-        "variant": "cpp"
+        "variant": "cpp",
+        "clustermessagesproto.pb.h": "c"
     },
     "configurations": [
         {

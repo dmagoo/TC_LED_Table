@@ -20,7 +20,7 @@ CommandParamsVariant ClusterMessage::getParams() const {
 }
 
 ClusterMessage createFillNodeMessage(int clusterId, int nodeId, int color) {
-    FillNodeParams params;
+    NodeWithColorParams params;
     params.nodeId = nodeId;
     params.color = color;
     ClusterMessage clusterMessage(clusterId, ClusterCommandType::FillNode, params);
@@ -37,7 +37,7 @@ ClusterMessage createBlitNodeMessage(int clusterId, int nodeId, std::vector<RGBW
 }
 
 ClusterMessage createSetNodePixelMessage(int clusterId, int nodeId, int color) {
-    SetNodePixelParams params;
+    NodeWithPixelIndex params;
     params.nodeId = nodeId;
     params.color = color;
     ClusterMessage clusterMessage(clusterId, ClusterCommandType::SetNodePixel, params);
@@ -45,7 +45,7 @@ ClusterMessage createSetNodePixelMessage(int clusterId, int nodeId, int color) {
 }
 
 ClusterMessage createQueueNodePixelMessage(int clusterId, int nodeId, int color) {
-    QueueNodePixelParams params;
+    NodeWithColorParams params;
     params.nodeId = nodeId;
     params.color = color;
     ClusterMessage clusterMessage(clusterId, ClusterCommandType::QueueNodePixel, params);
@@ -53,7 +53,7 @@ ClusterMessage createQueueNodePixelMessage(int clusterId, int nodeId, int color)
 }
 
 ClusterMessage createDequeueNodePixelMessage(int clusterId, int nodeId, int color) {
-    DequeueNodePixelParams params;
+    NodeWithColorParams params;
     params.nodeId = nodeId;
     params.color = color;
     ClusterMessage clusterMessage(clusterId, ClusterCommandType::DequeueNodePixel, params);
@@ -70,8 +70,8 @@ std::vector<uint8_t> serializeClusterMessage(const ClusterMessage &message) {
 
     // Extract and set specific command params based on command_type
     const CommandParamsVariant &paramsVariant = message.getParams();
-    if (std::holds_alternative<FillNodeParams>(paramsVariant)) {
-        const FillNodeParams &fillParams = std::get<FillNodeParams>(paramsVariant);
+    if (std::holds_alternative<NodeWithColorParams>(paramsVariant)) {
+        const NodeWithColorParams &fillParams = std::get<NodeWithColorParams>(paramsVariant);
         proto_msg.params.fill_node_params.node_id = fillParams.nodeId;
         std::cout << "SERIALIZED node_id " << proto_msg.params.fill_node_params.node_id << std::endl;
         proto_msg.params.fill_node_params.color = fillParams.color; // Assuming direct assignment is possible
@@ -105,7 +105,7 @@ ClusterMessage deserializeClusterMessage(const std::vector<uint8_t> &buffer) {
         std::cout << "proto matches type" << std::endl;
         // error confirmed HERE:
         std::cout << "Deserialized node_id " << proto_msg.params.fill_node_params.node_id << std::endl;
-        FillNodeParams fillParams;
+        NodeWithColorParams fillParams;
         fillParams.nodeId = proto_msg.params.fill_node_params.node_id;
         fillParams.color = proto_msg.params.fill_node_params.color;
         params = fillParams;
@@ -115,9 +115,9 @@ ClusterMessage deserializeClusterMessage(const std::vector<uint8_t> &buffer) {
 
     std::cout << "proto cluster id: " << proto_msg.cluster_id << std::endl;
 
-    if (std::holds_alternative<FillNodeParams>(params)) {
-        // Step 3: Extract FillNodeParams
-        FillNodeParams castedParams = std::get<FillNodeParams>(params);
+    if (std::holds_alternative<NodeWithColorParams>(params)) {
+        // Step 3: Extract NodeWithColorParams
+        NodeWithColorParams castedParams = std::get<NodeWithColorParams>(params);
         std::cout << "proto node_id: " << castedParams.nodeId << std::endl;
     }
     ClusterMessage message(proto_msg.cluster_id, static_cast<ClusterCommandType>(proto_msg.command_type), params);

@@ -8,7 +8,7 @@ void test_basic_message_creation() {
     FillNodeCommand fillNodeCommand(10, 0x00112233);
     ClusterMessage clusterMessage(1, FillNodeCommand::getType(), fillNodeCommand.getParams());
 
-    FillNodeParams paramsInput = fillNodeCommand.getParams();
+    NodeWithColorParams paramsInput = fillNodeCommand.getParams();
 
     // todo: assert == 10
     // std::cout << " params --- " << (int)paramsInput.nodeId << std::endl;
@@ -21,10 +21,10 @@ void test_basic_message_creation() {
 
     CommandParamsVariant paramsVariant = deserialized.getParams();
 
-    // Step 2: Check if the variant holds an instance of FillNodeParams
-    if (std::holds_alternative<FillNodeParams>(paramsVariant)) {
-        // Step 3: Extract FillNodeParams
-        FillNodeParams params = std::get<FillNodeParams>(paramsVariant);
+    // Step 2: Check if the variant holds an instance of NodeWithColorParams
+    if (std::holds_alternative<NodeWithColorParams>(paramsVariant)) {
+        // Step 3: Extract NodeWithColorParams
+        NodeWithColorParams params = std::get<NodeWithColorParams>(paramsVariant);
 
         // Step 4: Compare nodeId
         if (params.nodeId == paramsInput.nodeId) {
@@ -37,14 +37,14 @@ void test_basic_message_creation() {
     }
 
     auto params = deserialized.getParams();
-    if (std::holds_alternative<FillNodeParams>(params)) {
-        int nodeId = std::get<FillNodeParams>(params).nodeId;
+    if (std::holds_alternative<NodeWithColorParams>(params)) {
+        int nodeId = std::get<NodeWithColorParams>(params).nodeId;
 
         TEST_ASSERT_EQUAL_INT(10, nodeId);
 
         // Use nodeId as needed
     } else {
-        // Handle the case where the params are not of type FillNodeParams
+        // Handle the case where the params are not of type NodeWithColorParams
     }
 
     TEST_ASSERT_EQUAL_INT(1, deserialized.getClusterId());

@@ -17,8 +17,14 @@ enum class ClusterCommandType {
 };
 
 // parms structured for use in messaging
-struct FillNodeParams {
+struct NodeWithColorParams {
     int nodeId;
+    RGBW color;
+};
+
+struct NodeWithPixelIndex {
+    int nodeId;
+    int pixelIndex;
     RGBW color;
 };
 
@@ -28,23 +34,7 @@ struct BlitNodeParams {
     RGBW padColor;
 };
 
-struct SetNodePixelParams {
-    int nodeId;
-    int pixelIndex;
-    RGBW color;
-};
-
-struct QueueNodePixelParams {
-    int nodeId;
-    RGBW color;
-};
-
-struct DequeueNodePixelParams {
-    int nodeId;
-    RGBW color;
-};
-
-using CommandParamsVariant = std::variant<FillNodeParams, BlitNodeParams, SetNodePixelParams, QueueNodePixelParams, DequeueNodePixelParams>;
+using CommandParamsVariant = std::variant<NodeWithColorParams, BlitNodeParams, NodeWithPixelIndex>;
 
 // Command interfaces
 class ClusterCommandReturningVoid {
@@ -78,8 +68,8 @@ public:
         return ClusterCommandType::FillNode;
     }
 
-    FillNodeParams getParams() const {
-        return FillNodeParams{nodeId, color};
+    NodeWithColorParams getParams() const {
+        return NodeWithColorParams{nodeId, color};
     }
 };
 
@@ -122,8 +112,8 @@ public:
         return ClusterCommandType::SetNodePixel;
     }
 
-    SetNodePixelParams getParams() const {
-        return SetNodePixelParams{nodeId, pixelIndex, color};
+    NodeWithPixelIndex getParams() const {
+        return NodeWithPixelIndex{nodeId, pixelIndex, color};
     }
 };
 
@@ -145,8 +135,8 @@ public:
         return ClusterCommandType::QueueNodePixel;
     }
 
-    QueueNodePixelParams getParams() const {
-        return QueueNodePixelParams{nodeId, color};
+    NodeWithColorParams getParams() const {
+        return NodeWithColorParams{nodeId, color};
     }
 };
 
@@ -167,8 +157,8 @@ public:
         return ClusterCommandType::DequeueNodePixel;
     }
 
-    DequeueNodePixelParams getParams() const {
-        return DequeueNodePixelParams{nodeId, color};
+    NodeWithColorParams getParams() const {
+        return NodeWithColorParams{nodeId, color};
     }
 };
 

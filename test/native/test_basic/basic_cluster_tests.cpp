@@ -13,7 +13,7 @@
 #define PIXELS_PER_NODE 8
 
 void test_create_cluster() {
-    std::vector<NodeConfig> nodeConfigs = makeNodeConfigs();
+    std::vector<NodeConfig> nodeConfigs = makeNodeConfigs(0);
     Cluster cluster(0, nodeConfigs);
 
     const Node *node1 = cluster.getNode(0);
@@ -28,7 +28,7 @@ void test_create_cluster() {
 }
 
 void test_pixel_buffer_fill_node() {
-    std::vector<NodeConfig> nodeConfigs = makeNodeConfigs();
+    std::vector<NodeConfig> nodeConfigs = makeNodeConfigs(0);
     Cluster cluster(0, nodeConfigs);
 
     RGBW color1 = 0xFF0000FF; // Example color 1

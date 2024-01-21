@@ -1,0 +1,56 @@
+// commands.proto
+// build when new commands are added
+// protoc --cpp_out=. src/native/proto/ProtoClusterMessages.proto        
+// or mayhaps after cd to dir: protoc --cpp_out=. ClusterMessagesProto.proto 
+// woth nano pb
+
+syntax = "proto3";
+
+message FillNodeParamsProto {
+    int32 node_id = 1;
+    uint32 color = 2;
+}
+
+message BlitNodeParamsProto {
+    int32 node_id = 1;
+    repeated uint32 colors = 2;
+    uint32 pad_color = 3;
+}
+
+message SetNodePixelParamsProto {
+    int32 node_id = 1;
+    uint32 color = 2;
+}
+
+
+message QueueNodePixelParamsProto {
+    int32 node_id = 1;
+    uint32 color = 2;
+}
+
+message DequeueNodePixelParamsProto {
+    int32 node_id = 1;
+    uint32 color = 2;
+}
+
+// Define other command parameter messages...
+
+enum CommandTypeProto {
+    FILL_NODE = 0;
+    BLIT_NODE = 1;
+    SET_NODE_PIXEL = 2;
+    QUEUE_NODE_PIXEL = 3;
+    DEQUEUE_NODE_PIXEL = 4;
+}
+
+message ClusterMessageProto {
+    int32 cluster_id = 1;
+    CommandTypeProto command_type = 2;
+    oneof params {
+        FillNodeParamsProto fill_node_params = 3;
+        BlitNodeParamsProto blit_node_params = 4;
+        SetNodePixelParamsProto set_node_pixel_params = 5;
+        QueueNodePixelParamsProto queue_node_pixel_params = 6;
+        DequeueNodePixelParamsProto dequeue_node_pixel_params = 7;
+    }
+}

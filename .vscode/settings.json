@@ -55,6 +55,26 @@
         "codecvt": "cpp",
         "forward_list": "cpp",
         "ratio": "cpp",
-        "valarray": "cpp"
-    }
+        "valarray": "cpp",
+        "variant": "cpp"
+    },
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "${workspaceFolder}/**"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE"
+            ],
+            "compilerPath": "C:/MinGW/bin/g++.exe",
+            "cStandard": "c17",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "gcc-x64"
+        }
+    ],
+    "C_Cpp.default.cppStandard": "c++17",
+    "C_Cpp.default.cStandard": ""
 }

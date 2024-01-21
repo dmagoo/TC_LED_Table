@@ -113,10 +113,13 @@ void Cluster::fillNode(int nodeId, const std::vector<RGBW> &colors, RGBW padColo
 
         if (pad && fillCount < ledCount) {
 std::cout << "padding color 0x" << std::hex << std::setw(8) << std::setfill('0') << padColor << " in buffer of size " << pixelBuffer.size();
+std::cout << std::dec;
 std::cout << ". Starting at index " << startIndex + fillCount << " with item count: " << ledCount - fillCount << std::endl;
             std::fill_n(pixelBuffer.begin() + startIndex + fillCount, ledCount - fillCount, padColor);
         }
     }
+std::cout << std::dec;
+
 }
  
 void Cluster::fillNode(int nodeId, RGBW color) {
@@ -135,7 +138,8 @@ void Cluster::fillNode(int nodeId, const std::vector<RGBW> &colors) {
 void Cluster::fillNode(int nodeId, const std::vector<RGBW> &colors, RGBW padColor) {
     std::cout << "blitting node: " << nodeId << " in cluster " << id;
     std::cout << " using padding color 0x" << std::hex << std::setw(8) << std::setfill('0') << padColor << std::endl;
-    
+    std::cout << std::dec;
+
     fillNode(nodeId, colors, padColor, true);
 }
 

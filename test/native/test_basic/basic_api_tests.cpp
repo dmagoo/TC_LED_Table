@@ -3,6 +3,7 @@
 #include <unity.h>
 #include <vector>
 
+#include "native/ClusterCommands.h"
 #include "../test_utils.h"
 #include "api/LedTableApi.h"
 #include "config/make_cluster_config.h"

@@ -2,7 +2,7 @@
 #define WORKER_H
 
 // #include <FastLED.h>
-#include "Cluster.h"
+#include "native/Cluster.h"
 
 class Worker {
 private:

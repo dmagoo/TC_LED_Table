@@ -1,26 +1,11 @@
 #include "bootstrap.h"
 #include "config.h"
-#include "Worker.h"
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
-#include <ArduinoJSON.h>
 
 Worker worker;  // Global Worker instance
 
-// Task function declarations
-void handleMQTTTask(void* parameter);
-void handleLEDSensorTask(void* parameter);
-
-Worker myWorker;
-
-void parseConfig() {
-    DynamicJsonDocument localConfig = readJsonFile("/config/config.local.json");
-    int clusterId = localConfig["clusterId"]; // Example of extracting clusterId
-    DynamicJsonDocument globalConfig = readJsonFile("/config/config.global.json");
-}
-
 void workerSetup() {
-
     worker.setup();
 
     // Create tasks for MQTT handling and LED/sensor operations

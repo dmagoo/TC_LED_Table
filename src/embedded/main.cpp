@@ -1,5 +1,5 @@
 #include <Arduino.h>
-#include <LittleFS.h>
+// #include <LittleFS.h>
 
 #ifdef CONTROLLER_DEVICE
 #include "controller/bootstrap.h"
@@ -9,11 +9,11 @@
 
 void setup() {
     // Initialize LittleFS
-    if (!LittleFS.begin()) {
-        Serial.println("LittleFS initialization failed");
-        return;
-    }
-
+    //if (!LittleFS.begin()) {
+    //    Serial.println("LittleFS initialization failed");
+    //    return;
+    //}
+    Serial.begin(115200);
     #ifdef CONTROLLER_DEVICE
     controllerSetup();
     #else
@@ -22,9 +22,11 @@ void setup() {
 }
 
 void loop() {
+    Serial.println("Hello, from main loop!");
     #ifdef CONTROLLER_DEVICE
     controllerLoop();
     #else
     workerLoop();
     #endif
+    delay(1000); 
 }

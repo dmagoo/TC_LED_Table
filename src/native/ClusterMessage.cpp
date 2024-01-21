@@ -1,8 +1,6 @@
 #include "ClusterMessage.h"
 
-// # include <google/protobuf/message.h>
 #include "native/proto/ClusterMessagesProto.pb.h"
-// #include "ClusterMessagesProto.pb.h"
 #include <iostream>
 #include <vector>
 #include <variant>

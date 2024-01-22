@@ -1,26 +1,28 @@
 #ifndef WORKER_H
 #define WORKER_H
 
-// #include <FastLED.h>
+#include <mutex>
+#include <Adafruit_NeoPixel.h>
+
 #include "native/Cluster.h"
 
 class Worker {
-private:
-  //  Adafruit_NeoPixel strip; // NeoPixel strip object
-//    Cluster clusterConfig;   // Private cluster object
-
-    void initializeSensors();
-    void initializeMQTT();
 
 public:
-    //Worker(uint16_t numLEDs, uint8_t pin, neoPixelType type = NEO_GRBW + NEO_KHZ800);
-    //~Worker();
-    Worker();
+    explicit Worker(int clusterId);
     void setup();
     void handleMQTTMessages();
     void updateLEDs();
     void readSensors();
 
+
+private:
+    int clusterId;
+    Cluster cluster;
+    Adafruit_NeoPixel strip;
+    mutable std::mutex bufferMutex;
+    void initializeSensors();
+    void initializeMQTT();
 };
 
 #endif // WORKER_H

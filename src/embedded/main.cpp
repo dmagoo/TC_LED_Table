@@ -1,5 +1,4 @@
 #include <Arduino.h>
-// #include <LittleFS.h>
 
 #ifdef CONTROLLER_DEVICE
 #include "controller/bootstrap.h"
@@ -8,12 +7,8 @@
 #endif
 
 void setup() {
-    // Initialize LittleFS
-    //if (!LittleFS.begin()) {
-    //    Serial.println("LittleFS initialization failed");
-    //    return;
-    //}
     Serial.begin(115200);
+    Serial.println("Hello, from main setup!");
     #ifdef CONTROLLER_DEVICE
     controllerSetup();
     #else

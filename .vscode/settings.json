@@ -57,7 +57,10 @@
         "ratio": "cpp",
         "valarray": "cpp",
         "variant": "cpp",
-        "clustermessagesproto.pb.h": "c"
+        "clustermessagesproto.pb.h": "c",
+        "condition_variable": "cpp",
+        "mutex": "cpp",
+        "thread": "cpp"
     },
     "configurations": [
         {

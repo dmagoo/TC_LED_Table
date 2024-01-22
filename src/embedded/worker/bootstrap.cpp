@@ -1,16 +1,25 @@
 #include "bootstrap.h"
-#include "config.h"
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
+#include "config/make_cluster_config.h"
+#include "native/Cluster.h"
 
-Worker worker;  // Global Worker instance
+#include <Adafruit_NeoPixel.h>
+
+#define DEFAULT_WORKER_CLUSTER_ID 0
+
+#if defined(WORKER_CLUSTER_ID)
+    const int clusterId = WORKER_CLUSTER_ID;
+#else
+    const int clusterId = DEFAULT_WORKER_CLUSTER_ID; // Define a default value
+#endif
+
+static Worker worker(clusterId);
 
 void workerSetup() {
-    worker.setup();
-
-    // Create tasks for MQTT handling and LED/sensor operations
     xTaskCreatePinnedToCore(handleMQTTTask, "MQTTTask", 10000, NULL, 1, NULL, 0); // Core 0
     xTaskCreatePinnedToCore(handleLEDSensorTask, "LEDSensorTask", 10000, NULL, 1, NULL, 1); // Core 1
+    worker.setup();
 }
 
 void workerLoop() {

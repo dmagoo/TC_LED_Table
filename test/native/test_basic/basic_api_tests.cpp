@@ -119,6 +119,7 @@ void test_fill_node() {
     buffer = cluster->getNodePixelBuffer(nodeId);
 
     verifyBufferIsFilledWithColor(buffer, 0xFFFFFFFF);
+
 }
 
 int run_basic_api_tests(int argc, char **argv) {

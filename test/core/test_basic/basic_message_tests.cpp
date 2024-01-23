@@ -1,5 +1,5 @@
-#include "native/ClusterCommands.h"
-#include "native/ClusterMessage.h"
+#include "core/ClusterCommands.h"
+#include "core/ClusterMessage.h"
 #include <iostream>
 #include <variant>
 #include <unity.h>

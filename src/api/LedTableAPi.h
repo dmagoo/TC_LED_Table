@@ -1,11 +1,11 @@
 #ifndef LEDTABLEAPI_H
 #define LEDTABLEAPI_H
 
-#include "native/ClusterManager.h"
-#include "native/coordinates/RingCoordinate.h"
-#include "native/coordinates/CubeCoordinate.h"
-#include "native/coordinates/Cartesian2dCoordinate.h"
-#include "native/ClusterCommands.h"
+#include "core/ClusterManager.h"
+#include "core/coordinates/RingCoordinate.h"
+#include "core/coordinates/CubeCoordinate.h"
+#include "core/coordinates/Cartesian2dCoordinate.h"
+#include "core/ClusterCommands.h"
 
 class LedTableApi {
     bool suppressMessages = false;

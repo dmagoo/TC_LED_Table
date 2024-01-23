@@ -1,8 +1,8 @@
 #ifndef ASCII_UTILS_H
 #define ASCII_UTILS_H
 
-#include "native/LedTableTypes.h"
-#include "native/Cluster.h"
+#include "core/LedTableTypes.h"
+#include "core/Cluster.h"
 #include <string>
 
 std::string nodeBufferToAscii(const Cluster& cluster, int nodeId);

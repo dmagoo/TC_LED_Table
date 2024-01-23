@@ -31,7 +31,7 @@
             "args": [
                 "${workspaceFolder}/scripts/parse_config_csv.py",
                 "${workspaceFolder}/scripts/config.csv",
-                "${workspaceFolder}/test/native/make_cluster_config.cpp"
+                "${workspaceFolder}/test/core/make_cluster_config.cpp"
             ],
             "group": {
                 "kind": "build",

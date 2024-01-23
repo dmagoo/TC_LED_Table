@@ -2,11 +2,11 @@
 #include <unity.h>
 #include <vector>
 
-#include "native/LedTableTypes.h"
-#include "native/Cluster.h"
-#include "native/Node.h"
-#include "native/NodeConfig.h"
-#include "native/ClusterManager.h"
+#include "core/LedTableTypes.h"
+#include "core/Cluster.h"
+#include "core/Node.h"
+#include "core/NodeConfig.h"
+#include "core/ClusterManager.h"
 #include "windows/AsciiUtils.h"
 
 #include "config/make_cluster_config.h"

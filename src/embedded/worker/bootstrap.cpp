@@ -1,6 +1,6 @@
 #include "bootstrap.h"
 #include "config/make_cluster_config.h"
-#include "native/Cluster.h"
+#include "core/Cluster.h"
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
 

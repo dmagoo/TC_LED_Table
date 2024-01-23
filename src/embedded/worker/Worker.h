@@ -6,7 +6,7 @@
 #include <freertos/FreeRTOS.h>
 #include <freertos/queue.h>
 
-#include "native/Cluster.h"
+#include "core/Cluster.h"
 
 class Worker {
 

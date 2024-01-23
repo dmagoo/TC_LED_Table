@@ -3,13 +3,13 @@
 #include <unity.h>
 #include <vector>
 
-#include "native/ClusterCommands.h"
 #include "../test_utils.h"
 #include "api/LedTableApi.h"
 #include "config/make_cluster_config.h"
-#include "native/Cluster.h"
-#include "native/ClusterManager.h"
-#include "native/LedTableTypes.h"
+#include "core/ClusterCommands.h"
+#include "core/Cluster.h"
+#include "core/ClusterManager.h"
+#include "core/LedTableTypes.h"
 #include "windows/AsciiUtils.h"
 
 void test_basic_api_polymorphism() {

@@ -1,6 +1,6 @@
 #ifndef TEST_UTILS_H
 #define TEST_UTILS_H
-#include "native/LedTableTypes.h"
+#include "core/LedTableTypes.h"
 #include <vector>
 #include <cstdint>
 

@@ -1,6 +1,6 @@
 #include "ClusterMessage.h"
 
-#include "native/proto/ClusterMessagesProto.pb.h"
+#include "core/proto/ClusterMessagesProto.pb.h"
 #include <iostream>
 #include <vector>
 #include <variant>

@@ -1,6 +1,6 @@
 #include "embedded/worker/Worker.h"
 #include "config/make_cluster_config.h"
-#include "native/LedTableTypes.h"
+#include "core/LedTableTypes.h"
 
 #include <Arduino.h>
 #include <PubSubClient.h>

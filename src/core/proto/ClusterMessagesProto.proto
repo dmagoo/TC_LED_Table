@@ -1,10 +1,15 @@
 // commands.proto
 // build when new commands are added
-// protoc --cpp_out=. src/native/proto/ProtoClusterMessages.proto        
+// protoc --cpp_out=. src/core/proto/ProtoClusterMessages.proto        
 // or mayhaps after cd to dir: protoc --cpp_out=. ClusterMessagesProto.proto 
 // with nano pb:
-// python C:\DevTools\nanopb\generator\nanopb_generator.py .\src\native\proto\ClusterMessagesProto.proto
-
+// python C:\DevTools\nanopb\generator\nanopb_generator.py .\src\core\proto\ClusterMessagesProto.proto
+// THen I modify the .dc file so the .h include is filebame only
+// in .h, after #include <pb.h>, I add the following:
+// #include "pb.h"
+// #include "pb_encode.h"
+// #include "pb_decode.h"
+// #include "pb_common.h"
 
 syntax = "proto3";
 

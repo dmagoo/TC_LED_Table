@@ -60,7 +60,13 @@
         "clustermessagesproto.pb.h": "c",
         "condition_variable": "cpp",
         "mutex": "cpp",
-        "thread": "cpp"
+        "thread": "cpp",
+        "bitset": "cpp",
+        "complex": "cpp",
+        "list": "cpp",
+        "regex": "cpp",
+        "set": "cpp",
+        "future": "cpp"
     },
     "configurations": [
         {

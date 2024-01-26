@@ -43,6 +43,10 @@ public:
     RGBW dequeueNodePixel(Cartesian2dCoordinate coordinate, RGBW color);
     RGBW dequeueNodePixel(CubeCoordinate coordinate, RGBW color);
 
+
+    // more ideas!
+    // copyNode(nodeIdA, nodeIdB) // copies the buffer from a to b, using padding if not equaly sized
+
 private:
     ClusterManager& clusterManager;
 

@@ -54,7 +54,6 @@ int main(int argc, char *argv[]) {
         currentColorIndex = (currentColorIndex + 1) % colors.size();
 
         for (int nodeId = 0; nodeId < NUM_NODES; nodeId++) {
-
             std::string asciiArt = nodeBufferToAscii(*cluster, nodeId);
             std::cout << asciiArt;
         }

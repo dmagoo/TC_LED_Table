@@ -6,29 +6,11 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
-# Platform-specific definitions
-if(WIN32)
-    add_definitions(-D_WIN64)
-    add_definitions(-DWIN64)
-    # Windows-specific include and library paths
-    set(PAHO_MQTT_C_INCLUDE_DIRS "C:/DevTools/installed/paho.mqtt.c/include")
-    set(PAHO_MQTT_CPP_INCLUDE_DIRS "C:/DevTools/installed/paho.mqtt.cpp/include")
-    set(PAHO_MQTT_C_LIBRARIES "C:/DevTools/installed/paho.mqtt.c/lib/paho-mqtt3a-static.lib")
-    set(PAHO_MQTT_CPP_LIBRARIES "C:/DevTools/installed/paho.mqtt.cpp/lib/paho-mqttpp3-static.lib")
-else()
-    # For Linux, use pkg-config or find_package as fallback
-    find_package(PkgConfig)
-    pkg_check_modules(PAHO_MQTT_C REQUIRED libpaho-mqtt3c)
-    pkg_check_modules(PAHO_MQTT_CPP REQUIRED libpaho-mqttpp3)
-endif()
-
 # Include directories
 include_directories(
     ${PROJECT_SOURCE_DIR}/src
     ${PROJECT_SOURCE_DIR}/lib/CLI11/include
     ${PROJECT_SOURCE_DIR}/lib/nanopb
-    ${PAHO_MQTT_C_INCLUDE_DIRS}
-    ${PAHO_MQTT_CPP_INCLUDE_DIRS}
 )
 
 # Source files
@@ -61,12 +43,24 @@ add_executable(api_test
     ${PROJECT_SOURCE_DIR}/lib/nanopb/pb_encode.c
 )
 
-# Link libraries
-target_link_libraries(demo
-    ${PAHO_MQTT_C_LIBRARIES}
-    ${PAHO_MQTT_CPP_LIBRARIES}
-    $<$<BOOL:${WIN32}>:ws2_32>
-)
+# Platform-specific definitions and libraries
+if(WIN32)
+    add_definitions(-D_WIN64)
+    add_definitions(-DWIN64)
+    
+    # Specify Windows-specific include and library paths if not using standard installation paths
+    include_directories("C:/DevTools/installed/paho.mqtt.c/include" "C:/DevTools/installed/paho.mqtt.cpp/include")
+    set(PAHO_MQTT_C_LIBRARIES "C:/DevTools/installed/paho.mqtt.c/lib/paho-mqtt3a-static.lib")
+    set(PAHO_MQTT_CPP_LIBRARIES "C:/DevTools/installed/paho.mqtt.cpp/lib/paho-mqttpp3-static.lib")
+    
+    target_link_libraries(demo ${PAHO_MQTT_C_LIBRARIES} ${PAHO_MQTT_CPP_LIBRARIES} ws2_32)
+else()
+    # Find Paho MQTT C and C++ libraries installed in standard locations
+    find_package(PahoMqttC REQUIRED)
+    find_package(PahoMqttCpp REQUIRED)
+    
+    target_link_libraries(demo PahoMqttCpp::paho-mqttpp3-static)
+endif()
 
 # For nanopb, specify the source files directly
 target_sources(demo PRIVATE

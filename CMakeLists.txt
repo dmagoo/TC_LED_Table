@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 project(TCLEDTable)
+enable_testing()
 
 # Set the C++ standard
 set(CMAKE_CXX_STANDARD 17)
@@ -11,31 +12,54 @@ include_directories(
     ${PROJECT_SOURCE_DIR}/src
     ${PROJECT_SOURCE_DIR}/lib/CLI11/include
     ${PROJECT_SOURCE_DIR}/lib/nanopb
+    ${PROJECT_SOURCE_DIR}/test/core/test_basic  # Test headers
+    ${PROJECT_SOURCE_DIR}/lib/Unity/src  # Unity framework
 )
+
 
 # Source files
 file(GLOB_RECURSE CONFIG_SOURCES "${PROJECT_SOURCE_DIR}/src/config/*.cpp")
 file(GLOB_RECURSE API_SOURCES "${PROJECT_SOURCE_DIR}/src/api/*.cpp")
 file(GLOB_RECURSE WIN_SOURCES "${PROJECT_SOURCE_DIR}/src/windows/*.cpp")
-file(GLOB_RECURSE NATIVE_SOURCES "${PROJECT_SOURCE_DIR}/src/core/*.cpp" "${PROJECT_SOURCE_DIR}/src/core/*.c")
+file(GLOB_RECURSE CORE_SOURCES "${PROJECT_SOURCE_DIR}/src/core/*.cpp" "${PROJECT_SOURCE_DIR}/src/core/*.c")
+file(GLOB_RECURSE CONFIG_SOURCES "${PROJECT_SOURCE_DIR}/src/config/*.cpp" "${PROJECT_SOURCE_DIR}/src/config/*.c")
+file(GLOB_RECURSE TEST_SOURCES "${PROJECT_SOURCE_DIR}/test/core/test_basic/*.cpp")
 
 # Set the output directory for the executable
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
 
-# Executables
+add_test(NAME unity_test COMMAND test_app)
+
 add_executable(demo
     ${PROJECT_SOURCE_DIR}/src/native/main.cpp
     ${CONFIG_SOURCES}
-    ${NATIVE_SOURCES}
+    ${CORE_SOURCES}
     ${PROJECT_SOURCE_DIR}/lib/nanopb/pb_common.c
     ${PROJECT_SOURCE_DIR}/lib/nanopb/pb_decode.c
     ${PROJECT_SOURCE_DIR}/lib/nanopb/pb_encode.c
 )
 
+# Executables
+add_executable(test_app
+    #${PROJECT_SOURCE_DIR}/test/core/test_basic/main.cpp
+    ${TEST_SOURCES}
+    ${PROJECT_SOURCE_DIR}/test/core/test_utils.cpp
+    ${CONFIG_SOURCES}
+    ${CORE_SOURCES}
+    ${API_SOURCES}
+    ${WIN_SOURCES}
+    ${PROJECT_SOURCE_DIR}/lib/nanopb/pb_common.c
+    ${PROJECT_SOURCE_DIR}/lib/nanopb/pb_decode.c
+    ${PROJECT_SOURCE_DIR}/lib/nanopb/pb_encode.c
+    ${PROJECT_SOURCE_DIR}/lib/Unity/src/unity.c
+)
+
 add_executable(api_test
     ${PROJECT_SOURCE_DIR}/src/native/api_test.cpp
-    ${CONFIG_SOURCES}
-    ${NATIVE_SOURCES}
+    #${CONFIG_SOURCES} # don't use this unless mqtt is needed.. lol
+    "${PROJECT_SOURCE_DIR}/src/config/make_cluster_config.cpp"
+    "${PROJECT_SOURCE_DIR}/src/config/make_mqtt_config.cpp"
+    ${CORE_SOURCES}
     ${API_SOURCES}
     ${WIN_SOURCES}
     ${PROJECT_SOURCE_DIR}/lib/nanopb/pb_common.c
@@ -54,13 +78,17 @@ if(WIN32)
     set(PAHO_MQTT_CPP_LIBRARIES "C:/DevTools/installed/paho.mqtt.cpp/lib/paho-mqttpp3-static.lib")
     
     target_link_libraries(demo ${PAHO_MQTT_C_LIBRARIES} ${PAHO_MQTT_CPP_LIBRARIES} ws2_32)
-else()
+    target_link_libraries(test_app ${PAHO_MQTT_C_LIBRARIES} ${PAHO_MQTT_CPP_LIBRARIES} ws2_32)
+    target_link_libraries(api_test ${PAHO_MQTT_C_LIBRARIES} ${PAHO_MQTT_CPP_LIBRARIES} ws2_32)
+    else()
     # Find Paho MQTT C and C++ libraries installed in standard locations
     find_package(PahoMqttC REQUIRED)
     find_package(PahoMqttCpp REQUIRED)
     
     target_link_libraries(demo PahoMqttCpp::paho-mqttpp3-static)
-endif()
+    target_link_libraries(test_app PahoMqttCpp::paho-mqttpp3-static)
+    target_link_libraries(api_test PahoMqttCpp::paho-mqttpp3-static)
+    endif()
 
 # For nanopb, specify the source files directly
 target_sources(demo PRIVATE
@@ -68,3 +96,6 @@ target_sources(demo PRIVATE
     ${PROJECT_SOURCE_DIR}/lib/nanopb/pb_decode.c
     ${PROJECT_SOURCE_DIR}/lib/nanopb/pb_encode.c
 )
+
+
+message("API_SOURCES: ${API_SOURCES} ------------------------------------------------------------------------------------------------")

@@ -1,5 +1,6 @@
 {
     "cmake.configureOnOpen": false,
+    "cmake.testArgs": ["-C Debug --verbose"],
     "files.associations": {
         "array": "cpp",
         "atomic": "cpp",

@@ -1,5 +1,7 @@
 #include "LedTableApi.h"
+#include "core/ClusterMessage.h"
 #include <iostream>
+// #include <vector>
 
 template <typename CommandType, typename... Args>
 void LedTableApi::performClusterOperationReturningVoid(int nodeId, Args... args) {
@@ -13,6 +15,10 @@ void LedTableApi::performClusterOperationReturningVoid(int nodeId, Args... args)
         }
         //// HERE the seond argument is fine!!  Is the syntax below correct?
         CommandType command(nodeId, args...);
+        // run the command against the local model
+        if (!suppressMessages && clusterMessageManager != nullptr) {
+            clusterMessageManager->sendClusterCommand(clusterId, command);
+        }
         command.execute(cluster);
     } else {
         // Handle the case where the cluster is not found
@@ -27,6 +33,9 @@ RGBW LedTableApi::performClusterOperationReturningColor(int nodeId, Args... args
     if (clusterPtr) {
         Cluster &cluster = *const_cast<Cluster *>(clusterPtr); // Cast to non-const reference
         CommandType command(nodeId, args...);
+        if (!suppressMessages && clusterMessageManager != nullptr) {
+            clusterMessageManager->sendClusterCommand(clusterId, command);
+        }
         return command.execute(cluster);
     } else {
         // Handle the case where the cluster is not found

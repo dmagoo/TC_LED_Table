@@ -2,7 +2,6 @@
 #ifndef CLUSTERMESSAGE_H
 #define CLUSTERMESSAGE_H
 
-#include "ClusterMessage.h"
 #include "ClusterCommands.h"
 
 class ClusterMessage {
@@ -16,12 +15,12 @@ public:
         : clusterId(clusterId), commandType(commandType), params(params) {}
 
     int getClusterId() const;
-    ClusterCommandType getCommandType() const;    
+    ClusterCommandType getCommandType() const;
     CommandParamsVariant getParams() const;
 };
 
-std::vector<uint8_t> serializeClusterMessage(const ClusterMessage& message);
+std::vector<uint8_t> serializeClusterMessage(const ClusterMessage &message);
 
-ClusterMessage deserializeClusterMessage(const std::vector<uint8_t>& data);
+ClusterMessage deserializeClusterMessage(const std::vector<uint8_t> &data);
 
 #endif // CLUSTERMESSAGE_H

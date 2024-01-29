@@ -1,3 +1,6 @@
 [submodule "lib/CLI11"]
 	path = lib/CLI11
 	url = https://github.com/CLIUtils/CLI11.git
+[submodule "lib/Unity"]
+	path = lib/Unity
+	url = https://github.com/ThrowTheSwitch/Unity.git

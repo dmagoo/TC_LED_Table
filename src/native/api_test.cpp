@@ -57,17 +57,35 @@ int main(int argc, char *argv[]) {
         api.fillNode(0, nodeColors[0]);
         currentColorIndex = (currentColorIndex + 1) % colors.size();
 
+#ifdef WIN64
         for (int nodeId = 0; nodeId < NUM_NODES; nodeId++) {
             std::string asciiArt = nodeBufferToAscii(*cluster, nodeId);
             std::cout << asciiArt;
         }
 
-#ifdef WIN64
-        //    asciiArt = nodeBufferToAscii(cluster, 1);
-        //    std::cout << asciiArt;
         Sleep(DELAY_MS); // Delay
 #else
-    posix:
+        //  posix:
+        std::ostringstream asciiArt;
+        for (int nodeId = 0; nodeId < NUM_NODES; nodeId++) {
+            auto nodeBuffer = cluster->getNodePixelBuffer(nodeId);
+            asciiArt << std::setw(3) << (nodeBuffer[7] ? 'x' : 'o') << " ";
+            asciiArt << std::setw(3) << (nodeBuffer[0] ? 'x' : 'o') << " ";
+            asciiArt << std::setw(3) << (nodeBuffer[1] ? 'x' : 'o') << "\n";
+
+            // Middle row (West, Node ID, East)
+            asciiArt << std::setw(3) << (nodeBuffer[6] ? 'x' : 'o') << " ";
+            asciiArt << std::setw(3) << nodeId << " ";
+            asciiArt << std::setw(3) << (nodeBuffer[2] ? 'x' : 'o') << "\n";
+
+            // Bottom row (South-West, South, South-East)
+            asciiArt << std::setw(3) << (nodeBuffer[5] ? 'x' : 'o') << " ";
+            asciiArt << std::setw(3) << (nodeBuffer[4] ? 'x' : 'o') << " ";
+            asciiArt << std::setw(3) << (nodeBuffer[3] ? 'x' : 'o') << "\n\n";
+
+            std::cout << asciiArt.str();
+        }
+
         usleep(DELAY_MS * 1000); // Delay
 #endif
     }

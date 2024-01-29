@@ -82,7 +82,9 @@ if(WIN32)
     target_link_libraries(api_test ${PAHO_MQTT_C_LIBRARIES} ${PAHO_MQTT_CPP_LIBRARIES} ws2_32)
     else()
     # Find Paho MQTT C and C++ libraries installed in standard locations
-    find_package(PahoMqttC REQUIRED)
+    #temporary fix for weird setup.. should probably make this some kind of env var or flag
+    #find_package(PahoMqttC REQUIRED)
+    find_package(eclipse-paho-mqtt-c REQUIRED)
     find_package(PahoMqttCpp REQUIRED)
     
     target_link_libraries(demo PahoMqttCpp::paho-mqttpp3-static)
@@ -96,6 +98,3 @@ target_sources(demo PRIVATE
     ${PROJECT_SOURCE_DIR}/lib/nanopb/pb_decode.c
     ${PROJECT_SOURCE_DIR}/lib/nanopb/pb_encode.c
 )
-
-
-message("API_SOURCES: ${API_SOURCES} ------------------------------------------------------------------------------------------------")

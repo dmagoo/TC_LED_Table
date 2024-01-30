@@ -26,7 +26,7 @@ void LedTableApi::performClusterOperationReturningVoid(int nodeId, Args... args)
 }
 
 template <typename CommandType, typename... Args>
-RGBW LedTableApi::performClusterOperationReturningColor(int nodeId, Args... args) {
+WRGB LedTableApi::performClusterOperationReturningColor(int nodeId, Args... args) {
     int clusterId = clusterManager.getClusterIdFromNodeId(nodeId);
     const Cluster *clusterPtr = clusterManager.getClusterById(clusterId);
 
@@ -44,9 +44,9 @@ RGBW LedTableApi::performClusterOperationReturningColor(int nodeId, Args... args
 }
 
 // Explicit template instantiations for all the command types you use
-template void LedTableApi::performClusterOperationReturningVoid<FillNodeCommand, RGBW>(int, RGBW);
-template RGBW LedTableApi::performClusterOperationReturningColor<QueueNodePixelCommand, RGBW>(int, RGBW);
-template RGBW LedTableApi::performClusterOperationReturningColor<DequeueNodePixelCommand>(int, RGBW);
+template void LedTableApi::performClusterOperationReturningVoid<FillNodeCommand, WRGB>(int, WRGB);
+template WRGB LedTableApi::performClusterOperationReturningColor<QueueNodePixelCommand, WRGB>(int, WRGB);
+template WRGB LedTableApi::performClusterOperationReturningColor<DequeueNodePixelCommand>(int, WRGB);
 
 // Template specialization for RingCoordinate
 template <>
@@ -66,109 +66,108 @@ int LedTableApi::convertToNodeId<CubeCoordinate>(const CubeCoordinate &coordinat
     return clusterManager.getNodeId(coordinate);
 }
 
-void LedTableApi::fillNode(int nodeId, RGBW color) {
+void LedTableApi::fillNode(int nodeId, WRGB color) {
     std::cout << "in root fill with node: " << nodeId << std::endl;
     performClusterOperationReturningVoid<FillNodeCommand>(nodeId, color);
 }
 
-void LedTableApi::fillNode(RingCoordinate coordinate, RGBW color) {
+void LedTableApi::fillNode(RingCoordinate coordinate, WRGB color) {
     int nodeId = convertToNodeId(coordinate);
     std::cout << "in ring fill with node: " << nodeId << std::endl;
     performClusterOperationReturningVoid<FillNodeCommand>(nodeId, color);
 }
 
-void LedTableApi::fillNode(CubeCoordinate coordinate, RGBW color) {
+void LedTableApi::fillNode(CubeCoordinate coordinate, WRGB color) {
     int nodeId = convertToNodeId(coordinate);
     std::cout << "in cube fill with node: " << nodeId << std::endl;
     performClusterOperationReturningVoid<FillNodeCommand>(nodeId, color);
 }
 
-void LedTableApi::fillNode(Cartesian2dCoordinate coordinate, RGBW color) {
+void LedTableApi::fillNode(Cartesian2dCoordinate coordinate, WRGB color) {
     int nodeId = convertToNodeId(coordinate);
     std::cout << "in cart2d fill with node: " << nodeId << std::endl;
     performClusterOperationReturningVoid<FillNodeCommand>(nodeId, color);
 }
 
-void LedTableApi::fillNode(int nodeId, const std::vector<RGBW> &colors, RGBW padColor) {
+void LedTableApi::fillNode(int nodeId, const std::vector<WRGB> &colors, WRGB padColor) {
     performClusterOperationReturningVoid<BlitNodeCommand>(nodeId, colors, padColor);
 }
 
-void LedTableApi::fillNode(RingCoordinate coordinate, const std::vector<RGBW> &colors, RGBW padColor) {
+void LedTableApi::fillNode(RingCoordinate coordinate, const std::vector<WRGB> &colors, WRGB padColor) {
     int nodeId = convertToNodeId(coordinate);
     std::cout << "api call with ringcoord to fillNode: ";
-    std::cout << std::hex << static_cast<RGBW>(padColor) << std::endl;
+    std::cout << std::hex << static_cast<WRGB>(padColor) << std::endl;
     performClusterOperationReturningVoid<BlitNodeCommand>(nodeId, colors, padColor);
 }
 
-void LedTableApi::fillNode(CubeCoordinate coordinate, const std::vector<RGBW> &colors, RGBW padColor) {
+void LedTableApi::fillNode(CubeCoordinate coordinate, const std::vector<WRGB> &colors, WRGB padColor) {
     int nodeId = convertToNodeId(coordinate);
     performClusterOperationReturningVoid<BlitNodeCommand>(nodeId, colors, padColor);
 }
 
-void LedTableApi::fillNode(Cartesian2dCoordinate coordinate, const std::vector<RGBW> &colors, RGBW padColor) {
+void LedTableApi::fillNode(Cartesian2dCoordinate coordinate, const std::vector<WRGB> &colors, WRGB padColor) {
     int nodeId = convertToNodeId(coordinate);
     performClusterOperationReturningVoid<BlitNodeCommand>(nodeId, colors, padColor);
 }
 
 // Implementations of the public API methods using the template function
-void LedTableApi::setNodePixel(int nodeId, int pixelIndex, RGBW color) {
+void LedTableApi::setNodePixel(int nodeId, int pixelIndex, WRGB color) {
     performClusterOperationReturningVoid<SetNodePixelCommand>(nodeId, pixelIndex, color);
 }
 
-void LedTableApi::setNodePixel(RingCoordinate coordinate, int pixelIndex, RGBW color) {
+void LedTableApi::setNodePixel(RingCoordinate coordinate, int pixelIndex, WRGB color) {
     int nodeId = convertToNodeId(coordinate);
     performClusterOperationReturningVoid<SetNodePixelCommand>(nodeId, pixelIndex, color);
 }
 
-void LedTableApi::setNodePixel(CubeCoordinate coordinate, int pixelIndex, RGBW color) {
+void LedTableApi::setNodePixel(CubeCoordinate coordinate, int pixelIndex, WRGB color) {
     int nodeId = convertToNodeId(coordinate);
     performClusterOperationReturningVoid<SetNodePixelCommand>(nodeId, pixelIndex, color);
 }
 
-void LedTableApi::setNodePixel(Cartesian2dCoordinate coordinate, int pixelIndex, RGBW color) {
+void LedTableApi::setNodePixel(Cartesian2dCoordinate coordinate, int pixelIndex, WRGB color) {
     int nodeId = convertToNodeId(coordinate);
     performClusterOperationReturningVoid<SetNodePixelCommand>(nodeId, pixelIndex, color);
 }
 
 // Implementations of the public API methods using the template function
-RGBW LedTableApi::queueNodePixel(int nodeId, RGBW color) {
+WRGB LedTableApi::queueNodePixel(int nodeId, WRGB color) {
     return performClusterOperationReturningColor<QueueNodePixelCommand>(nodeId, color);
 }
 
-RGBW LedTableApi::queueNodePixel(RingCoordinate coordinate, RGBW color) {
+WRGB LedTableApi::queueNodePixel(RingCoordinate coordinate, WRGB color) {
     int nodeId = convertToNodeId(coordinate);
     return performClusterOperationReturningColor<QueueNodePixelCommand>(nodeId, color);
 }
 
-RGBW LedTableApi::queueNodePixel(CubeCoordinate coordinate, RGBW color) {
+WRGB LedTableApi::queueNodePixel(CubeCoordinate coordinate, WRGB color) {
     int nodeId = convertToNodeId(coordinate);
     return performClusterOperationReturningColor<QueueNodePixelCommand>(nodeId, color);
 }
 
-RGBW LedTableApi::queueNodePixel(Cartesian2dCoordinate coordinate, RGBW color) {
+WRGB LedTableApi::queueNodePixel(Cartesian2dCoordinate coordinate, WRGB color) {
     int nodeId = convertToNodeId(coordinate);
     return performClusterOperationReturningColor<QueueNodePixelCommand>(nodeId, color);
 }
 
 // Implementations of the public API methods using the template function
-RGBW LedTableApi::dequeueNodePixel(int nodeId, RGBW color) {
+WRGB LedTableApi::dequeueNodePixel(int nodeId, WRGB color) {
     return performClusterOperationReturningColor<DequeueNodePixelCommand>(nodeId, color);
 }
 
-RGBW LedTableApi::dequeueNodePixel(RingCoordinate coordinate, RGBW color) {
+WRGB LedTableApi::dequeueNodePixel(RingCoordinate coordinate, WRGB color) {
     int nodeId = convertToNodeId(coordinate);
     return performClusterOperationReturningColor<DequeueNodePixelCommand>(nodeId, color);
 }
 
-RGBW LedTableApi::dequeueNodePixel(CubeCoordinate coordinate, RGBW color) {
+WRGB LedTableApi::dequeueNodePixel(CubeCoordinate coordinate, WRGB color) {
     int nodeId = convertToNodeId(coordinate);
     return performClusterOperationReturningColor<DequeueNodePixelCommand>(nodeId, color);
 }
 
-RGBW LedTableApi::dequeueNodePixel(Cartesian2dCoordinate coordinate, RGBW color) {
+WRGB LedTableApi::dequeueNodePixel(Cartesian2dCoordinate coordinate, WRGB color) {
     int nodeId = convertToNodeId(coordinate);
     return performClusterOperationReturningColor<DequeueNodePixelCommand>(nodeId, color);
 }
 
 void LedTableApi::setSuppressMessages(bool newValue) {}
-void LedTableApi::setSuppressRefresh(bool newValue) {}

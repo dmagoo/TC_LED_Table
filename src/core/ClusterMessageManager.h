@@ -28,7 +28,6 @@ void ClusterMessageManager::sendClusterCommand(int clusterId, const CommandType 
 
     // todo: this all goes inside the clusterMessage manager
     std::vector<uint8_t> serialized = serializeClusterMessage(clusterMessage);
-    std::cout << "making a message!! WEEEE" << std::endl;
 
     // Convert std::vector<uint8_t> to std::string for the MQTT message payload
     std::string payload(serialized.begin(), serialized.end());
@@ -37,7 +36,7 @@ void ClusterMessageManager::sendClusterCommand(int clusterId, const CommandType 
     // cannot get connect workign in here?? WTF
     //  }
 
-    mqttClient->publish("my_topic", payload.data(), payload.size(), 0, false)->wait();
+    mqttClient->publish("ledtable/cluster/0/command", payload.data(), payload.size(), 0, false)->wait();
 
     // mqttClient->publish("/foo", payload, payloadlen, 0, false)->wait();
     //  mqttClient.publish(topic, message.c_str(), message.length(), 0, false)->wait();

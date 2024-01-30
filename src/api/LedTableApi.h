@@ -14,8 +14,7 @@ private:
     ClusterManager &clusterManager;
     ClusterMessageManager *clusterMessageManager = nullptr;
     bool suppressMessages = false;
-    bool suppressRefresh = false;
-
+    
     template <typename CoordinateType>
     int convertToNodeId(const CoordinateType &coordinate);
 
@@ -23,7 +22,7 @@ private:
     void performClusterOperationReturningVoid(int nodeId, Args... args);
 
     template <typename CommandType, typename... Args>
-    RGBW performClusterOperationReturningColor(int nodeId, Args... args);
+    WRGB performClusterOperationReturningColor(int nodeId, Args... args);
 
 public:
     // if (clusterMessageManager) {
@@ -43,43 +42,38 @@ public:
 
     void setSuppressMessages(bool newValue);
 
-    void setSuppressRefresh(bool newValue);
+    void fillNode(int nodeId, WRGB color);
+    void fillNode(RingCoordinate coordinate, WRGB color);
+    void fillNode(Cartesian2dCoordinate coordinate, WRGB color);
+    void fillNode(CubeCoordinate coordinate, WRGB color);
 
-    void fillNode(int nodeId, RGBW color);
-    void fillNode(RingCoordinate coordinate, RGBW color);
-    void fillNode(Cartesian2dCoordinate coordinate, RGBW color);
-    void fillNode(CubeCoordinate coordinate, RGBW color);
+    void fillNode(int nodeId, const std::vector<WRGB> &colors, WRGB padcolor);
+    void fillNode(RingCoordinate coordinate, const std::vector<WRGB> &colors, WRGB padcolor);
+    void fillNode(Cartesian2dCoordinate coordinate, const std::vector<WRGB> &colors, WRGB padcolor);
+    void fillNode(CubeCoordinate coordinate, const std::vector<WRGB> &colors, WRGB padcolor);
 
-    void fillNode(int nodeId, const std::vector<RGBW> &colors, RGBW padcolor);
-    void fillNode(RingCoordinate coordinate, const std::vector<RGBW> &colors, RGBW padcolor);
-    void fillNode(Cartesian2dCoordinate coordinate, const std::vector<RGBW> &colors, RGBW padcolor);
-    void fillNode(CubeCoordinate coordinate, const std::vector<RGBW> &colors, RGBW padcolor);
+    void setNodePixel(int nodeId, int pixelIndex, WRGB color);
+    void setNodePixel(RingCoordinate coordinate, int pixelIndex, WRGB color);
+    void setNodePixel(Cartesian2dCoordinate coordinate, int pixelIndex, WRGB color);
+    void setNodePixel(CubeCoordinate coordinate, int pixelIndex, WRGB color);
 
-    void setNodePixel(int nodeId, int pixelIndex, RGBW color);
-    void setNodePixel(RingCoordinate coordinate, int pixelIndex, RGBW color);
-    void setNodePixel(Cartesian2dCoordinate coordinate, int pixelIndex, RGBW color);
-    void setNodePixel(CubeCoordinate coordinate, int pixelIndex, RGBW color);
+    WRGB queueNodePixel(int nodeId, WRGB color);
+    WRGB queueNodePixel(RingCoordinate coordinate, WRGB color);
+    WRGB queueNodePixel(Cartesian2dCoordinate coordinate, WRGB color);
+    WRGB queueNodePixel(CubeCoordinate coordinate, WRGB color);
 
-    RGBW queueNodePixel(int nodeId, RGBW color);
-    RGBW queueNodePixel(RingCoordinate coordinate, RGBW color);
-    RGBW queueNodePixel(Cartesian2dCoordinate coordinate, RGBW color);
-    RGBW queueNodePixel(CubeCoordinate coordinate, RGBW color);
-
-    RGBW dequeueNodePixel(int nodeId, RGBW color);
-    RGBW dequeueNodePixel(RingCoordinate coordinate, RGBW color);
-    RGBW dequeueNodePixel(Cartesian2dCoordinate coordinate, RGBW color);
-    RGBW dequeueNodePixel(CubeCoordinate coordinate, RGBW color);
+    WRGB dequeueNodePixel(int nodeId, WRGB color);
+    WRGB dequeueNodePixel(RingCoordinate coordinate, WRGB color);
+    WRGB dequeueNodePixel(Cartesian2dCoordinate coordinate, WRGB color);
+    WRGB dequeueNodePixel(CubeCoordinate coordinate, WRGB color);
 
     // more ideas!
     // copyNode(nodeIdA, nodeIdB) // copies the buffer from a to b, using padding if not equaly sized
     // reset() // contacts all clusters, asking them to fill their buffers black, could any color fill?
-
+    // refresh() // sends state to all clusters via simple fillbuffer commands
     // sends fillBuffer() messages to all clusters, using the local models buffer
     // effectively updating / syncing the models. Useful if messages is off
 
-    // refresh()
-    // setSuppressMessages(bool)
-    // setSuppressRefresh(bool) // lol, forget what this was!
 };
 
 #endif // LEDTABLEAPI_H

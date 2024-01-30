@@ -1,7 +1,9 @@
 #include "make_mqtt_config.h"
+#include <iostream>
 
-std::unique_ptr<mqtt::async_client> makeMQTTClientConfig() {
-   auto client = std::make_unique<mqtt::async_client>("tcp://192.168.1.49", "LEDTableController");
+std::unique_ptr<mqtt::async_client> makeMQTTClientConfig(const std::string& clientId) {
+    auto client = std::make_unique<mqtt::async_client>("tcp://192.168.1.49", clientId);
+std::cout << clientId << std::endl;
     try {
         // Try to connect the client
          mqtt::connect_options connOpts;

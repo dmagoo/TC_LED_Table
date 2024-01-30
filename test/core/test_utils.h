@@ -4,8 +4,8 @@
 #include <vector>
 #include <cstdint>
 
-void verifyBufferIsFilledWithColor(std::vector<RGBW> buffer, RGBW expectedColor);
-void verifyBufferHasColorAt(std::vector<RGBW> buffer, int index, RGBW expectedColor);
-void outputBufferAsHex(std::vector<RGBW> buffer);
+void verifyBufferIsFilledWithColor(std::vector<WRGB> buffer, WRGB expectedColor);
+void verifyBufferHasColorAt(std::vector<WRGB> buffer, int index, WRGB expectedColor);
+void outputBufferAsHex(std::vector<WRGB> buffer);
 
 #endif // TEST_UTILS_H

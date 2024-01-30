@@ -3,6 +3,7 @@
 #include "config/make_mqtt_config.h"
 #include "core/Cluster.h"
 #include "core/ClusterManager.h"
+#include "core/ClusterMessage.h"
 #include "core/ClusterMessageManager.h"
 #include "core/LedTableTypes.h"
 #ifdef WIN64
@@ -11,13 +12,18 @@
 #else
 #include <unistd.h> // For sleep function
 #endif
+#include <iostream>
 #include <signal.h>
+#include <string>
 #include <vector>
 
-#include <iostream>
+#include "mqtt/async_client.h"
+
 // #include <string>
 
-#define DELAY_MS 1000
+// max? #define DELAY_MS 75
+#define DELAY_MS 250
+
 #define NUM_NODES 7
 
 // Global flag to control loop termination
@@ -28,20 +34,78 @@ void intHandler(int dummy) {
     keepRunning = 0;
 }
 
-int main(int argc, char *argv[]) {
+class simple_callback : public virtual mqtt::callback {
+public:
+    void message_arrived(mqtt::const_message_ptr msg) override {
+        //std::cout << "Message arrived: " << msg->to_string() << std::endl;
+        //std::cout << "\ttopic: '" << msg->get_topic() << "'" << std::endl;
+        std::string payload_str = msg->to_string(); // Get the payload as a string
+
+        // Convert std::string to std::vector<uint8_t>
+        std::vector<uint8_t> buffer(payload_str.begin(), payload_str.end());
+
+        ClusterMessage deserialized = deserializeClusterMessage(buffer);
+
+        std::cout << "Received message bound for cluster: " << deserialized.getClusterId() << std::endl;
+
+        // CommandParamsVariant paramsVariant = deserialized.getParams();
+        auto params = deserialized.getParams();
+        if (std::holds_alternative<NodeWithColorParams>(params)) {
+            int nodeId = std::get<NodeWithColorParams>(params).nodeId;
+            std::cout << "Received message to color node: " << nodeId << std::endl;;
+
+            // Use nodeId as needed
+        } else {
+            std::cout << "other type" << std::endl;
+        }
+    }
+
+    void connection_lost(const std::string &cause) override {
+        std::cerr << "\nConnection lost" << std::endl;
+        if (!cause.empty())
+            std::cerr << "\tcause: " << cause << std::endl;
+    }
+};
+
+void runReceiver() {
     signal(SIGINT, intHandler); // Register the signal handler
 
-    auto mqttClient = makeMQTTClientConfig();
+    auto mqttClient = makeMQTTClientConfig("LedTableMonitor");
+    mqttClient->subscribe("my_topic", 1)->wait();
+
+    simple_callback cb{};
+    mqttClient->set_callback(cb);
+    std::cout << " - removing  - " << std::endl;
+
+    while (keepRunning) {
+
+#ifdef WIN64
+        Sleep(DELAY_MS); // Delay
+#else
+        usleep(DELAY_MS * 1000); // Delay
+#endif
+    }
+    std::cout << "disconnecting" << std::endl;
+    mqttClient->disconnect();
+}
+
+void runSender() {
+    signal(SIGINT, intHandler); // Register the signal handler
+
+    auto mqttClient = makeMQTTClientConfig("LedTableController");
     ClusterMessageManager clusterMessageManager(mqttClient.get());
     ClusterManager clusterManager(makeClusterConfigs());
     LedTableApi api(clusterManager, &clusterMessageManager);
 
     const Cluster *cluster = clusterManager.getClusterById(0);
     // Define the color list
-    std::vector<RGBW> colors = {0x00000000, 0xFF0000FF, 0xFF00FF00, 0xFFFF0000, 0xFFFFFF00, 0xFFFF00FF, 0xFF00FFFF};
+    //std::vector<WRGB> colors = {0x00000000, 0x33000000, 0x33003300, 0x33330000, 0x33333300, 0x33330000, 0x33003300};
+    //std::vector<WRGB> colors = {0x33000000, 0x00000000, 0x00330000, 0x00000000, 0x00003300, 0x00000000, 0x00000000};
+    // std::vector<WRGB> colors = {0x00330000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000};
+    std::vector<WRGB> colors = {0x00000000, 0x00000055, 0x00005500, 0x00550000, 0x00555500, 0x00550055, 0x00005555};
     // track the fill from each node so we can move colors to the new node.
     // could do this by getting the buffer, but this is just a cheap demo!
-    std::vector<RGBW> nodeColors(NUM_NODES, 0x00000000); // Initialize all nodes to black
+    std::vector<WRGB> nodeColors(NUM_NODES, 0x00000000); // Initialize all nodes to black
 
     int currentColorIndex = 0;
 
@@ -81,7 +145,7 @@ int main(int argc, char *argv[]) {
             // Bottom row (South-West, South, South-East)
             asciiArt << std::setw(3) << (nodeBuffer[5] ? 'x' : 'o') << " ";
             asciiArt << std::setw(3) << (nodeBuffer[4] ? 'x' : 'o') << " ";
-            asciiArt << std::setw(3) << (nodeBuffer[3] ? 'x' : 'o') << "\n\n";
+            asciiArt << std::setw(3) << (nodeBuffer[3] ? 'x' : 'o') << "\n";
 
             std::cout << asciiArt.str();
         }
@@ -89,6 +153,19 @@ int main(int argc, char *argv[]) {
         usleep(DELAY_MS * 1000); // Delay
 #endif
     }
+    mqttClient->disconnect();
+}
 
+int main(int argc, char *argv[]) {
+    // Parse command-line arguments
+    for (int i = 1; i < argc; ++i) {
+        std::string arg = argv[i];
+        if (arg == "--receiver") {
+            runReceiver();
+            return 0; // Exit after receiver runs
+        }
+    }
+
+    runSender();
     return 0;
 }

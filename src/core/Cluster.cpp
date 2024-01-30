@@ -33,7 +33,7 @@ void Cluster::initializePixelBuffer() {
     pixelBuffer.resize(totalPixels, 0); // Initialize pixelBuffer with default color (0) and fixed size
 }
 
-void Cluster::setNodePixel(int nodeId, int ledIndex, RGBW color) {
+void Cluster::setNodePixel(int nodeId, int ledIndex, WRGB color) {
     auto it = nodeIdToIndex.find(nodeId);
     if (it != nodeIdToIndex.end()) {
         Node &node = nodes[it->second];
@@ -46,7 +46,7 @@ void Cluster::setNodePixel(int nodeId, int ledIndex, RGBW color) {
     }
 }
 
-RGBW Cluster::queueNodeColor(int nodeId, RGBW color) {
+WRGB Cluster::queueNodeColor(int nodeId, WRGB color) {
     auto it = nodeIdToIndex.find(nodeId);
     if (it != nodeIdToIndex.end()) {
         Node &node = nodes[it->second];
@@ -64,7 +64,7 @@ RGBW Cluster::queueNodeColor(int nodeId, RGBW color) {
     return 0; // Modify as needed
 }
 
-RGBW Cluster::dequeueNodeColor(int nodeId, RGBW color) {
+WRGB Cluster::dequeueNodeColor(int nodeId, WRGB color) {
     auto it = nodeIdToIndex.find(nodeId);
     if (it != nodeIdToIndex.end()) {
         Node &node = nodes[it->second];
@@ -73,7 +73,7 @@ RGBW Cluster::dequeueNodeColor(int nodeId, RGBW color) {
 
         if (ledCount > 0) {
             // Move all pixels down, inserting a default color at the end
-            RGBW removedColor = pixelBuffer[startIndex];
+            WRGB removedColor = pixelBuffer[startIndex];
             std::rotate(pixelBuffer.begin() + startIndex,
                         pixelBuffer.begin() + startIndex + 1,
                         pixelBuffer.begin() + startIndex + ledCount);
@@ -100,8 +100,10 @@ int Cluster::getPixelCount() const {
     return pixelBuffer.size();
 }
 
-void Cluster::fillNode(int nodeId, const std::vector<RGBW> &colors, RGBW padColor, bool pad) {
+void Cluster::fillNode(int nodeId, const std::vector<WRGB> &colors, WRGB padColor, bool pad) {
+#ifdef DEBUG
     std::cout << " base node fill with padding: " << nodeId << " in cluster " << id << std::endl;
+#endif
     auto it = nodeIdToIndex.find(nodeId);
     if (it != nodeIdToIndex.end()) {
         Node &node = nodes[it->second];
@@ -112,18 +114,15 @@ void Cluster::fillNode(int nodeId, const std::vector<RGBW> &colors, RGBW padColo
         std::copy(colors.begin(), colors.begin() + fillCount, pixelBuffer.begin() + startIndex);
 
         if (pad && fillCount < ledCount) {
-std::cout << "padding color 0x" << std::hex << std::setw(8) << std::setfill('0') << padColor << " in buffer of size " << pixelBuffer.size();
-std::cout << std::dec;
-std::cout << ". Starting at index " << startIndex + fillCount << " with item count: " << ledCount - fillCount << std::endl;
             std::fill_n(pixelBuffer.begin() + startIndex + fillCount, ledCount - fillCount, padColor);
         }
     }
-std::cout << std::dec;
-
 }
- 
-void Cluster::fillNode(int nodeId, RGBW color) {
+
+void Cluster::fillNode(int nodeId, WRGB color) {
+#ifdef DEBUG
     std::cout << " filling node: " << nodeId << " in cluster " << id << std::endl;
+#endif
     auto it = nodeIdToIndex.find(nodeId);
     if (it != nodeIdToIndex.end()) {
         Node &node = nodes[it->second];
@@ -131,23 +130,25 @@ void Cluster::fillNode(int nodeId, RGBW color) {
     }
 }
 
-void Cluster::fillNode(int nodeId, const std::vector<RGBW> &colors) {
+void Cluster::fillNode(int nodeId, const std::vector<WRGB> &colors) {
     fillNode(nodeId, colors, 0, false);
 }
 
-void Cluster::fillNode(int nodeId, const std::vector<RGBW> &colors, RGBW padColor) {
+void Cluster::fillNode(int nodeId, const std::vector<WRGB> &colors, WRGB padColor) {
+#ifdef DEBUG
     std::cout << "blitting node: " << nodeId << " in cluster " << id;
-    std::cout << " using padding color 0x" << std::hex << std::setw(8) << std::setfill('0') << padColor << std::endl;
-    std::cout << std::dec;
+#endif
+    // std::cout << " using padding color 0x" << std::hex << std::setw(8) << std::setfill('0') << padColor << std::endl;
+    // std::cout << std::dec;
 
     fillNode(nodeId, colors, padColor, true);
 }
 
-void Cluster::fillBuffer(RGBW color) {
+void Cluster::fillBuffer(WRGB color) {
     std::fill(pixelBuffer.begin(), pixelBuffer.end(), color);
 }
 
-void Cluster::fillBuffer(const std::vector<RGBW> &colors) {
+void Cluster::fillBuffer(const std::vector<WRGB> &colors) {
     int fillCount = static_cast<int>(std::min(colors.size(), pixelBuffer.size()));
 
     std::copy(colors.begin(), colors.begin() + fillCount, pixelBuffer.begin());
@@ -157,7 +158,7 @@ void Cluster::fillBuffer(const std::vector<RGBW> &colors) {
     }
 }
 
-void Cluster::fillBuffer(const std::vector<RGBW> &colors, RGBW padColor) {
+void Cluster::fillBuffer(const std::vector<WRGB> &colors, WRGB padColor) {
     int fillCount = static_cast<int>(std::min(colors.size(), pixelBuffer.size()));
 
     std::copy(colors.begin(), colors.begin() + fillCount, pixelBuffer.begin());
@@ -167,23 +168,23 @@ void Cluster::fillBuffer(const std::vector<RGBW> &colors, RGBW padColor) {
     }
 }
 
-std::vector<RGBW> Cluster::getPixelBuffer() const  {
+std::vector<WRGB> Cluster::getPixelBuffer() const {
     // Returns a copy of the entire pixel buffer, ensuring immutability
     return pixelBuffer;
 }
 
-std::vector<RGBW> Cluster::getNodePixelBuffer(int nodeId) const {
+std::vector<WRGB> Cluster::getNodePixelBuffer(int nodeId) const {
     // Returns a copy of the pixel buffer for the specified node, ensuring immutability
     auto it = nodeIdToIndex.find(nodeId);
     if (it != nodeIdToIndex.end()) {
         const Node &node = nodes[it->second];
         int startIndex = node.getStartIndex();
         int ledCount = node.getPixelCount();
-        return std::vector<RGBW>(pixelBuffer.begin() + startIndex, pixelBuffer.begin() + startIndex + ledCount);
+        return std::vector<WRGB>(pixelBuffer.begin() + startIndex, pixelBuffer.begin() + startIndex + ledCount);
     }
 
     // Return an empty vector if the node ID is not found
-    return std::vector<RGBW>();
+    return std::vector<WRGB>();
 }
 
 // for debugging, output a string representing a node state
@@ -219,4 +220,3 @@ std::string Cluster::nodeAscii(int nodeId) const {
     }
     return "Node not found\n";
 }
-

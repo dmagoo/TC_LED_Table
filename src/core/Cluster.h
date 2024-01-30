@@ -23,11 +23,11 @@ class Cluster {
     // to drive the neo pixels using a double buffer to page them.
     // That way the renderer can do its thing, and all of the internet messaging and sensor data can happen on the second core.
 
-    std::vector<RGBW> pixelBuffer;                 // Buffer for pixel colors
+    std::vector<WRGB> pixelBuffer;                 // Buffer for pixel colors
     std::unordered_map<int, size_t> nodeIdToIndex; // Fast lookup for nodes by their ID
 private:
     void initializePixelBuffer();
-    void fillNode(int nodeId, const std::vector<RGBW> &colors, RGBW padColor, bool pad);
+    void fillNode(int nodeId, const std::vector<WRGB> &colors, WRGB padColor, bool pad);
 
 public:
     /**
@@ -52,7 +52,7 @@ public:
      * @param pixelIndex The index of the pixel within the node.
      * @param color The color to set.
      */
-    void setNodePixel(int nodeId, int pixelIndex, RGBW color);
+    void setNodePixel(int nodeId, int pixelIndex, WRGB color);
 
     /**
      * Queues a new color at the start of a node's pixel range, pushing other colors forward.
@@ -62,7 +62,7 @@ public:
      * @param color The new color to queue.
      * @return The color that was removed from the end of the queue.
      */
-    RGBW queueNodeColor(int nodeId, RGBW color);
+    WRGB queueNodeColor(int nodeId, WRGB color);
 
     /**
      * Removes the first color in a node's pixel range and pushes other colors back.
@@ -72,7 +72,7 @@ public:
      * @param color The new color to queue.
      * @return The color that was removed from the start of the queue.
      */
-    RGBW dequeueNodeColor(int nodeId, RGBW color);
+    WRGB dequeueNodeColor(int nodeId, WRGB color);
 
     /**
      * Retrieves a pointer to a Node object by its ID.
@@ -94,7 +94,7 @@ public:
      * @param nodeId The ID of the node.
      * @param color The color to fill the node with.
      */
-    void fillNode(int nodeId, RGBW color);
+    void fillNode(int nodeId, WRGB color);
 
     /**
      * Fills a node with a list of colors and pads extra pixels with padColor.
@@ -103,7 +103,7 @@ public:
      * @param colors The list of colors to fill the node with.
      * @param padColor The color to pad the extra pixels with.
      */
-    void fillNode(int nodeId, const std::vector<RGBW> &colors, RGBW padColor);
+    void fillNode(int nodeId, const std::vector<WRGB> &colors, WRGB padColor);
 
     /**
      * Fills a node with a list of colors and pads extra pixels with default (black)
@@ -111,21 +111,21 @@ public:
      * @param nodeId The ID of the node.
      * @param colors The list of colors to fill the node with.
      */
-    void fillNode(int nodeId, const std::vector<RGBW> &colors);
+    void fillNode(int nodeId, const std::vector<WRGB> &colors);
 
     /**
      * Fills the entire buffer with a single color.
      *
      * @param color The color to fill the buffer with.
      */
-    void fillBuffer(RGBW color);
+    void fillBuffer(WRGB color);
 
     /**
      * Fills the entire buffer with a list of colors.
      *
      * @param colors The list of colors to fill the buffer with.
      */
-    void fillBuffer(const std::vector<RGBW> &colors);
+    void fillBuffer(const std::vector<WRGB> &colors);
 
     /**
      * Fills the buffer with a list of colors and pads extra pixels with padColor.
@@ -133,18 +133,18 @@ public:
      * @param colors The list of colors to fill the buffer with.
      * @param padColor The color to pad the extra pixels with.
      */
-    void fillBuffer(const std::vector<RGBW> &colors, RGBW padColor);
+    void fillBuffer(const std::vector<WRGB> &colors, WRGB padColor);
 
     /**
      * Returns an immutable buffer of the entire cluster
      */
-    std::vector<RGBW> getPixelBuffer() const;
+    std::vector<WRGB> getPixelBuffer() const;
 
     /**
      * Returns an immutable buffer of a single node
      * @param nodeId The ID of the node.
      */
-    std::vector<RGBW> getNodePixelBuffer(int nodeId) const;
+    std::vector<WRGB> getNodePixelBuffer(int nodeId) const;
 
     /**
      * Returns a string representation of a single node

@@ -29,7 +29,7 @@ void test_basic_api_polymorphism() {
     const Cluster *cluster = clusterManager.getClusterById(0);
 
     api.fillNode(coordinate, 0xFF0000FF);
-    std::vector<RGBW> buffer = cluster->getNodePixelBuffer(nodeId);
+    std::vector<WRGB> buffer = cluster->getNodePixelBuffer(nodeId);
     verifyBufferIsFilledWithColor(buffer, 0xFF0000FF);
 
     api.fillNode(coordinate, 0xFFFF0000);
@@ -77,9 +77,9 @@ void test_set_pixel() {
     api.setNodePixel(nodeId, 6, 0xFFFFFFFF);
     // std::cout << nodeBufferToAscii(*cluster, nodeId);
 
-    std::vector<RGBW> buffer = cluster->getNodePixelBuffer(nodeId);
+    std::vector<WRGB> buffer = cluster->getNodePixelBuffer(nodeId);
     for (int i = 0; i < buffer.size(); i++) {
-        RGBW color = i == 6 ? 0xFFFFFFFF : 0x00000000;
+        WRGB color = i == 6 ? 0xFFFFFFFF : 0x00000000;
         verifyBufferHasColorAt(buffer, i, color);
     }
 
@@ -106,7 +106,7 @@ void test_fill_node() {
 
     // a simple, single-color fill
     api.fillNode(coordinate, 0xABCDEF00);
-    std::vector<RGBW> buffer = cluster->getNodePixelBuffer(nodeId);
+    std::vector<WRGB> buffer = cluster->getNodePixelBuffer(nodeId);
     verifyBufferIsFilledWithColor(buffer, 0xABCDEF00);
 
     // verify that padding works as expected
@@ -116,7 +116,7 @@ void test_fill_node() {
     outputBufferAsHex(buffer);
 
     for (int i = 0; i < buffer.size(); i++) {
-        RGBW color = i == 0 ? 0xFFFFFFFF : 0x00000000;
+        WRGB color = i == 0 ? 0xFFFFFFFF : 0x00000000;
         verifyBufferHasColorAt(buffer, i, color);
     }
 

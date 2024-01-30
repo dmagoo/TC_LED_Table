@@ -19,19 +19,19 @@ enum class ClusterCommandType {
 // parms structured for use in messaging
 struct NodeWithColorParams {
     int nodeId;
-    RGBW color;
+    WRGB color;
 };
 
 struct NodeWithPixelIndex {
     int nodeId;
     int pixelIndex;
-    RGBW color;
+    WRGB color;
 };
 
 struct BlitNodeParams {
     int nodeId;
-    std::vector<RGBW> colors;
-    RGBW padColor;
+    std::vector<WRGB> colors;
+    WRGB padColor;
 };
 
 using CommandParamsVariant = std::variant<NodeWithColorParams, BlitNodeParams, NodeWithPixelIndex>;
@@ -46,21 +46,23 @@ public:
 class ClusterCommandReturningColor {
 public:
     virtual ~ClusterCommandReturningColor() {}
-    virtual RGBW execute(Cluster &cluster) = 0;
+    virtual WRGB execute(Cluster &cluster) = 0;
 };
 
 class FillNodeCommand : public ClusterCommandReturningVoid {
     int nodeId;
-    RGBW color;
+    WRGB color;
 
 public:
-    FillNodeCommand(int nodeId, RGBW color)
+    FillNodeCommand(int nodeId, WRGB color)
         : nodeId(nodeId), color(color) {}
 
     void execute(Cluster &cluster) override {
+#ifdef DEBUG
         std::cout << "filling node: " << nodeId << " with color: 0x"
-                  << std::hex << static_cast<RGBW>(color) << std::endl;
+                  << std::hex << static_cast<WRGB>(color) << std::endl;
         std::cout << std::dec;
+#endif
         cluster.fillNode(nodeId, color);
     }
 
@@ -75,11 +77,11 @@ public:
 
 class BlitNodeCommand : public ClusterCommandReturningVoid {
     int nodeId;
-    std::vector<RGBW> colors; // Vector passed by value
-    RGBW padColor;
+    std::vector<WRGB> colors; // Vector passed by value
+    WRGB padColor;
 
 public:
-    BlitNodeCommand(int nodeId, std::vector<RGBW> colors, RGBW padColor)
+    BlitNodeCommand(int nodeId, std::vector<WRGB> colors, WRGB padColor)
         : nodeId(nodeId), colors(std::move(colors)), padColor(padColor) {}
 
     void execute(Cluster &cluster) override {
@@ -98,10 +100,10 @@ public:
 class SetNodePixelCommand : public ClusterCommandReturningVoid {
     int nodeId;
     int pixelIndex;
-    RGBW color;
+    WRGB color;
 
 public:
-    SetNodePixelCommand(int nodeId, int pixelIndex, RGBW color)
+    SetNodePixelCommand(int nodeId, int pixelIndex, WRGB color)
         : nodeId(nodeId), pixelIndex(pixelIndex), color(color) {}
 
     void execute(Cluster &cluster) override {
@@ -120,13 +122,13 @@ public:
 // QueueNodePixelCommand
 class QueueNodePixelCommand : public ClusterCommandReturningColor {
     int nodeId;
-    RGBW color;
+    WRGB color;
 
 public:
-    QueueNodePixelCommand(int nodeId, RGBW color)
+    QueueNodePixelCommand(int nodeId, WRGB color)
         : nodeId(nodeId), color(color) {}
 
-    RGBW execute(Cluster &cluster) override {
+    WRGB execute(Cluster &cluster) override {
         // Implementation to queue the node color
         return cluster.queueNodeColor(nodeId, color);
     }
@@ -143,13 +145,13 @@ public:
 // DequeueNodePixelCommand
 class DequeueNodePixelCommand : public ClusterCommandReturningColor {
     int nodeId;
-    RGBW color;
+    WRGB color;
 
 public:
-    DequeueNodePixelCommand(int nodeId, RGBW color)
+    DequeueNodePixelCommand(int nodeId, WRGB color)
         : nodeId(nodeId), color(color) {}
 
-    RGBW execute(Cluster &cluster) override {
+    WRGB execute(Cluster &cluster) override {
         return cluster.dequeueNodeColor(nodeId, color);
     }
 

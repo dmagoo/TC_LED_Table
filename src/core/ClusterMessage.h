@@ -3,7 +3,7 @@
 #define CLUSTERMESSAGE_H
 
 #include "ClusterCommands.h"
-
+#include "Cluster.h"
 class ClusterMessage {
 private:
     int clusterId;
@@ -22,5 +22,5 @@ public:
 std::vector<uint8_t> serializeClusterMessage(const ClusterMessage &message);
 
 ClusterMessage deserializeClusterMessage(const std::vector<uint8_t> &data);
-
+void executeMessageCommand(const ClusterMessage& clusterMessage, Cluster& cluster);
 #endif // CLUSTERMESSAGE_H

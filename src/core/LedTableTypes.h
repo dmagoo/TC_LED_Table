@@ -3,6 +3,6 @@
 
 #include <cstdint>
 
-using RGBW = uint32_t;
+using WRGB = uint32_t;
 
 #endif // LED_TABLE_TYPES_H

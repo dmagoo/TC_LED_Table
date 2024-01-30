@@ -31,20 +31,20 @@ void test_pixel_buffer_fill_node() {
     std::vector<NodeConfig> nodeConfigs = makeNodeConfigs(0);
     Cluster cluster(0, nodeConfigs);
 
-    RGBW color1 = 0xFF0000FF; // Example color 1
-    RGBW color2 = 0x00FF00FF; // Example color 2
+    WRGB color1 = 0xFF0000FF; // Example color 1
+    WRGB color2 = 0x00FF00FF; // Example color 2
     for (int i = 0; i < nodeConfigs.size(); ++i) {
         cluster.fillNode(i, (i % 2 == 0) ? color1 : color2);
     }
 
     // Test: Check buffer size and contents
-    std::vector<RGBW> buffer = cluster.getPixelBuffer();
+    std::vector<WRGB> buffer = cluster.getPixelBuffer();
     int totalPixelCount = PIXELS_PER_NODE * nodeConfigs.size();
     TEST_ASSERT_EQUAL_INT(totalPixelCount, buffer.size());
 
     for (int i = 0; i < buffer.size(); ++i) {
         int nodeIndex = (int)i / PIXELS_PER_NODE;
-        RGBW expectedColor = (nodeIndex % 2 == 0) ? color1 : color2;
+        WRGB expectedColor = (nodeIndex % 2 == 0) ? color1 : color2;
         TEST_ASSERT_EQUAL_HEX32(expectedColor, buffer[i]);
     }
 

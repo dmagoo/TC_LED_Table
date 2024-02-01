@@ -32,6 +32,12 @@ public:
 
     int getClusterIdFromNodeId(int nodeId) const;
 
+    void forEachCluster(std::function<void(Cluster&)> func) {
+        for (Cluster& cluster : clusters) {
+            func(cluster);
+        }
+    }
+
     int getNodeId(const RingCoordinate &coords) const;
     int getNodeId(const CubeCoordinate &coords) const;
     int getNodeId(const Cartesian2dCoordinate &coords) const;

@@ -9,6 +9,13 @@ std::vector<ClusterConfig> makeClusterConfigs() {
     };
 }
 
+// allow a universe of a single cluster for unit testing
+std::vector<ClusterConfig> makeClusterConfig(int clusterId) {
+    return {
+        ClusterConfig(clusterId, makeNodeConfigs(clusterId)),
+    };
+}
+
 std::vector<NodeConfig> makeNodeConfigs(int clusterId) {
     switch(clusterId) {
     case 0:

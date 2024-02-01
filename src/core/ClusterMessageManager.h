@@ -5,6 +5,7 @@
 
 #include "ClusterCommands.h"
 #include "ClusterMessage.h"
+#include <sstream>
 
 class ClusterMessageManager {
 private:
@@ -22,24 +23,14 @@ public:
 
 template <typename CommandType>
 void ClusterMessageManager::sendClusterCommand(int clusterId, const CommandType &command) {
-
-    //    FillNodeCommand fillNodeCommand(10, 0x00112233);
     ClusterMessage clusterMessage(clusterId, command.getType(), command.getParams());
-
-    // todo: this all goes inside the clusterMessage manager
+    // todo: this all goes inside the clusterMessage manager?
     std::vector<uint8_t> serialized = serializeClusterMessage(clusterMessage);
-
     // Convert std::vector<uint8_t> to std::string for the MQTT message payload
     std::string payload(serialized.begin(), serialized.end());
-
-    //    if(!connected) {
-    // cannot get connect workign in here?? WTF
-    //  }
-
-    mqttClient->publish("ledtable/cluster/0/command", payload.data(), payload.size(), 0, false)->wait();
-
-    // mqttClient->publish("/foo", payload, payloadlen, 0, false)->wait();
-    //  mqttClient.publish(topic, message.c_str(), message.length(), 0, false)->wait();
+    std::ostringstream topic;
+    topic << "ledtable/cluster/" << clusterId << "/command";
+    mqttClient->publish(topic.str(), payload.data(), payload.size(), 0, false)->wait();
 }
 
 #endif // CLUSTERMESSAGEMANAGER_H

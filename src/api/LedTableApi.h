@@ -14,7 +14,7 @@ private:
     ClusterManager &clusterManager;
     ClusterMessageManager *clusterMessageManager = nullptr;
     bool suppressMessages = false;
-    
+
     template <typename CoordinateType>
     int convertToNodeId(const CoordinateType &coordinate);
 
@@ -67,13 +67,16 @@ public:
     WRGB dequeueNodePixel(Cartesian2dCoordinate coordinate, WRGB color);
     WRGB dequeueNodePixel(CubeCoordinate coordinate, WRGB color);
 
+    // contacts all clusters, asking them to fill their buffers black, could any color fill?
+    void reset();
+
+    // sends state to all clusters via simple fillbuffer commands
+    // using the local models buffer
+    // effectively updating / syncing the models. Useful if messages is off
+    void refresh();
+
     // more ideas!
     // copyNode(nodeIdA, nodeIdB) // copies the buffer from a to b, using padding if not equaly sized
-    // reset() // contacts all clusters, asking them to fill their buffers black, could any color fill?
-    // refresh() // sends state to all clusters via simple fillbuffer commands
-    // sends fillBuffer() messages to all clusters, using the local models buffer
-    // effectively updating / syncing the models. Useful if messages is off
-
 };
 
 #endif // LEDTABLEAPI_H

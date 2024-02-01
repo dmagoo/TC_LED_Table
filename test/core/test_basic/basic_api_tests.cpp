@@ -23,7 +23,7 @@ void test_basic_api_polymorphism() {
     ClusterMessageManager clusterMessageManager(mqttClient.get());
 
     LedTableApi api(clusterManager, &clusterMessageManager);
-
+    api.setSuppressMessages(true);
     RingCoordinate coordinate(0, 0);
     int nodeId = clusterManager.getNodeId(coordinate);
     const Cluster *cluster = clusterManager.getClusterById(0);
@@ -56,7 +56,7 @@ void test_basic_api_polymorphism() {
 void test_set_pixel() {
     ClusterManager clusterManager(makeClusterConfigs());
     LedTableApi api(clusterManager);
-
+    api.setSuppressMessages(true);
     RingCoordinate coordinate(3, 6);
     int nodeId = clusterManager.getNodeId(coordinate);
 
@@ -98,7 +98,7 @@ void test_fill_node() {
     // coordinate systems
     ClusterManager clusterManager(makeClusterConfigs());
     LedTableApi api(clusterManager);
-
+    api.setSuppressMessages(true);
     RingCoordinate coordinate(3, 5);
     int nodeId = clusterManager.getNodeId(coordinate);
     int clusterId = clusterManager.getClusterIdFromNodeId(nodeId);
@@ -127,9 +127,29 @@ void test_fill_node() {
     verifyBufferIsFilledWithColor(buffer, 0xFFFFFFFF);
 }
 
+void test_reset_cluster() {
+    ClusterManager clusterManager(makeClusterConfigs());
+    LedTableApi api(clusterManager);
+    api.setSuppressMessages(true);
+
+    for(int i=0; i<7; i++) {
+        api.fillNode(i, 0xFFFFFFFF);
+    }
+
+    const Cluster *cluster = clusterManager.getClusterById(0);
+    std::vector<WRGB> buffer = cluster->getPixelBuffer();
+    verifyBufferIsFilledWithColor(buffer, 0xFFFFFFFF);
+
+    api.reset();
+
+    buffer = cluster->getPixelBuffer();
+    verifyBufferIsFilledWithColor(buffer, 0x00000000);
+}
+
 int run_basic_api_tests(int argc, char **argv) {
     RUN_TEST(test_basic_api_polymorphism);
-    //    RUN_TEST(test_set_pixel);
-    //    RUN_TEST(test_fill_node);
+    RUN_TEST(test_set_pixel);
+    RUN_TEST(test_fill_node);
+    RUN_TEST(test_reset_cluster);
     return 0;
 }

@@ -8,12 +8,30 @@
 #include <iostream>
 #include <variant>
 
+/***
+ * adding a command
+ * 1. add command type to ClusterCommandType enum
+ * 2. if parameters signature doesn't exist, create a struct for it
+ * 2a. Add it to CommandParamsVariant
+ * 3. if return type doesn't exist, create an interface for it
+ * 4. create the Command class, extending the interface
+ * 5. Add any params / classes to src/core/proto/ClusterMessages.proto
+ * 6. Follow instructions in ClusterMessages.proto to update the code via nanopb
+ * 7. In LedTableApi.ccp add appropriate pass-through methods if the command is
+ *    Is accessible to the api user. Perhaps some ClusterCommands are internal to
+ *    The Api?
+ * 8. Add case to executeMessageCommand in ClusterMessage.cpp
+ * 9. register types in Message serialize/desirialize
+ ***/
+
 enum class ClusterCommandType {
-    FillNode,
-    BlitNode,
-    SetNodePixel,
-    QueueNodePixel,
-    DequeueNodePixel
+    FillNode = 0,       // Matches FILL_NODE
+    BlitNode = 1,       // Matches BLIT_NODE
+    FillBuffer = 2,     // Matches FILL_BUFFER (Note the skip to align with the protobuf enum)
+    BlitBuffer = 3,     // Matches BLIT_BUFFER
+    SetNodePixel = 4,   // Matches SET_NODE_PIXEL
+    QueueNodePixel = 5, // Matches QUEUE_NODE_PIXEL
+    DequeueNodePixel = 6 // Matches DEQUEUE_NODE_PIXEL
 };
 
 // parms structured for use in messaging
@@ -22,7 +40,7 @@ struct NodeWithColorParams {
     WRGB color;
 };
 
-struct NodeWithPixelIndex {
+struct NodeWithPixelIndexParams {
     int nodeId;
     int pixelIndex;
     WRGB color;
@@ -34,7 +52,22 @@ struct BlitNodeParams {
     WRGB padColor;
 };
 
-using CommandParamsVariant = std::variant<NodeWithColorParams, BlitNodeParams, NodeWithPixelIndex>;
+struct BlitBufferParams {
+    std::vector<WRGB> colors;
+    WRGB padColor;
+};
+
+struct FillBufferParams {
+    WRGB color;
+};
+
+using CommandParamsVariant = std::variant<
+    NodeWithColorParams,
+    BlitNodeParams,
+    NodeWithPixelIndexParams,
+    FillBufferParams,
+    BlitBufferParams
+>;
 
 // Command interfaces
 class ClusterCommandReturningVoid {
@@ -97,6 +130,47 @@ public:
     }
 };
 
+class FillBufferCommand : public ClusterCommandReturningVoid {
+    WRGB color;
+
+public:
+    FillBufferCommand(WRGB color)
+        : color(color) {}
+
+    void execute(Cluster &cluster) override {
+        cluster.fillBuffer(color);
+    }
+
+    static ClusterCommandType getType() {
+        return ClusterCommandType::FillBuffer;
+    }
+
+    FillBufferParams getParams() const {
+        return FillBufferParams{color};
+    }
+};
+
+class BlitBufferCommand : public ClusterCommandReturningVoid {
+    std::vector<WRGB> colors; // Vector passed by value
+    WRGB padColor;
+
+public:
+    void execute(Cluster &cluster) override {
+        cluster.fillBuffer(colors, padColor);
+    }
+
+    BlitBufferCommand(std::vector<WRGB> colors, WRGB padColor)
+        : colors(std::move(colors)), padColor(padColor) {}
+
+    static ClusterCommandType getType() {
+        return ClusterCommandType::BlitBuffer;
+    }
+
+    BlitBufferParams getParams() const {
+        return BlitBufferParams{colors, padColor};
+    }
+};
+
 class SetNodePixelCommand : public ClusterCommandReturningVoid {
     int nodeId;
     int pixelIndex;
@@ -114,8 +188,8 @@ public:
         return ClusterCommandType::SetNodePixel;
     }
 
-    NodeWithPixelIndex getParams() const {
-        return NodeWithPixelIndex{nodeId, pixelIndex, color};
+    NodeWithPixelIndexParams getParams() const {
+        return NodeWithPixelIndexParams{nodeId, pixelIndex, color};
     }
 };
 

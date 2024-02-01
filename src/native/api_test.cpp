@@ -2,6 +2,7 @@
 #include "config/make_cluster_config.h"
 #include "config/make_mqtt_config.h"
 #include "core/Cluster.h"
+#include "core/ClusterCommands.h"
 #include "core/ClusterManager.h"
 #include "core/ClusterMessage.h"
 #include "core/ClusterMessageManager.h"
@@ -22,9 +23,11 @@
 // #include <string>
 
 // max? #define DELAY_MS 75
-#define DELAY_MS 250
+#define DELAY_MS 5000
 
 #define NUM_NODES 7
+
+bool USE_REFRESH = true;
 
 // Global flag to control loop termination
 volatile sig_atomic_t keepRunning = 1;
@@ -94,8 +97,10 @@ void runSender() {
 
     auto mqttClient = makeMQTTClientConfig("LedTableController");
     ClusterMessageManager clusterMessageManager(mqttClient.get());
-    ClusterManager clusterManager(makeClusterConfigs());
+    ClusterManager clusterManager(makeClusterConfig(0));
     LedTableApi api(clusterManager, &clusterMessageManager);
+
+    api.setSuppressMessages(USE_REFRESH);
 
     const Cluster *cluster = clusterManager.getClusterById(0);
     // Define the color list
@@ -121,6 +126,9 @@ void runSender() {
         api.fillNode(0, nodeColors[0]);
         currentColorIndex = (currentColorIndex + 1) % colors.size();
 
+        if(USE_REFRESH) {
+            api.refresh();
+        }
 #ifdef WIN64
         for (int nodeId = 0; nodeId < NUM_NODES; nodeId++) {
             std::string asciiArt = nodeBufferToAscii(*cluster, nodeId);
@@ -153,6 +161,14 @@ void runSender() {
         usleep(DELAY_MS * 1000); // Delay
 #endif
     }
+    api.setSuppressMessages(false);
+
+    // this doesn't seem to be sending messages when suppressMessages is false
+    // it should!
+    api.reset();
+
+    // this works
+//    api.refresh();
     mqttClient->disconnect();
 }
 

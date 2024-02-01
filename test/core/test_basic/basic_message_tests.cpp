@@ -1,57 +1,73 @@
 #include "core/ClusterCommands.h"
 #include "core/ClusterMessage.h"
 #include <iostream>
-#include <variant>
 #include <unity.h>
+#include <variant>
+
+// #include "../test_utils.h"
 
 void test_basic_message_creation() {
     FillNodeCommand fillNodeCommand(10, 0x00112233);
     ClusterMessage clusterMessage(1, FillNodeCommand::getType(), fillNodeCommand.getParams());
-
     NodeWithColorParams paramsInput = fillNodeCommand.getParams();
-
-    // todo: assert == 10
-    // std::cout << " params --- " << (int)paramsInput.nodeId << std::endl;
-
     std::vector<uint8_t> serialized = serializeClusterMessage(clusterMessage);
-
     ClusterMessage deserialized = deserializeClusterMessage(serialized);
-
-    // std::cout << "params" << deserialized.getParams().nodeId << std::endl;
-
     CommandParamsVariant paramsVariant = deserialized.getParams();
 
-    // Step 2: Check if the variant holds an instance of NodeWithColorParams
-    if (std::holds_alternative<NodeWithColorParams>(paramsVariant)) {
-        // Step 3: Extract NodeWithColorParams
-        NodeWithColorParams params = std::get<NodeWithColorParams>(paramsVariant);
-
-        // Step 4: Compare nodeId
-        if (params.nodeId == paramsInput.nodeId) {
-            std::cout << "Verification successful: nodeId matches." << std::endl;
-        } else {
-            std::cout << "Verification failed: nodeId does not match. See: " << params.nodeId << std::endl;
-        }
-    } else {
-        std::cout << "Deserialized command is not a FillNodeCommand." << std::endl;
-    }
-
-    auto params = deserialized.getParams();
-    if (std::holds_alternative<NodeWithColorParams>(params)) {
-        int nodeId = std::get<NodeWithColorParams>(params).nodeId;
-
-        TEST_ASSERT_EQUAL_INT(10, nodeId);
-
-        // Use nodeId as needed
-    } else {
-        // Handle the case where the params are not of type NodeWithColorParams
-    }
-
+    TEST_ASSERT_TRUE(std::holds_alternative<NodeWithColorParams>(paramsVariant));
+    NodeWithColorParams params = std::get<NodeWithColorParams>(paramsVariant);
+    TEST_ASSERT_EQUAL_INT(params.nodeId, paramsInput.nodeId);
     TEST_ASSERT_EQUAL_INT(1, deserialized.getClusterId());
-    // TEST_ASSERT_EQUAL_INT(10, deserialized.getParams().nodeId);
+}
+
+void test_node_color_buffer_message() {
+    WRGB PAD_COLOR = 0x87654321;
+    BlitNodeCommand nodeCommand(5, {0x12345678, 0x12345678, 0x12345678, 0x12345678, 0x12345678, 0x12345678, 0x12345678, 0x12345678}, PAD_COLOR);
+    ClusterMessage clusterMessage(1, BlitNodeCommand::getType(), nodeCommand.getParams());
+    std::vector<uint8_t> serialized = serializeClusterMessage(clusterMessage);
+    ClusterMessage deserialized = deserializeClusterMessage(serialized);
+    auto params = deserialized.getParams();
+    int nodeId = std::get<BlitNodeParams>(params).nodeId;
+    TEST_ASSERT_TRUE(std::holds_alternative<BlitNodeParams>(params));
+    WRGB padColor = std::get<BlitNodeParams>(params).padColor;
+    TEST_ASSERT_EQUAL_UINT32(padColor, PAD_COLOR);
+}
+void test_cluster_color_buffer_message() {
+    WRGB PAD_COLOR = 0x87654321;
+    std::vector<WRGB> clusterFill(80, 0x12345678);
+    BlitBufferCommand nodeCommand(clusterFill, 0x87654321);
+    ClusterMessage clusterMessage(1, BlitBufferCommand::getType(), nodeCommand.getParams());
+    std::vector<uint8_t> serialized = serializeClusterMessage(clusterMessage);
+    ClusterMessage deserialized = deserializeClusterMessage(serialized);
+    auto params = deserialized.getParams();
+
+    TEST_ASSERT_TRUE(std::holds_alternative<BlitBufferParams>(params));
+    WRGB padColor = std::get<BlitBufferParams>(params).padColor;
+    std::vector<WRGB> colors = std::get<BlitBufferParams>(params).colors;
+    // outputBufferAsHex(colors);
+    // outputBufferAsHex({padColor, PAD_COLOR});
+
+    TEST_ASSERT_EQUAL_UINT32(padColor, PAD_COLOR);
+}
+
+void test_refresh_message() {
+    // FillNodeCommand fillNodeCommand(0, 0x11111111);
+    // ClusterMessage clusterMessage(0, FillNodeCommand::getType(), fillNodeCommand.getParams());
+    //    BlitBufferCommand clusterCommand(buffer, 0x00000000);
+    //    ClusterMessage clusterMessage(1, BlitNodeCommand::getType(), nodeCommand.getParams());
+    //    clusterManager.forEachCluster([this](Cluster& cluster) {  // Capture `this` to access class members
+    //        std::vector<WRGB> buffer = cluster.getPixelBuffer();
+    //        if (this->clusterMessageManager != nullptr) {  // Use `this->` to access class members
+    //            BlitBufferCommand command(buffer, 0x00000000);
+    //            this->clusterMessageManager->sendClusterCommand(cluster.getId(), command);
+    //        }
+    //    });
 }
 
 int run_basic_message_tests(int argc, char **argv) {
     RUN_TEST(test_basic_message_creation);
+    RUN_TEST(test_node_color_buffer_message);
+    RUN_TEST(test_cluster_color_buffer_message);
+    //    RUN_TEST(test_refresh_message);
     return 0;
 }

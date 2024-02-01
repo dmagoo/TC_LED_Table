@@ -13,13 +13,10 @@ void tearDown(void) {
 }
 
 int main(int argc, char **argv) {
-    UNITY_BEGIN(); // IMPORTANT LINE!
-
+    UNITY_BEGIN();
     run_basic_cluster_tests(argc, argv);
     run_basic_cluster_manager_tests(argc, argv);
     run_basic_api_tests(argc, argv);
     run_basic_message_tests(argc, argv);
-    UNITY_END();
-
-    return 0;
+    return UNITY_END();
 }

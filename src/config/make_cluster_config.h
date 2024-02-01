@@ -9,6 +9,7 @@
 #include "core/coordinates/Cartesian2dCoordinate.h"
 
 std::vector<ClusterConfig> makeClusterConfigs();
+std::vector<ClusterConfig> makeClusterConfig(int clusterId);
 std::vector<NodeConfig> makeNodeConfigs(int clusterId = 0);
 
 #endif // MAKE_CLUSTER_CONFIG_H

@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 project(TCLEDTable)
 enable_testing()
+# run with: ctest -C Debug
 
 # Set the C++ standard
 set(CMAKE_CXX_STANDARD 17)

@@ -6,15 +6,6 @@
 #error Regenerate this file with the current version of nanopb generator.
 #endif
 
-PB_BIND(NodeWithColorParamsProto, NodeWithColorParamsProto, AUTO)
-
-
-PB_BIND(BlitNodeParamsProto, BlitNodeParamsProto, AUTO)
-
-
-PB_BIND(NodeWithPixelIndexProto, NodeWithPixelIndexProto, AUTO)
-
-
 PB_BIND(ClusterMessageProto, ClusterMessageProto, AUTO)
 
 

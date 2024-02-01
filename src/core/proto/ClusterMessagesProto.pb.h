@@ -4,12 +4,9 @@
 #ifndef PB_SRC_CORE_PROTO_CLUSTERMESSAGESPROTO_PB_H_INCLUDED
 #define PB_SRC_CORE_PROTO_CLUSTERMESSAGESPROTO_PB_H_INCLUDED
 #include <pb.h>
-
-#include "pb.h"
 #include "pb_encode.h"
 #include "pb_decode.h"
 #include "pb_common.h"
-
 #if PB_PROTO_HEADER_VERSION != 40
 #error Regenerate this file with the current version of nanopb generator.
 #endif
@@ -18,39 +15,22 @@
 typedef enum _CommandTypeProto {
     CommandTypeProto_FILL_NODE = 0,
     CommandTypeProto_BLIT_NODE = 1,
-    CommandTypeProto_SET_NODE_PIXEL = 2,
-    CommandTypeProto_QUEUE_NODE_PIXEL = 3,
-    CommandTypeProto_DEQUEUE_NODE_PIXEL = 4
+    CommandTypeProto_FILL_BUFFER = 2,
+    CommandTypeProto_BLIT_BUFFER = 3,
+    CommandTypeProto_SET_NODE_PIXEL = 4,
+    CommandTypeProto_QUEUE_NODE_PIXEL = 5,
+    CommandTypeProto_DEQUEUE_NODE_PIXEL = 6
 } CommandTypeProto;
 
 /* Struct definitions */
-typedef struct _NodeWithColorParamsProto {
-    int32_t node_id;
-    uint32_t color;
-} NodeWithColorParamsProto;
-
-typedef struct _BlitNodeParamsProto {
-    int32_t node_id;
-    pb_callback_t colors;
-    uint32_t pad_color;
-} BlitNodeParamsProto;
-
-typedef struct _NodeWithPixelIndexProto {
-    int32_t node_id;
-    uint32_t color;
-} NodeWithPixelIndexProto;
-
 typedef struct _ClusterMessageProto {
     int32_t cluster_id;
     CommandTypeProto command_type;
-    pb_size_t which_params;
-    union {
-        NodeWithColorParamsProto fill_node_params;
-        BlitNodeParamsProto blit_node_params;
-        NodeWithPixelIndexProto set_node_pixel_params;
-        NodeWithColorParamsProto queue_node_pixel_params;
-        NodeWithColorParamsProto dequeue_node_pixel_params;
-    } params;
+    int32_t param_node_id;
+    uint32_t param_color;
+    uint32_t param_pad_color;
+    int32_t param_pixel_index;
+    pb_callback_t param_colors;
 } ClusterMessageProto;
 
 
@@ -63,91 +43,41 @@ extern "C" {
 #define _CommandTypeProto_MAX CommandTypeProto_DEQUEUE_NODE_PIXEL
 #define _CommandTypeProto_ARRAYSIZE ((CommandTypeProto)(CommandTypeProto_DEQUEUE_NODE_PIXEL+1))
 
-
-
-
 #define ClusterMessageProto_command_type_ENUMTYPE CommandTypeProto
 
 
 /* Initializer values for message structs */
-#define NodeWithColorParamsProto_init_default    {0, 0}
-#define BlitNodeParamsProto_init_default         {0, {{NULL}, NULL}, 0}
-#define NodeWithPixelIndexProto_init_default     {0, 0}
-#define ClusterMessageProto_init_default         {0, _CommandTypeProto_MIN, 0, {NodeWithColorParamsProto_init_default}}
-#define NodeWithColorParamsProto_init_zero       {0, 0}
-#define BlitNodeParamsProto_init_zero            {0, {{NULL}, NULL}, 0}
-#define NodeWithPixelIndexProto_init_zero        {0, 0}
-#define ClusterMessageProto_init_zero            {0, _CommandTypeProto_MIN, 0, {NodeWithColorParamsProto_init_zero}}
+#define ClusterMessageProto_init_default         {0, _CommandTypeProto_MIN, 0, 0, 0, 0, {{NULL}, NULL}}
+#define ClusterMessageProto_init_zero            {0, _CommandTypeProto_MIN, 0, 0, 0, 0, {{NULL}, NULL}}
 
 /* Field tags (for use in manual encoding/decoding) */
-#define NodeWithColorParamsProto_node_id_tag     1
-#define NodeWithColorParamsProto_color_tag       2
-#define BlitNodeParamsProto_node_id_tag          1
-#define BlitNodeParamsProto_colors_tag           2
-#define BlitNodeParamsProto_pad_color_tag        3
-#define NodeWithPixelIndexProto_node_id_tag      1
-#define NodeWithPixelIndexProto_color_tag        2
 #define ClusterMessageProto_cluster_id_tag       1
 #define ClusterMessageProto_command_type_tag     2
-#define ClusterMessageProto_fill_node_params_tag 3
-#define ClusterMessageProto_blit_node_params_tag 4
-#define ClusterMessageProto_set_node_pixel_params_tag 5
-#define ClusterMessageProto_queue_node_pixel_params_tag 6
-#define ClusterMessageProto_dequeue_node_pixel_params_tag 7
+#define ClusterMessageProto_param_node_id_tag    3
+#define ClusterMessageProto_param_color_tag      4
+#define ClusterMessageProto_param_pad_color_tag  5
+#define ClusterMessageProto_param_pixel_index_tag 6
+#define ClusterMessageProto_param_colors_tag     7
 
 /* Struct field encoding specification for nanopb */
-#define NodeWithColorParamsProto_FIELDLIST(X, a) \
-X(a, STATIC,   SINGULAR, INT32,    node_id,           1) \
-X(a, STATIC,   SINGULAR, UINT32,   color,             2)
-#define NodeWithColorParamsProto_CALLBACK NULL
-#define NodeWithColorParamsProto_DEFAULT NULL
-
-#define BlitNodeParamsProto_FIELDLIST(X, a) \
-X(a, STATIC,   SINGULAR, INT32,    node_id,           1) \
-X(a, CALLBACK, REPEATED, UINT32,   colors,            2) \
-X(a, STATIC,   SINGULAR, UINT32,   pad_color,         3)
-#define BlitNodeParamsProto_CALLBACK pb_default_field_callback
-#define BlitNodeParamsProto_DEFAULT NULL
-
-#define NodeWithPixelIndexProto_FIELDLIST(X, a) \
-X(a, STATIC,   SINGULAR, INT32,    node_id,           1) \
-X(a, STATIC,   SINGULAR, UINT32,   color,             2)
-#define NodeWithPixelIndexProto_CALLBACK NULL
-#define NodeWithPixelIndexProto_DEFAULT NULL
-
 #define ClusterMessageProto_FIELDLIST(X, a) \
 X(a, STATIC,   SINGULAR, INT32,    cluster_id,        1) \
 X(a, STATIC,   SINGULAR, UENUM,    command_type,      2) \
-X(a, STATIC,   ONEOF,    MESSAGE,  (params,fill_node_params,params.fill_node_params),   3) \
-X(a, STATIC,   ONEOF,    MESSAGE,  (params,blit_node_params,params.blit_node_params),   4) \
-X(a, STATIC,   ONEOF,    MESSAGE,  (params,set_node_pixel_params,params.set_node_pixel_params),   5) \
-X(a, STATIC,   ONEOF,    MESSAGE,  (params,queue_node_pixel_params,params.queue_node_pixel_params),   6) \
-X(a, STATIC,   ONEOF,    MESSAGE,  (params,dequeue_node_pixel_params,params.dequeue_node_pixel_params),   7)
-#define ClusterMessageProto_CALLBACK NULL
+X(a, STATIC,   SINGULAR, INT32,    param_node_id,     3) \
+X(a, STATIC,   SINGULAR, UINT32,   param_color,       4) \
+X(a, STATIC,   SINGULAR, UINT32,   param_pad_color,   5) \
+X(a, STATIC,   SINGULAR, INT32,    param_pixel_index,   6) \
+X(a, CALLBACK, REPEATED, UINT32,   param_colors,      7)
+#define ClusterMessageProto_CALLBACK pb_default_field_callback
 #define ClusterMessageProto_DEFAULT NULL
-#define ClusterMessageProto_params_fill_node_params_MSGTYPE NodeWithColorParamsProto
-#define ClusterMessageProto_params_blit_node_params_MSGTYPE BlitNodeParamsProto
-#define ClusterMessageProto_params_set_node_pixel_params_MSGTYPE NodeWithPixelIndexProto
-#define ClusterMessageProto_params_queue_node_pixel_params_MSGTYPE NodeWithColorParamsProto
-#define ClusterMessageProto_params_dequeue_node_pixel_params_MSGTYPE NodeWithColorParamsProto
 
-extern const pb_msgdesc_t NodeWithColorParamsProto_msg;
-extern const pb_msgdesc_t BlitNodeParamsProto_msg;
-extern const pb_msgdesc_t NodeWithPixelIndexProto_msg;
 extern const pb_msgdesc_t ClusterMessageProto_msg;
 
 /* Defines for backwards compatibility with code written before nanopb-0.4.0 */
-#define NodeWithColorParamsProto_fields &NodeWithColorParamsProto_msg
-#define BlitNodeParamsProto_fields &BlitNodeParamsProto_msg
-#define NodeWithPixelIndexProto_fields &NodeWithPixelIndexProto_msg
 #define ClusterMessageProto_fields &ClusterMessageProto_msg
 
 /* Maximum encoded size of messages (where known) */
-/* BlitNodeParamsProto_size depends on runtime parameters */
 /* ClusterMessageProto_size depends on runtime parameters */
-#define NodeWithColorParamsProto_size            17
-#define NodeWithPixelIndexProto_size             17
-#define SRC_CORE_PROTO_CLUSTERMESSAGESPROTO_PB_H_MAX_SIZE NodeWithColorParamsProto_size
 
 #ifdef __cplusplus
 } /* extern "C" */

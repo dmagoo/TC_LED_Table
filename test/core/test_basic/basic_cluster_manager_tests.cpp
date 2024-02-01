@@ -2,11 +2,11 @@
 #include <unity.h>
 #include <vector>
 
-#include "core/LedTableTypes.h"
 #include "core/Cluster.h"
+#include "core/ClusterManager.h"
+#include "core/LedTableTypes.h"
 #include "core/Node.h"
 #include "core/NodeConfig.h"
-#include "core/ClusterManager.h"
 #include "windows/AsciiUtils.h"
 
 #include "config/make_cluster_config.h"
@@ -15,7 +15,7 @@
 
 void test_create_cluster_manager() {
     ClusterManager clusterManager(makeClusterConfigs());
-    const Cluster* cluster = clusterManager.getClusterById(0);
+    const Cluster *cluster = clusterManager.getClusterById(0);
 
     TEST_ASSERT_NOT_NULL(cluster);
 
@@ -28,18 +28,18 @@ void test_create_cluster_manager() {
 
 void test_ring_coordinates() {
     ClusterManager clusterManager(makeClusterConfigs());
-    const Cluster* cluster = clusterManager.getClusterById(0);
+    const Cluster *cluster = clusterManager.getClusterById(0);
 
     int nodeId;
 
-    RingCoordinate coordinate(0,0);
+    RingCoordinate coordinate(0, 0);
     nodeId = clusterManager.getNodeId(coordinate);
     TEST_ASSERT_EQUAL_INT(nodeId, 0);
     RingCoordinate reverseCoordinate = clusterManager.getRingCoordinate(nodeId);
     TEST_ASSERT_EQUAL_INT(reverseCoordinate.getIndex(), 0);
     TEST_ASSERT_EQUAL_INT(reverseCoordinate.getRing(), 0);
 
-    coordinate = RingCoordinate(2,2);
+    coordinate = RingCoordinate(2, 2);
     nodeId = clusterManager.getNodeId(coordinate);
     TEST_ASSERT_EQUAL_INT(nodeId, 14);
     reverseCoordinate = clusterManager.getRingCoordinate(nodeId);
@@ -49,7 +49,7 @@ void test_ring_coordinates() {
 
 void test_cartesian_2d_coordinates() {
     ClusterManager clusterManager(makeClusterConfigs());
-    const Cluster* cluster = clusterManager.getClusterById(0);
+    const Cluster *cluster = clusterManager.getClusterById(0);
 
     int nodeId;
 
@@ -60,7 +60,7 @@ void test_cartesian_2d_coordinates() {
     TEST_ASSERT_EQUAL_INT(reverseCoordinate.getX(), 0);
     TEST_ASSERT_EQUAL_INT(reverseCoordinate.getY(), 0);
 
-    coordinate = Cartesian2dCoordinate(200,100);
+    coordinate = Cartesian2dCoordinate(200, 100);
     nodeId = clusterManager.getNodeId(coordinate);
     TEST_ASSERT_EQUAL_INT(nodeId, 14);
     reverseCoordinate = clusterManager.getCartesian2dCoordinate(nodeId);
@@ -70,7 +70,7 @@ void test_cartesian_2d_coordinates() {
 
 void test_cube_coordinates() {
     ClusterManager clusterManager(makeClusterConfigs());
-    const Cluster* cluster = clusterManager.getClusterById(0);
+    const Cluster *cluster = clusterManager.getClusterById(0);
 
     int nodeId;
 
@@ -82,7 +82,7 @@ void test_cube_coordinates() {
     TEST_ASSERT_EQUAL_INT(reverseCoordinate.getR(), 0);
     TEST_ASSERT_EQUAL_INT(reverseCoordinate.getS(), 0);
 
-    coordinate = CubeCoordinate(2,-2, 0);
+    coordinate = CubeCoordinate(2, -2, 0);
     nodeId = clusterManager.getNodeId(coordinate);
     TEST_ASSERT_EQUAL_INT(nodeId, 14);
     reverseCoordinate = clusterManager.getCubeCoordinate(nodeId);
@@ -91,9 +91,20 @@ void test_cube_coordinates() {
     TEST_ASSERT_EQUAL_INT(reverseCoordinate.getS(), 0);
 }
 
+void test_cluster_iteration() {
+    ClusterManager clusterManager(makeClusterConfigs());
+
+    int i = 0;
+    std::cout << "CULSTE" << std::endl;
+    clusterManager.forEachCluster([&i](Cluster &cluster) {
+        TEST_ASSERT_EQUAL_INT(cluster.getId(), i++);
+    });
+}
+
 int run_basic_cluster_manager_tests(int argc, char **argv) {
     RUN_TEST(test_create_cluster_manager);
     RUN_TEST(test_ring_coordinates);
     RUN_TEST(test_cartesian_2d_coordinates);
+    RUN_TEST(test_cluster_iteration);
     return 0;
 }

@@ -67,25 +67,25 @@ int LedTableApi::convertToNodeId<CubeCoordinate>(const CubeCoordinate &coordinat
 }
 
 void LedTableApi::fillNode(int nodeId, WRGB color) {
-    std::cout << "in root fill with node: " << nodeId << std::endl;
+    //////std::couttt << "in root fill with node: " << nodeId << std::endl;
     performClusterOperationReturningVoid<FillNodeCommand>(nodeId, color);
 }
 
 void LedTableApi::fillNode(RingCoordinate coordinate, WRGB color) {
     int nodeId = convertToNodeId(coordinate);
-    std::cout << "in ring fill with node: " << nodeId << std::endl;
+    ////std::couttt << "in ring fill with node: " << nodeId << std::endl;
     performClusterOperationReturningVoid<FillNodeCommand>(nodeId, color);
 }
 
 void LedTableApi::fillNode(CubeCoordinate coordinate, WRGB color) {
     int nodeId = convertToNodeId(coordinate);
-    std::cout << "in cube fill with node: " << nodeId << std::endl;
+    //////std::couttt << "in cube fill with node: " << nodeId << std::endl;
     performClusterOperationReturningVoid<FillNodeCommand>(nodeId, color);
 }
 
 void LedTableApi::fillNode(Cartesian2dCoordinate coordinate, WRGB color) {
     int nodeId = convertToNodeId(coordinate);
-    std::cout << "in cart2d fill with node: " << nodeId << std::endl;
+    ////std::coutt << "in cart2d fill with node: " << nodeId << std::endl;
     performClusterOperationReturningVoid<FillNodeCommand>(nodeId, color);
 }
 
@@ -95,8 +95,8 @@ void LedTableApi::fillNode(int nodeId, const std::vector<WRGB> &colors, WRGB pad
 
 void LedTableApi::fillNode(RingCoordinate coordinate, const std::vector<WRGB> &colors, WRGB padColor) {
     int nodeId = convertToNodeId(coordinate);
-    std::cout << "api call with ringcoord to fillNode: ";
-    std::cout << std::hex << static_cast<WRGB>(padColor) << std::endl;
+    ////std::couttt << "api call with ringcoord to fillNode: ";
+    ////std::couttt << std::hex << static_cast<WRGB>(padColor) << std::endl;
     performClusterOperationReturningVoid<BlitNodeCommand>(nodeId, colors, padColor);
 }
 
@@ -170,4 +170,31 @@ WRGB LedTableApi::dequeueNodePixel(Cartesian2dCoordinate coordinate, WRGB color)
     return performClusterOperationReturningColor<DequeueNodePixelCommand>(nodeId, color);
 }
 
-void LedTableApi::setSuppressMessages(bool newValue) {}
+void LedTableApi::setSuppressMessages(bool newValue) {
+    suppressMessages = newValue;
+}
+
+// ignores suppressMessges, as this is an explicit command to send a message
+// but cannot operate if a clustermessagemanager is not present
+void LedTableApi::refresh() {
+    clusterManager.forEachCluster([this](Cluster &cluster) { // Capture `this` to access class members
+        std::vector<WRGB> buffer = cluster.getPixelBuffer();
+        if (this->clusterMessageManager != nullptr) { // Use `this->` to access class members
+            BlitBufferCommand command(buffer, 0x00000000);
+            this->clusterMessageManager->sendClusterCommand(cluster.getId(), command);
+        }
+    });
+}
+
+void LedTableApi::reset() {
+    clusterManager.forEachCluster([this](Cluster &cluster) {
+        FillBufferCommand command(0x00000000);
+        command.execute(cluster);
+        if (!suppressMessages) {
+            if (this->clusterMessageManager != nullptr) { // Use `this->` to access class members
+
+                this->clusterMessageManager->sendClusterCommand(cluster.getId(), command);
+            }
+        }
+    });
+}

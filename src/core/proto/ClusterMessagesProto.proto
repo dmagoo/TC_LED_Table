@@ -1,52 +1,38 @@
 // commands.proto
 // build when new commands are added
-// protoc --cpp_out=. src/core/proto/ProtoClusterMessages.proto        
-// or mayhaps after cd to dir: protoc --cpp_out=. ClusterMessagesProto.proto 
 // with nano pb:
 // python C:\DevTools\nanopb\generator\nanopb_generator.py .\src\core\proto\ClusterMessagesProto.proto
 // THen I modify the .dc file so the .h include is filebame only
 // in .h, after #include <pb.h>, I add the following:
-// #include "pb.h"
-// #include "pb_encode.h"
-// #include "pb_decode.h"
-// #include "pb_common.h"
-
+/*
+#include "pb_encode.h"
+#include "pb_decode.h"
+#include "pb_common.h"
+*/
+//
+// in ClusterMessagesProto.pb.c I change:
+// #include "src/core/proto/ClusterMessagesProto.pb.h"
+// to:
+// #include "ClusterMessagesProto.pb.h"
 syntax = "proto3";
-
-message NodeWithColorParamsProto {
-    int32 node_id = 1;
-    uint32 color = 2;
-}
-
-message BlitNodeParamsProto {
-    int32 node_id = 1;
-    repeated uint32 colors = 2;
-    uint32 pad_color = 3;
-}
-
-message NodeWithPixelIndexProto {
-    int32 node_id = 1;
-    uint32 color = 2;
-}
-
-// Define other command parameter messages...
 
 enum CommandTypeProto {
     FILL_NODE = 0;
     BLIT_NODE = 1;
-    SET_NODE_PIXEL = 2;
-    QUEUE_NODE_PIXEL = 3;
-    DEQUEUE_NODE_PIXEL = 4;
+    FILL_BUFFER = 2;
+    BLIT_BUFFER = 3;
+    SET_NODE_PIXEL = 4;
+    QUEUE_NODE_PIXEL = 5;
+    DEQUEUE_NODE_PIXEL = 6;
 }
 
 message ClusterMessageProto {
     int32 cluster_id = 1;
     CommandTypeProto command_type = 2;
-    oneof params {
-        NodeWithColorParamsProto fill_node_params = 3;
-        BlitNodeParamsProto blit_node_params = 4;
-        NodeWithPixelIndexProto set_node_pixel_params = 5;
-        NodeWithColorParamsProto queue_node_pixel_params = 6;
-        NodeWithColorParamsProto dequeue_node_pixel_params = 7;
-    }
+
+    int32 param_node_id = 3;
+    int32 param_pixel_index = 4;
+    uint32 param_color = 5;
+    uint32 param_pad_color = 6;
+    repeated uint32 param_colors = 7;
 }

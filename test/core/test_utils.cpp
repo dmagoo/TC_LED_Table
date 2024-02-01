@@ -1,6 +1,6 @@
 #include "test_utils.h"
-#include <iostream>
 #include <iomanip>
+#include <iostream>
 #include <unity.h>
 
 void verifyBufferIsFilledWithColor(std::vector<WRGB> buffer, WRGB expectedColor) {
@@ -14,12 +14,13 @@ void verifyBufferHasColorAt(std::vector<WRGB> buffer, int index, WRGB expectedCo
 }
 
 void outputBufferAsHex(std::vector<WRGB> buffer) {
-   std::cout << '{';
-   for (int i = 0; i < buffer.size(); ++i) {
+    std::cout << "size: " << buffer.size() << ' ';
+    std::cout << '{';
+    for (int i = 0; i < buffer.size(); ++i) {
         std::cout << " 0x" << std::hex << std::setw(8) << std::setfill('0') << buffer[i];
-        if(i<buffer.size()) {
-    std::cout << ',';        
+        if (i < buffer.size()) {
+            std::cout << ',';
         }
-   }
+    }
     std::cout << '}' << std::endl;
 }

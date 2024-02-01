@@ -7,8 +7,9 @@
 #include "core/Cluster.h"
 #include "core/Node.h"
 #include "core/NodeConfig.h"
-
+#include "core/ClusterCommands.h"
 #include "config/make_cluster_config.h"
+#include "../test_utils.h"
 
 #define PIXELS_PER_NODE 8
 
@@ -55,7 +56,29 @@ void test_pixel_buffer_fill_node() {
     std::cout << asciiArt;
 }
 
+void test_fill_buffer_command() {
+    std::vector<NodeConfig> nodeConfigs = makeNodeConfigs(0);
+    Cluster cluster(0, nodeConfigs);
+
+    // note that cluster 0 only has 56 items, but the test crops at the
+    // output buffer, so it's okay
+    std::vector<WRGB> inputBuffer(80, 0x12345678);
+    BlitBufferCommand blitBufferCommand(inputBuffer, 0x00000000);
+
+    blitBufferCommand.execute(cluster);
+    std::vector<WRGB> outputBuffer = cluster.getPixelBuffer();
+    //std::cout << " - inputBuffer -- " << std::endl;
+    //outputBufferAsHex(inputBuffer);
+    //std::cout << " - outputBuffer -- " << std::endl;
+    //outputBufferAsHex(outputBuffer);
+
+
+    TEST_ASSERT_EQUAL_UINT32_ARRAY(inputBuffer.data(), outputBuffer.data(),  outputBuffer.size());
+}
+
 void run_basic_cluster_tests(int argc, char **argv) {
     RUN_TEST(test_create_cluster);
     RUN_TEST(test_pixel_buffer_fill_node);
+    RUN_TEST(test_fill_buffer_command);
+
 }

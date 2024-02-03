@@ -4,3 +4,6 @@
 [submodule "lib/Unity"]
 	path = lib/Unity
 	url = https://github.com/ThrowTheSwitch/Unity.git
+[submodule "lib/pybind11"]
+	path = lib/pybind11
+	url = https://github.com/pybind/pybind11.git

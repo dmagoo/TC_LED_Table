@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
+
 project(TCLEDTable)
 enable_testing()
 # run with: ctest -C Debug
@@ -16,6 +17,19 @@ include_directories(
     ${PROJECT_SOURCE_DIR}/test/core/test_basic  # Test headers
     ${PROJECT_SOURCE_DIR}/lib/Unity/src  # Unity framework
 )
+
+
+
+
+#include(ExternalProject)
+
+#ExternalProject_Add(
+##    pybind11
+ #   PREFIX ${CMAKE_SOURCE_DIR}/lib/pybind11
+ ##   GIT_REPOSITORY https://github.com/pybind/pybind11.git
+#    GIT_TAG v2.7.0  # Use the specific version you need
+#)
+
 
 
 # Source files
@@ -68,6 +82,17 @@ add_executable(api_test
     ${PROJECT_SOURCE_DIR}/lib/nanopb/pb_encode.c
 )
 
+add_library(LedTableApi
+    ${CORE_SOURCES}
+    ${API_SOURCES}
+    ${WIN_SOURCES}
+    "${PROJECT_SOURCE_DIR}/src/config/make_cluster_config.cpp"
+    "${PROJECT_SOURCE_DIR}/src/config/make_mqtt_config.cpp"
+    ${PROJECT_SOURCE_DIR}/lib/nanopb/pb_common.c
+    ${PROJECT_SOURCE_DIR}/lib/nanopb/pb_decode.c
+    ${PROJECT_SOURCE_DIR}/lib/nanopb/pb_encode.c
+)
+
 # Platform-specific definitions and libraries
 if(WIN32)
     add_definitions(-D_WIN64)
@@ -99,3 +124,7 @@ target_sources(demo PRIVATE
     ${PROJECT_SOURCE_DIR}/lib/nanopb/pb_decode.c
     ${PROJECT_SOURCE_DIR}/lib/nanopb/pb_encode.c
 )
+
+
+add_subdirectory(lib/pybind11)
+add_subdirectory(src/bindings)

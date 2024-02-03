@@ -23,7 +23,7 @@
 // #include <string>
 
 // max? #define DELAY_MS 75
-#define DELAY_MS 5000
+#define DELAY_MS 75
 
 #define NUM_NODES 7
 
@@ -40,8 +40,8 @@ void intHandler(int dummy) {
 class simple_callback : public virtual mqtt::callback {
 public:
     void message_arrived(mqtt::const_message_ptr msg) override {
-        //std::cout << "Message arrived: " << msg->to_string() << std::endl;
-        //std::cout << "\ttopic: '" << msg->get_topic() << "'" << std::endl;
+        // std::cout << "Message arrived: " << msg->to_string() << std::endl;
+        // std::cout << "\ttopic: '" << msg->get_topic() << "'" << std::endl;
         std::string payload_str = msg->to_string(); // Get the payload as a string
 
         // Convert std::string to std::vector<uint8_t>
@@ -55,7 +55,8 @@ public:
         auto params = deserialized.getParams();
         if (std::holds_alternative<NodeWithColorParams>(params)) {
             int nodeId = std::get<NodeWithColorParams>(params).nodeId;
-            std::cout << "Received message to color node: " << nodeId << std::endl;;
+            std::cout << "Received message to color node: " << nodeId << std::endl;
+            ;
 
             // Use nodeId as needed
         } else {
@@ -104,8 +105,8 @@ void runSender() {
 
     const Cluster *cluster = clusterManager.getClusterById(0);
     // Define the color list
-    //std::vector<WRGB> colors = {0x00000000, 0x33000000, 0x33003300, 0x33330000, 0x33333300, 0x33330000, 0x33003300};
-    //std::vector<WRGB> colors = {0x33000000, 0x00000000, 0x00330000, 0x00000000, 0x00003300, 0x00000000, 0x00000000};
+    // std::vector<WRGB> colors = {0x00000000, 0x33000000, 0x33003300, 0x33330000, 0x33333300, 0x33330000, 0x33003300};
+    // std::vector<WRGB> colors = {0x33000000, 0x00000000, 0x00330000, 0x00000000, 0x00003300, 0x00000000, 0x00000000};
     // std::vector<WRGB> colors = {0x00330000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000};
     std::vector<WRGB> colors = {0x00000000, 0x00000055, 0x00005500, 0x00550000, 0x00555500, 0x00550055, 0x00005555};
     // track the fill from each node so we can move colors to the new node.
@@ -113,8 +114,15 @@ void runSender() {
     std::vector<WRGB> nodeColors(NUM_NODES, 0x00000000); // Initialize all nodes to black
 
     int currentColorIndex = 0;
-
+int i = 0;
     while (keepRunning) {
+
+        if (USE_REFRESH) {
+            api.refresh();
+        }
+
+if(++i % 5) { continue; }
+
         // Shift colors across nodes
         for (int nodeId = NUM_NODES - 1; nodeId > 0; --nodeId) {
             nodeColors[nodeId] = nodeColors[nodeId - 1];
@@ -126,9 +134,6 @@ void runSender() {
         api.fillNode(0, nodeColors[0]);
         currentColorIndex = (currentColorIndex + 1) % colors.size();
 
-        if(USE_REFRESH) {
-            api.refresh();
-        }
 #ifdef WIN64
         for (int nodeId = 0; nodeId < NUM_NODES; nodeId++) {
             std::string asciiArt = nodeBufferToAscii(*cluster, nodeId);
@@ -160,6 +165,8 @@ void runSender() {
 
         usleep(DELAY_MS * 1000); // Delay
 #endif
+
+
     }
     api.setSuppressMessages(false);
 
@@ -168,7 +175,7 @@ void runSender() {
     api.reset();
 
     // this works
-//    api.refresh();
+    //    api.refresh();
     mqttClient->disconnect();
 }
 

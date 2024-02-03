@@ -6,6 +6,9 @@
 #include <Arduino.h>
 #include <PubSubClient.h>
 #include <WiFi.h>
+#include <algorithm>
+
+// ESP32 240MHz, 320KB RAM, 4MB Flash
 
 // Which pin on the Arduino is connected to the NeoPixels?
 // On a Trinket or Gemma we suggest changing this to 1:
@@ -19,16 +22,12 @@
 #define MAX_MESSAGE_SIZE 512
 #define MAX_TOPIC_SIZE 64
 
-int i = 0;
-
 const char *wifi_ssid = WIFI_SSID;
 const char *wifi_password = WIFI_PASSWORD;
 const char *mqttServer = MQTT_BROKER_HOST;
 
 WiFiClient espClient;
 PubSubClient mqttClient(espClient);
-
-// ESP32 240MHz, 320KB RAM, 4MB Flash
 
 struct MQTTMessage {
     // String topic;
@@ -94,27 +93,34 @@ void Worker::connectMqtt() {
 
 void Worker::loop() {
     static unsigned long lastTickTime = millis(); // Initialize the last tick time
+    static unsigned long lastAttemptTime = 0;     // Track the last reconnect attempt
+    static unsigned long attemptInterval = 1000;  // Start with 1 second delay for the first attempt
+
     unsigned long currentTime = millis();
     unsigned long timeSinceLastTick = currentTime - lastTickTime;
-    //    Serial.print("Time since last tick: ");
-    //    Serial.println(timeSinceLastTick);
+    unsigned long timeSinceLastAttempt = currentTime - lastAttemptTime;
+
+    // Serial.print("Time since last tick: ");
+    // Serial.println(timeSinceLastTick);
     // Serial.println("Led updates: " + String(ledUpdates));
     // Serial.println("msg: " + String(incomingMsgCount));
     if (WiFi.status() != WL_CONNECTED) {
-        //        Serial.print("wifi: down");
+        // Handle WiFi not connected scenario
+    } else if (!mqttClient.connected()) {
+        if (timeSinceLastAttempt > attemptInterval) {
+            Serial.println("\tbroker: down --- reconnecting!");
+            connectMqtt();
+            lastAttemptTime = currentTime;                     // Update the last attempt time
+            //attemptInterval = min(attemptInterval * 2, 60000); // Double the interval, max out at 1 minute
+            attemptInterval = std::min(attemptInterval * 2, 60000UL);
+        }
     } else {
-        //        Serial.print("wifi: up");
-    }
-
-    if (!mqttClient.connected()) {
-        Serial.println("\tbroker: down --- reconnecting!");
-        connectMqtt();
-    } else {
-        //        Serial.print("\tbroker: up");
+        // Reset the attempt interval upon successful connection
+        attemptInterval = 1000; // Reset to initial interval
+        // Handle MQTT client loop
+        mqttClient.loop();
     }
     //    Serial.println();
-
-    mqttClient.loop();
 
     lastTickTime = currentTime; // Update the last tick time
 }
@@ -177,7 +183,7 @@ void Worker::updateLEDs() {
     if (!hasUpdates) {
         return;
     }
-    //Serial.println("Worker LED Update");
+    // Serial.println("Worker LED Update");
 
     std::lock_guard<std::mutex> lock(bufferMutex);
     // TODO: make a ref version of this if speed becomes an issue

@@ -18,26 +18,23 @@ include_directories(
     ${PROJECT_SOURCE_DIR}/lib/Unity/src  # Unity framework
 )
 
+if(WIN32)
+    add_definitions(-D_WIN64)
+    add_definitions(-DWIN64)
+    
+    # Specify Windows-specific include and library paths if not using standard installation paths
+    include_directories("C:/DevTools/installed/paho.mqtt.c/include" "C:/DevTools/installed/paho.mqtt.cpp/include")
+    set(PAHO_MQTT_C_LIBRARIES "C:/DevTools/installed/paho.mqtt.c/lib/paho-mqtt3a-static.lib")
+    set(PAHO_MQTT_CPP_LIBRARIES "C:/DevTools/installed/paho.mqtt.cpp/lib/paho-mqttpp3-static.lib")
+endif()
 
 
-
-#include(ExternalProject)
-
-#ExternalProject_Add(
-##    pybind11
- #   PREFIX ${CMAKE_SOURCE_DIR}/lib/pybind11
- ##   GIT_REPOSITORY https://github.com/pybind/pybind11.git
-#    GIT_TAG v2.7.0  # Use the specific version you need
-#)
-
-
+add_subdirectory(src/api)
+add_subdirectory(src/config)
+add_subdirectory(src/core)
+add_subdirectory(src/windows)
 
 # Source files
-file(GLOB_RECURSE CONFIG_SOURCES "${PROJECT_SOURCE_DIR}/src/config/*.cpp")
-file(GLOB_RECURSE API_SOURCES "${PROJECT_SOURCE_DIR}/src/api/*.cpp")
-file(GLOB_RECURSE WIN_SOURCES "${PROJECT_SOURCE_DIR}/src/windows/*.cpp")
-file(GLOB_RECURSE CORE_SOURCES "${PROJECT_SOURCE_DIR}/src/core/*.cpp" "${PROJECT_SOURCE_DIR}/src/core/*.c")
-file(GLOB_RECURSE CONFIG_SOURCES "${PROJECT_SOURCE_DIR}/src/config/*.cpp" "${PROJECT_SOURCE_DIR}/src/config/*.c")
 file(GLOB_RECURSE TEST_SOURCES "${PROJECT_SOURCE_DIR}/test/core/test_basic/*.cpp")
 
 # Set the output directory for the executable
@@ -48,75 +45,72 @@ add_test(NAME unity_test COMMAND test_app)
 add_executable(demo
     ${PROJECT_SOURCE_DIR}/src/native/main.cpp
     ${CONFIG_SOURCES}
-    ${CORE_SOURCES}
     ${PROJECT_SOURCE_DIR}/lib/nanopb/pb_common.c
     ${PROJECT_SOURCE_DIR}/lib/nanopb/pb_decode.c
     ${PROJECT_SOURCE_DIR}/lib/nanopb/pb_encode.c
 )
+target_link_libraries(demo
+    ConfigLib
+    CoreLib
+    $<$<PLATFORM_ID:Windows>:${PAHO_MQTT_C_LIBRARIES} ${PAHO_MQTT_CPP_LIBRARIES} ws2_32>
+    $<$<NOT:$<PLATFORM_ID:Windows>>:PahoMqttCpp::paho-mqttpp3-static>
+)
 
-# Executables
 add_executable(test_app
-    #${PROJECT_SOURCE_DIR}/test/core/test_basic/main.cpp
     ${TEST_SOURCES}
     ${PROJECT_SOURCE_DIR}/test/core/test_utils.cpp
-    ${CONFIG_SOURCES}
-    ${CORE_SOURCES}
-    ${API_SOURCES}
-    ${WIN_SOURCES}
     ${PROJECT_SOURCE_DIR}/lib/nanopb/pb_common.c
     ${PROJECT_SOURCE_DIR}/lib/nanopb/pb_decode.c
     ${PROJECT_SOURCE_DIR}/lib/nanopb/pb_encode.c
     ${PROJECT_SOURCE_DIR}/lib/Unity/src/unity.c
 )
 
+# Linking ApiLib and conditionally linking platform-specific libraries
+target_link_libraries(test_app PRIVATE 
+    ApiLib
+    ConfigLib
+    CoreLib
+    $<$<PLATFORM_ID:Windows>:WinLib ${PAHO_MQTT_C_LIBRARIES} ${PAHO_MQTT_CPP_LIBRARIES} ws2_32>
+    $<$<NOT:$<PLATFORM_ID:Windows>>:PahoMqttCpp::paho-mqttpp3-static>
+)
+
 add_executable(api_test
     ${PROJECT_SOURCE_DIR}/src/native/api_test.cpp
-    #${CONFIG_SOURCES} # don't use this unless mqtt is needed.. lol
     "${PROJECT_SOURCE_DIR}/src/config/make_cluster_config.cpp"
     "${PROJECT_SOURCE_DIR}/src/config/make_mqtt_config.cpp"
-    ${CORE_SOURCES}
-    ${API_SOURCES}
-    ${WIN_SOURCES}
     ${PROJECT_SOURCE_DIR}/lib/nanopb/pb_common.c
     ${PROJECT_SOURCE_DIR}/lib/nanopb/pb_decode.c
     ${PROJECT_SOURCE_DIR}/lib/nanopb/pb_encode.c
 )
+target_link_libraries(api_test PRIVATE
+    ApiLib
+    CoreLib
+    $<$<PLATFORM_ID:Windows>:WinLib ${PAHO_MQTT_C_LIBRARIES} ${PAHO_MQTT_CPP_LIBRARIES} ws2_32>
+    $<$<NOT:$<PLATFORM_ID:Windows>>:PahoMqttCpp::paho-mqttpp3-static>
+)
 
 add_library(LedTableApi
-    ${CORE_SOURCES}
-    ${API_SOURCES}
-    ${WIN_SOURCES}
     "${PROJECT_SOURCE_DIR}/src/config/make_cluster_config.cpp"
     "${PROJECT_SOURCE_DIR}/src/config/make_mqtt_config.cpp"
     ${PROJECT_SOURCE_DIR}/lib/nanopb/pb_common.c
     ${PROJECT_SOURCE_DIR}/lib/nanopb/pb_decode.c
     ${PROJECT_SOURCE_DIR}/lib/nanopb/pb_encode.c
+)
+target_link_libraries(LedTableApi PRIVATE
+    ApiLib
+    CoreLib
+    $<$<PLATFORM_ID:Windows>:WinLib  ${PAHO_MQTT_C_LIBRARIES} ${PAHO_MQTT_CPP_LIBRARIES} ws2_32>
+    $<$<NOT:$<PLATFORM_ID:Windows>>:PahoMqttCpp::paho-mqttpp3-static>
 )
 
 # Platform-specific definitions and libraries
 if(WIN32)
-    add_definitions(-D_WIN64)
-    add_definitions(-DWIN64)
-    
-    # Specify Windows-specific include and library paths if not using standard installation paths
-    include_directories("C:/DevTools/installed/paho.mqtt.c/include" "C:/DevTools/installed/paho.mqtt.cpp/include")
-    set(PAHO_MQTT_C_LIBRARIES "C:/DevTools/installed/paho.mqtt.c/lib/paho-mqtt3a-static.lib")
-    set(PAHO_MQTT_CPP_LIBRARIES "C:/DevTools/installed/paho.mqtt.cpp/lib/paho-mqttpp3-static.lib")
-    
-    target_link_libraries(demo ${PAHO_MQTT_C_LIBRARIES} ${PAHO_MQTT_CPP_LIBRARIES} ws2_32)
-    target_link_libraries(test_app ${PAHO_MQTT_C_LIBRARIES} ${PAHO_MQTT_CPP_LIBRARIES} ws2_32)
-    target_link_libraries(api_test ${PAHO_MQTT_C_LIBRARIES} ${PAHO_MQTT_CPP_LIBRARIES} ws2_32)
-    else()
+else()
     # Find Paho MQTT C and C++ libraries installed in standard locations
     #temporary fix for weird setup.. should probably make this some kind of env var or flag
-    #find_package(PahoMqttC REQUIRED)
     find_package(eclipse-paho-mqtt-c REQUIRED)
     find_package(PahoMqttCpp REQUIRED)
-    
-    target_link_libraries(demo PahoMqttCpp::paho-mqttpp3-static)
-    target_link_libraries(test_app PahoMqttCpp::paho-mqttpp3-static)
-    target_link_libraries(api_test PahoMqttCpp::paho-mqttpp3-static)
-    endif()
+endif()
 
 # For nanopb, specify the source files directly
 target_sources(demo PRIVATE
@@ -124,7 +118,6 @@ target_sources(demo PRIVATE
     ${PROJECT_SOURCE_DIR}/lib/nanopb/pb_decode.c
     ${PROJECT_SOURCE_DIR}/lib/nanopb/pb_encode.c
 )
-
 
 add_subdirectory(lib/pybind11)
 add_subdirectory(src/bindings)

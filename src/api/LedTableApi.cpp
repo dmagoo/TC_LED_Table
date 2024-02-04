@@ -168,6 +168,68 @@ WRGB LedTableApi::dequeueNodePixel(Cartesian2dCoordinate coordinate, WRGB color)
     return performClusterOperationReturningColor<DequeueNodePixelCommand>(nodeId, color);
 }
 
+std::vector<int> LedTableApi::getNodePath(int nodeIdA, int nodeIdB) { return {}; }
+std::vector<int> LedTableApi::getNodePath(RingCoordinate coordinateA, RingCoordinate coordinateB) {
+    int nodeIdA = convertToNodeId(coordinateA);
+    int nodeIdB = convertToNodeId(coordinateB);
+    return {};
+}
+std::vector<int> LedTableApi::getNodePath(Cartesian2dCoordinate coordinateA, Cartesian2dCoordinate coordinateB) {
+    int nodeIdA = convertToNodeId(coordinateA);
+    int nodeIdB = convertToNodeId(coordinateB);
+    return {};
+}
+std::vector<int> LedTableApi::getNodePath(CubeCoordinate coordinateA, CubeCoordinate coordinateB) {
+    int nodeIdA = convertToNodeId(coordinateA);
+    int nodeIdB = convertToNodeId(coordinateB);
+    return {};
+}
+
+std::vector<int> LedTableApi::getNodeNeighbors(int nodeId) { return {}; }
+std::vector<int> LedTableApi::getNodeNeighbors(RingCoordinate coordinate) {
+    int nodeId = convertToNodeId(coordinate);
+    return {};
+}
+std::vector<int> LedTableApi::getNodeNeighbors(Cartesian2dCoordinate coordinate) {
+    int nodeId = convertToNodeId(coordinate);
+    return {};
+}
+std::vector<int> LedTableApi::getNodeNeighbors(CubeCoordinate coordinate) {
+    int nodeId = convertToNodeId(coordinate);
+    return {};
+}
+
+std::vector<int> LedTableApi::getNodeNeighbors(int nodeId, bool includeMissingNeighbors) { return {}; }
+std::vector<int> LedTableApi::getNodeNeighbors(RingCoordinate coordinate, bool includeMissingNeighbors) {
+    int nodeId = convertToNodeId(coordinate);
+    return {};
+}
+std::vector<int> LedTableApi::getNodeNeighbors(Cartesian2dCoordinate coordinate, bool includeMissingNeighbors) {
+    int nodeId = convertToNodeId(coordinate);
+    return {};
+}
+std::vector<int> LedTableApi::getNodeNeighbors(CubeCoordinate coordinate, bool includeMissingNeighbors) {
+    int nodeId = convertToNodeId(coordinate);
+    return {};
+}
+
+std::tuple<int, int> LedTableApi::getFacingPixelIndexes(int nodeIdA, int nodeIdB) { return {}; }
+std::tuple<int, int> LedTableApi::getFacingPixelIndexes(RingCoordinate coordinateA, RingCoordinate coordinateB) {
+    int nodeIdA = convertToNodeId(coordinateA);
+    int nodeIdB = convertToNodeId(coordinateB);
+    return {};
+}
+std::tuple<int, int> LedTableApi::getFacingPixelIndexes(Cartesian2dCoordinate coordinateA, Cartesian2dCoordinate coordinateB) {
+    int nodeIdA = convertToNodeId(coordinateA);
+    int nodeIdB = convertToNodeId(coordinateB);
+    return {};
+}
+std::tuple<int, int> LedTableApi::getFacingPixelIndexes(CubeCoordinate coordinateA, CubeCoordinate coordinateB) {
+    int nodeIdA = convertToNodeId(coordinateA);
+    int nodeIdB = convertToNodeId(coordinateB);
+    return {};
+}
+
 void LedTableApi::setSuppressMessages(bool newValue) {
     suppressMessages = newValue;
 }

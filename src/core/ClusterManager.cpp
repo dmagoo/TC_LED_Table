@@ -5,7 +5,6 @@ ClusterManager::ClusterManager(const std::vector<ClusterConfig> &clusterConfigs)
         clusters.emplace_back(clusterConfig.clusterId, clusterConfig.nodeConfigs);
         clusterIdToIndexMap[clusterConfig.clusterId] = clusters.size() - 1;
         for (const auto &nodeConfig : clusterConfig.nodeConfigs) {
-
             nodeIdToClusterIdMap[nodeConfig.getId()] = clusterConfig.clusterId;
 
             ringCoordinateToNodeId[nodeConfig.getRingCoordinates()] = nodeConfig.getId();

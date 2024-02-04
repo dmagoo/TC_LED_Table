@@ -23,15 +23,12 @@ PYBIND11_MODULE(tc_led_table, m) {
 
         // Create the MQTT client configuration
         // auto mqttClient = makeMQTTClientConfig("LedTableController", host);
-        auto mqttClient = makeMQTTClientConfig("LedTableController");
+        static auto mqttClient = makeMQTTClientConfig("LedTableController");
 
-        ClusterMessageManager clusterMessageManager(mqttClient.get());
-        ClusterManager clusterManager(makeClusterConfigs());
+        static ClusterMessageManager clusterMessageManager(mqttClient.get());
+        static ClusterManager clusterManager(makeClusterConfigs());
         static LedTableApi api(clusterManager, &clusterMessageManager);
-
         // Return a pointer to the static LedTableApi instance
         return &api;
-
-
     }, "Get or create an API instance with the specified configuration.");
 }

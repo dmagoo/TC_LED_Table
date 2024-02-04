@@ -67,7 +67,8 @@
         "list": "cpp",
         "regex": "cpp",
         "set": "cpp",
-        "future": "cpp"
+        "future": "cpp",
+        "typeindex": "cpp"
     },
     "configurations": [
         {

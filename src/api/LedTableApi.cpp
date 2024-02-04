@@ -7,30 +7,19 @@ template <typename CommandType, typename... Args>
 void LedTableApi::performClusterOperationReturningVoid(int nodeId, Args... args) {
     int clusterId = clusterManager.getClusterIdFromNodeId(nodeId);
     const Cluster *clusterPtr = clusterManager.getClusterById(clusterId);
-std::cout << "LOLOLOL" << std::endl;
     if (clusterPtr) {
-std::cout << "got cp" << std::endl;
         Cluster &cluster = *const_cast<Cluster *>(clusterPtr); // Cast to non-const reference
-std::cout << "got cluster, i hope" << std::endl;
         if constexpr (sizeof...(args) >= 2) {
-std::cout << "got arg2?" << std::endl;
             auto secondArgument = std::get<1>(std::make_tuple(args...));
-std::cout << "got it!" << std::endl;
         }
         //// HERE the seond argument is fine!!  Is the syntax below correct?
         CommandType command(nodeId, args...);
-std::cout << "made a command" << std::endl;
         // run the command against the local model
         if (!suppressMessages && clusterMessageManager != nullptr) {
-std::cout << "about to send a cc" << std::endl;
             clusterMessageManager->sendClusterCommand(clusterId, command);
-std::cout << "sent a cc" << std::endl;
         }
-std::cout << "going to execute" << std::endl;
         command.execute(cluster);
-std::cout << "we executed" << std::endl;
     } else {
-std::cout << "we done baddd" << std::endl;
         // Handle the case where the cluster is not found
     }
 }
@@ -61,7 +50,6 @@ template WRGB LedTableApi::performClusterOperationReturningColor<DequeueNodePixe
 // Template specialization for RingCoordinate
 template <>
 int LedTableApi::convertToNodeId<RingCoordinate>(const RingCoordinate &coordinate) {
-    std::cout << "converting ring coord to node id" << std::endl;
     return clusterManager.getNodeId(coordinate);
 }
 
@@ -83,18 +71,8 @@ void LedTableApi::fillNode(int nodeId, WRGB color) {
 }
 
 void LedTableApi::fillNode(RingCoordinate coordinate, WRGB color) {
-    try {
-        std::cout << "incoming" << std::endl;
-        int nodeId = convertToNodeId(coordinate);
-        std::cout << "in ring fill with node: " << nodeId << std::endl;
-        performClusterOperationReturningVoid<FillNodeCommand>(nodeId, color);
-    } catch (const std::exception& e) {
-        // Catch standard exceptions
-        std::cout << "An exception occurred in fillNode: " << e.what() << std::endl;
-    } catch (...) {
-        // Catch any other types of exceptions
-        std::cout << "An unknown exception occurred in fillNode." << std::endl;
-    }
+    int nodeId = convertToNodeId(coordinate);
+    performClusterOperationReturningVoid<FillNodeCommand>(nodeId, color);
 }
 
 void LedTableApi::fillNode(CubeCoordinate coordinate, WRGB color) {

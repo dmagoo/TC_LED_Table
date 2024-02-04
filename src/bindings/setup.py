@@ -1,20 +1,20 @@
 from setuptools import setup, Extension
 from pybind11.setup_helpers import Pybind11Extension, build_ext
+import platform
 
-ext_modules = [
-    Pybind11Extension(
-        "ledtableapi",
-        ["src/bindings/api/led_table_api_bindings.cpp"],
-        # Extra compile args can be specified if needed
-    ),
-]
+# Define platform-specific file extensions
+if platform.system() == "Windows":
+    pyd_file = 'python_bindings/ledtableapi_py.cp38-win_amd64.pyd'
+elif platform.system() == "Linux":
+    pyd_file = 'python_bindings/ledtableapi_py.so'  # Use .so for Linux
 
 setup(
     name="ledtableapi",
     version="0.1",
-    author="Your Name",
+    author="Dave MacGugan",
     description="Python bindings for LedTableApi",
-    ext_modules=ext_modules,
-    cmdclass={"build_ext": build_ext},
-    zip_safe=False,
+    ext_modules=[
+        Extension('ledtableapi', [pyd_file]),
+    ],
 )
+

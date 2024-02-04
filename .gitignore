@@ -7,6 +7,7 @@
 secrets.ini
 config/config.local.json
 build
+python_bindings/
 Testing
 bin
 

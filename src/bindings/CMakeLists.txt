@@ -5,7 +5,6 @@ set(pybind11_DIR "${CMAKE_SOURCE_DIR}/lib/pybind11/share/cmake/pybind11")
 pybind11_add_module(tc_led_table 
     tc_led_table_module.cpp
     coordinate_bindings.cpp
-    led_table_api_bindings.cpp  # Keep this if it still contains necessary bindings
 )
 
 

@@ -67,6 +67,16 @@ public:
     WRGB dequeueNodePixel(Cartesian2dCoordinate coordinate, WRGB color);
     WRGB dequeueNodePixel(CubeCoordinate coordinate, WRGB color);
 
+    std::vector<int> listNodeIds();
+
+    int getNodeId(const RingCoordinate &coords) const;
+    int getNodeId(const CubeCoordinate &coords) const;
+    int getNodeId(const Cartesian2dCoordinate &coords) const;
+
+    RingCoordinate getRingCoordinate(int nodeId) const;
+    CubeCoordinate getCubeCoordinate(int nodeId) const;
+    Cartesian2dCoordinate getCartesian2dCoordinate(int nodeId) const;
+
     // return the pixel buffer for a single node
     std::vector<WRGB> getNodePixelBuffer(int nodeId);
     std::vector<WRGB> getNodePixelBuffer(RingCoordinate coordinate);
@@ -85,15 +95,13 @@ public:
 
     std::vector<int> getNodeNeighbors(int nodeId, bool includeMissingNeighbors);
     std::vector<int> getNodeNeighbors(RingCoordinate coordinate, bool includeMissingNeighbors);
-    std::vector<int> getNodeNeighbors(Cartesian2dCoordinate coordinate, bool includeMissingNeighbors);  
+    std::vector<int> getNodeNeighbors(Cartesian2dCoordinate coordinate, bool includeMissingNeighbors);
     std::vector<int> getNodeNeighbors(CubeCoordinate coordinate, bool includeMissingNeighbors);
 
     std::tuple<int, int> getFacingPixelIndexes(int nodeIdA, int nodeIdB);
     std::tuple<int, int> getFacingPixelIndexes(RingCoordinate coordinateA, RingCoordinate coordinateB);
     std::tuple<int, int> getFacingPixelIndexes(Cartesian2dCoordinate coordinateA, Cartesian2dCoordinate coordinateB);
     std::tuple<int, int> getFacingPixelIndexes(CubeCoordinate coordinateA, CubeCoordinate coordinateB);
-
-
 
     // contacts all clusters, asking them to fill their buffers black, could any color fill?
     void reset();

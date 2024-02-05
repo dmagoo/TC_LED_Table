@@ -2,13 +2,13 @@
 #ifndef CLUSTERMANAGER_H
 #define CLUSTERMANAGER_H
 
-#include "ClusterConfig.h"
 #include "Cluster.h"
-#include "coordinates/RingCoordinate.h"
-#include "coordinates/CubeCoordinate.h"
+#include "ClusterConfig.h"
 #include "coordinates/Cartesian2dCoordinate.h"
-#include <vector>
+#include "coordinates/CubeCoordinate.h"
+#include "coordinates/RingCoordinate.h"
 #include <unordered_map>
+#include <vector>
 
 class ClusterManager {
 private:
@@ -28,14 +28,22 @@ private:
 
 public:
     ClusterManager(const std::vector<ClusterConfig> &clusterConfigs);
-    const Cluster* getClusterById(int clusterId) const;
+    const Cluster *getClusterById(int clusterId) const;
 
     int getClusterIdFromNodeId(int nodeId) const;
 
-    void forEachCluster(std::function<void(Cluster&)> func) {
-        for (Cluster& cluster : clusters) {
+    void forEachCluster(std::function<void(Cluster &)> func) {
+        for (Cluster &cluster : clusters) {
             func(cluster);
         }
+    }
+
+    std::vector<int> listNodeIds() const {
+        std::vector<int> nodeIds;
+        for (const auto &pair : nodeIdToClusterIdMap) {
+            nodeIds.push_back(pair.first);
+        }
+        return nodeIds;
     }
 
     int getNodeId(const RingCoordinate &coords) const;

@@ -22,7 +22,7 @@ std::shared_ptr<LedTableApi> init() {
 }
 
 void bootstrap() {
-init();
+    init();
 }
 
 PYBIND11_MODULE(tc_led_table, m) {
@@ -128,6 +128,39 @@ PYBIND11_MODULE(tc_led_table, m) {
         return api->dequeueNodePixel(coordinate, color);
     });
 
+    m.def("listNodeIds", []() -> std::vector<int> {
+        auto api = init();
+        return api->listNodeIds();
+    });
+
+    m.def("getNodeId", [](const RingCoordinate &coordinate) -> int {
+        auto api = init();
+        return api->getNodeId(coordinate);
+    });
+
+    m.def("getNodeId", [](const Cartesian2dCoordinate &coordinate) -> int {
+        auto api = init();
+        return api->getNodeId(coordinate);
+    });
+
+    m.def("getNodeId", [](const CubeCoordinate &coordinate) -> int {
+        auto api = init();
+        return api->getNodeId(coordinate);
+    });
+
+    m.def("getRingCoordinate", [](int nodeId) -> RingCoordinate {
+        auto api = init();
+        return api->getRingCoordinate(nodeId);
+    });
+    m.def("getCartesian2dCoordinate", [](int nodeId) -> Cartesian2dCoordinate {
+        auto api = init();
+        return api->getCartesian2dCoordinate(nodeId);
+    });
+    m.def("getCubeCoordinate", [](int nodeId) -> CubeCoordinate {
+        auto api = init();
+        return api->getCubeCoordinate(nodeId);
+    });
+
     // getNodePixelBuffer methods
     m.def("getNodePixelBuffer", [](int nodeId) -> std::vector<WRGB> {
         auto api = init();
@@ -145,7 +178,6 @@ PYBIND11_MODULE(tc_led_table, m) {
         auto api = init();
         return api->getNodePixelBuffer(coordinate);
     });
-
 
     m.def("reset", []() {
         auto api = init();

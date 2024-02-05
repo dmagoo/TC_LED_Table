@@ -127,6 +127,26 @@ PYBIND11_MODULE(tc_led_table, m) {
         auto api = init();
         return api->dequeueNodePixel(coordinate, color);
     });
+
+    // getNodePixelBuffer methods
+    m.def("getNodePixelBuffer", [](int nodeId) -> std::vector<WRGB> {
+        auto api = init();
+        return api->getNodePixelBuffer(nodeId);
+    });
+    m.def("getNodePixelBuffer", [](const RingCoordinate &coordinate) -> std::vector<WRGB> {
+        auto api = init();
+        return api->getNodePixelBuffer(coordinate);
+    });
+    m.def("getNodePixelBuffer", [](const Cartesian2dCoordinate &coordinate) -> std::vector<WRGB> {
+        auto api = init();
+        return api->getNodePixelBuffer(coordinate);
+    });
+    m.def("getNodePixelBuffer", [](const CubeCoordinate &coordinate) -> std::vector<WRGB> {
+        auto api = init();
+        return api->getNodePixelBuffer(coordinate);
+    });
+
+
     m.def("reset", []() {
         auto api = init();
         api->reset();

@@ -67,6 +67,12 @@ public:
     WRGB dequeueNodePixel(Cartesian2dCoordinate coordinate, WRGB color);
     WRGB dequeueNodePixel(CubeCoordinate coordinate, WRGB color);
 
+    // return the pixel buffer for a single node
+    std::vector<WRGB> getNodePixelBuffer(int nodeId);
+    std::vector<WRGB> getNodePixelBuffer(RingCoordinate coordinate);
+    std::vector<WRGB> getNodePixelBuffer(Cartesian2dCoordinate coordinate);
+    std::vector<WRGB> getNodePixelBuffer(CubeCoordinate coordinate);
+
     std::vector<int> getNodePath(int nodeIdA, int nodeIdB);
     std::vector<int> getNodePath(RingCoordinate coordinateA, RingCoordinate coordinateB);
     std::vector<int> getNodePath(Cartesian2dCoordinate coordinateA, Cartesian2dCoordinate coordinateB);

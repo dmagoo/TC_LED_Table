@@ -168,6 +168,24 @@ WRGB LedTableApi::dequeueNodePixel(Cartesian2dCoordinate coordinate, WRGB color)
     return performClusterOperationReturningColor<DequeueNodePixelCommand>(nodeId, color);
 }
 
+std::vector<WRGB> LedTableApi::getNodePixelBuffer(int nodeId) {
+    int clusterId = clusterManager.getClusterIdFromNodeId(nodeId);
+    const Cluster *clusterPtr = clusterManager.getClusterById(clusterId);
+    return clusterPtr->getNodePixelBuffer(nodeId);
+}
+std::vector<WRGB> LedTableApi::getNodePixelBuffer(RingCoordinate coordinate) {
+    int nodeId = convertToNodeId(coordinate);
+    return getNodePixelBuffer(nodeId);
+}
+std::vector<WRGB> LedTableApi::getNodePixelBuffer(Cartesian2dCoordinate coordinate) {
+    int nodeId = convertToNodeId(coordinate);
+    return getNodePixelBuffer(nodeId);
+}
+std::vector<WRGB> LedTableApi::getNodePixelBuffer(CubeCoordinate coordinate) {
+    int nodeId = convertToNodeId(coordinate);
+    return getNodePixelBuffer(nodeId);
+}
+
 std::vector<int> LedTableApi::getNodePath(int nodeIdA, int nodeIdB) { return {}; }
 std::vector<int> LedTableApi::getNodePath(RingCoordinate coordinateA, RingCoordinate coordinateB) {
     int nodeIdA = convertToNodeId(coordinateA);

@@ -1,6 +1,9 @@
 #include "LedTableApi.h"
 #include "core/ClusterMessage.h"
+#include "core/node_geometry.h"
 #include <iostream>
+
+
 // #include <vector>
 
 template <typename CommandType, typename... Args>
@@ -227,32 +230,35 @@ std::vector<int> LedTableApi::getNodePath(CubeCoordinate coordinateA, CubeCoordi
     return {};
 }
 
-std::vector<int> LedTableApi::getNodeNeighbors(int nodeId) { return {}; }
+std::vector<int> LedTableApi::getNodeNeighbors(int nodeId) {
+    std::vector<int> values = node_geometry::getNodeNeighbors(nodeId, clusterManager);
+    return values;
+}
 std::vector<int> LedTableApi::getNodeNeighbors(RingCoordinate coordinate) {
     int nodeId = convertToNodeId(coordinate);
-    return {};
+    return getNodeNeighbors(nodeId);
 }
 std::vector<int> LedTableApi::getNodeNeighbors(Cartesian2dCoordinate coordinate) {
     int nodeId = convertToNodeId(coordinate);
-    return {};
+    return getNodeNeighbors(nodeId);
 }
 std::vector<int> LedTableApi::getNodeNeighbors(CubeCoordinate coordinate) {
     int nodeId = convertToNodeId(coordinate);
-    return {};
+    return getNodeNeighbors(nodeId);
 }
 
 std::vector<int> LedTableApi::getNodeNeighbors(int nodeId, bool includeMissingNeighbors) { return {}; }
 std::vector<int> LedTableApi::getNodeNeighbors(RingCoordinate coordinate, bool includeMissingNeighbors) {
     int nodeId = convertToNodeId(coordinate);
-    return {};
+    return getNodeNeighbors(nodeId, includeMissingNeighbors);
 }
 std::vector<int> LedTableApi::getNodeNeighbors(Cartesian2dCoordinate coordinate, bool includeMissingNeighbors) {
     int nodeId = convertToNodeId(coordinate);
-    return {};
+    return getNodeNeighbors(nodeId, includeMissingNeighbors);
 }
 std::vector<int> LedTableApi::getNodeNeighbors(CubeCoordinate coordinate, bool includeMissingNeighbors) {
     int nodeId = convertToNodeId(coordinate);
-    return {};
+    return getNodeNeighbors(nodeId, includeMissingNeighbors);
 }
 
 std::tuple<int, int> LedTableApi::getFacingPixelIndexes(int nodeIdA, int nodeIdB) { return {}; }

@@ -6,6 +6,7 @@ add_library(CoreLib
     ClusterMessageManager.cpp
     Node.cpp
     NodeConfig.cpp
+    node_geometry.cpp
     coordinates/Cartesian2dCoordinate.cpp
     coordinates/CubeCoordinate.cpp
     coordinates/RingCoordinate.cpp

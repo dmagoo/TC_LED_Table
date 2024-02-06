@@ -103,6 +103,7 @@ public:
     std::tuple<int, int> getFacingPixelIndexes(Cartesian2dCoordinate coordinateA, Cartesian2dCoordinate coordinateB);
     std::tuple<int, int> getFacingPixelIndexes(CubeCoordinate coordinateA, CubeCoordinate coordinateB);
 
+
     // contacts all clusters, asking them to fill their buffers black, could any color fill?
     void reset();
 

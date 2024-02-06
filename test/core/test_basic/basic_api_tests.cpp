@@ -14,7 +14,7 @@
 #include "core/LedTableTypes.h"
 #include "windows/AsciiUtils.h"
 
-void test_basic_api_polymorphism() {
+void test_basic_api_overloading() {
     // some tests to make sure the functions work with different
     // coordinate systems
     ClusterManager clusterManager(makeClusterConfigs());
@@ -146,10 +146,31 @@ void test_reset_cluster() {
     verifyBufferIsFilledWithColor(buffer, 0x00000000);
 }
 
+void test_node_geometry() {
+    ClusterManager clusterManager(makeClusterConfigs());
+    LedTableApi api(clusterManager);
+    std::vector<int> neighbors = api.getNodeNeighbors(0);
+    std::vector<int> expected = {1, 2, 3, 4, 5, 6};
+    TEST_ASSERT_EQUAL_INT_ARRAY(expected.data(), neighbors.data(), expected.size());
+
+    neighbors = api.getNodeNeighbors(7);
+    expected = {8, 10, 1, 6, 34, 36};
+    TEST_ASSERT_EQUAL_INT_ARRAY(expected.data(), neighbors.data(), expected.size());
+
+    neighbors = api.getNodeNeighbors(23);
+    expected = {22, 21, -1, -1, 25, 24};
+    TEST_ASSERT_EQUAL_INT_ARRAY(expected.data(), neighbors.data(), expected.size());
+
+    neighbors = api.getNodeNeighbors(9);
+    expected = {-1, -1, 11, 10, 8, -1};
+    TEST_ASSERT_EQUAL_INT_ARRAY(expected.data(), neighbors.data(), expected.size());
+}
+
 int run_basic_api_tests(int argc, char **argv) {
-    RUN_TEST(test_basic_api_polymorphism);
+    RUN_TEST(test_basic_api_overloading);
     RUN_TEST(test_set_pixel);
     RUN_TEST(test_fill_node);
     RUN_TEST(test_reset_cluster);
+    RUN_TEST(test_node_geometry);
     return 0;
 }

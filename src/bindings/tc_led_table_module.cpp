@@ -179,6 +179,25 @@ PYBIND11_MODULE(tc_led_table, m) {
         return api->getNodePixelBuffer(coordinate);
     });
 
+    // getNodeNeighbors methods
+    m.def("getNodeNeighbors", [](int nodeId) -> std::vector<int> {
+        auto api = init();
+        return api->getNodeNeighbors(nodeId);
+    });
+    m.def("getNodeNeighbors", [](const RingCoordinate &coordinate) -> std::vector<int> {
+        auto api = init();
+        return api->getNodeNeighbors(coordinate);
+    });
+    m.def("getNodeNeighbors", [](const Cartesian2dCoordinate &coordinate) -> std::vector<int> {
+        auto api = init();
+        return api->getNodeNeighbors(coordinate);
+    });
+    m.def("getNodeNeighbors", [](const CubeCoordinate &coordinate) -> std::vector<int> {
+        auto api = init();
+        return api->getNodeNeighbors(coordinate);
+    });
+
+
     m.def("reset", []() {
         auto api = init();
         api->reset();

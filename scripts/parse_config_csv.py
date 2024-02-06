@@ -38,6 +38,14 @@ def generate_cpp_code(config):
         cpp_code += f"        ClusterConfig({cluster_id}, makeNodeConfigs({cluster_id})),\n"
     cpp_code += "    };\n"
     cpp_code += "}\n\n"
+
+    cpp_code += "// allow a universe of a single cluster for unit testing\n"
+    cpp_code += "std::vector<ClusterConfig> makeClusterConfig(int clusterId) {\n"
+    cpp_code += "    return {\n"
+    cpp_code += "        ClusterConfig(clusterId, makeNodeConfigs(clusterId)),\n"
+    cpp_code += "    };\n"
+    cpp_code += "}\n\n"
+
     cpp_code += "std::vector<NodeConfig> makeNodeConfigs(int clusterId) {\n"
     cpp_code += "    switch(clusterId) {\n"
     for cluster_id, cluster in config['clusters'].items():

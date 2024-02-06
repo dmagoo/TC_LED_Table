@@ -197,7 +197,6 @@ PYBIND11_MODULE(tc_led_table, m) {
         return api->getNodeNeighbors(coordinate);
     });
 
-
     m.def("reset", []() {
         auto api = init();
         api->reset();

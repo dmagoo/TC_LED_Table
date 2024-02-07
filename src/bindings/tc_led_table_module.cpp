@@ -179,6 +179,26 @@ PYBIND11_MODULE(tc_led_table, m) {
         return api->getNodePixelBuffer(coordinate);
     });
 
+
+    // getNodePath methods
+    m.def("getNodePath", [](int nodeIdA, int nodeIdB) -> std::vector<int> {
+        auto api = init();
+        return api->getNodePath(nodeIdA, nodeIdB);
+    });
+    m.def("getNodePath", [](const RingCoordinate &coordinateA, const RingCoordinate &coordinateB) -> std::vector<int> {
+        auto api = init();
+        return api->getNodePath(coordinateA, coordinateB);
+    });
+    m.def("getNodePath", [](const Cartesian2dCoordinate &coordinateA, const Cartesian2dCoordinate &coordinateB) -> std::vector<int> {
+        auto api = init();
+        return api->getNodePath(coordinateA, coordinateB);
+    });
+    m.def("getNodePath", [](const CubeCoordinate &coordinateA, const CubeCoordinate &coordinateB) -> std::vector<int> {
+        auto api = init();
+        return api->getNodePath(coordinateA, coordinateB);
+    });
+
+
     // getNodeNeighbors methods
     m.def("getNodeNeighbors", [](int nodeId) -> std::vector<int> {
         auto api = init();

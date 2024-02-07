@@ -171,7 +171,7 @@ std::vector<NodeConfig> makeNodeConfigs(int clusterId) {
                 Cartesian2dCoordinate(-200.0, 100.0)),
             NodeConfig(35, 8,
                 RingCoordinate(3, 15),
-                CubeCoordinate(-3, 1, 2),
+                CubeCoordinate(-3, 0, 3),
                 Cartesian2dCoordinate(-300.0, 150.0)),
             NodeConfig(36, 8,
                 RingCoordinate(3, 16),

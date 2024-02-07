@@ -217,6 +217,25 @@ PYBIND11_MODULE(tc_led_table, m) {
         return api->getNodeNeighbors(coordinate);
     });
 
+    // getFacingPixelIndexes methods
+    m.def("getFacingPixelIndexes", [](int nodeIdA, int nodeIdB) -> std::tuple<int,int> {
+        auto api = init();
+        return api->getFacingPixelIndexes(nodeIdA, nodeIdB);
+    });
+    m.def("getFacingPixelIndexes", [](const RingCoordinate &coordinateA, const RingCoordinate &coordinateB) -> std::tuple<int,int> {
+        auto api = init();
+        return api->getFacingPixelIndexes(coordinateA, coordinateB);
+    });
+    m.def("getFacingPixelIndexes", [](const Cartesian2dCoordinate &coordinateA, const Cartesian2dCoordinate &coordinateB) -> std::tuple<int,int> {
+        auto api = init();
+        return api->getFacingPixelIndexes(coordinateA, coordinateB);
+    });
+    m.def("getFacingPixelIndexes", [](const CubeCoordinate &coordinateA, const CubeCoordinate &coordinateB) -> std::tuple<int,int> {
+        auto api = init();
+        return api->getFacingPixelIndexes(coordinateA, coordinateB);
+    });
+
+
     m.def("reset", []() {
         auto api = init();
         api->reset();

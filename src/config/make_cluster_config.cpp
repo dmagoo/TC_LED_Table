@@ -132,14 +132,14 @@ std::vector<NodeConfig> makeNodeConfigs(int clusterId) {
                 Cartesian2dCoordinate(0.0, -300.0)),
             NodeConfig(26, 8,
                 RingCoordinate(3, 10),
-                CubeCoordinate(1, -2, 1),
+                CubeCoordinate(2,-3,1),
                 Cartesian2dCoordinate(-100.0, -250.0))
         };
     case 3:
         return {
             NodeConfig(27, 8,
                 RingCoordinate(2, 7),
-                CubeCoordinate(1, 2, 1),
+                CubeCoordinate(1,-2,1),
                 Cartesian2dCoordinate(-100.0, -150.0)),
             NodeConfig(28, 8,
                 RingCoordinate(3, 11),

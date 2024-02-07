@@ -213,7 +213,10 @@ std::vector<WRGB> LedTableApi::getNodePixelBuffer(CubeCoordinate coordinate) {
     return getNodePixelBuffer(nodeId);
 }
 
-std::vector<int> LedTableApi::getNodePath(int nodeIdA, int nodeIdB) { return {}; }
+std::vector<int> LedTableApi::getNodePath(int nodeIdA, int nodeIdB) { 
+    std::vector<int> values = node_geometry::get_node_path(nodeIdA, nodeIdB, clusterManager);
+    return values;
+}
 std::vector<int> LedTableApi::getNodePath(RingCoordinate coordinateA, RingCoordinate coordinateB) {
     int nodeIdA = convertToNodeId(coordinateA);
     int nodeIdB = convertToNodeId(coordinateB);
@@ -231,7 +234,7 @@ std::vector<int> LedTableApi::getNodePath(CubeCoordinate coordinateA, CubeCoordi
 }
 
 std::vector<int> LedTableApi::getNodeNeighbors(int nodeId) {
-    std::vector<int> values = node_geometry::getNodeNeighbors(nodeId, clusterManager);
+    std::vector<int> values = node_geometry::get_node_neighbors(nodeId, clusterManager);
     return values;
 }
 std::vector<int> LedTableApi::getNodeNeighbors(RingCoordinate coordinate) {
@@ -245,20 +248,6 @@ std::vector<int> LedTableApi::getNodeNeighbors(Cartesian2dCoordinate coordinate)
 std::vector<int> LedTableApi::getNodeNeighbors(CubeCoordinate coordinate) {
     int nodeId = convertToNodeId(coordinate);
     return getNodeNeighbors(nodeId);
-}
-
-std::vector<int> LedTableApi::getNodeNeighbors(int nodeId, bool includeMissingNeighbors) { return {}; }
-std::vector<int> LedTableApi::getNodeNeighbors(RingCoordinate coordinate, bool includeMissingNeighbors) {
-    int nodeId = convertToNodeId(coordinate);
-    return getNodeNeighbors(nodeId, includeMissingNeighbors);
-}
-std::vector<int> LedTableApi::getNodeNeighbors(Cartesian2dCoordinate coordinate, bool includeMissingNeighbors) {
-    int nodeId = convertToNodeId(coordinate);
-    return getNodeNeighbors(nodeId, includeMissingNeighbors);
-}
-std::vector<int> LedTableApi::getNodeNeighbors(CubeCoordinate coordinate, bool includeMissingNeighbors) {
-    int nodeId = convertToNodeId(coordinate);
-    return getNodeNeighbors(nodeId, includeMissingNeighbors);
 }
 
 std::tuple<int, int> LedTableApi::getFacingPixelIndexes(int nodeIdA, int nodeIdB) { return {}; }

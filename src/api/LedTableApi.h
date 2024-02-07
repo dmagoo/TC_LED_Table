@@ -93,11 +93,6 @@ public:
     std::vector<int> getNodeNeighbors(Cartesian2dCoordinate coordinate);
     std::vector<int> getNodeNeighbors(CubeCoordinate coordinate);
 
-    std::vector<int> getNodeNeighbors(int nodeId, bool includeMissingNeighbors);
-    std::vector<int> getNodeNeighbors(RingCoordinate coordinate, bool includeMissingNeighbors);
-    std::vector<int> getNodeNeighbors(Cartesian2dCoordinate coordinate, bool includeMissingNeighbors);
-    std::vector<int> getNodeNeighbors(CubeCoordinate coordinate, bool includeMissingNeighbors);
-
     std::tuple<int, int> getFacingPixelIndexes(int nodeIdA, int nodeIdB);
     std::tuple<int, int> getFacingPixelIndexes(RingCoordinate coordinateA, RingCoordinate coordinateB);
     std::tuple<int, int> getFacingPixelIndexes(Cartesian2dCoordinate coordinateA, Cartesian2dCoordinate coordinateB);

@@ -132,7 +132,7 @@ void test_reset_cluster() {
     LedTableApi api(clusterManager);
     api.setSuppressMessages(true);
 
-    for(int i=0; i<7; i++) {
+    for (int i = 0; i < 7; i++) {
         api.fillNode(i, 0xFFFFFFFF);
     }
 
@@ -160,10 +160,37 @@ void test_node_geometry() {
     neighbors = api.getNodeNeighbors(23);
     expected = {22, 21, -1, -1, 25, 24};
     TEST_ASSERT_EQUAL_INT_ARRAY(expected.data(), neighbors.data(), expected.size());
-
+    std::cout << std::dec;
     neighbors = api.getNodeNeighbors(9);
     expected = {-1, -1, 11, 10, 8, -1};
     TEST_ASSERT_EQUAL_INT_ARRAY(expected.data(), neighbors.data(), expected.size());
+
+    std::cout << "9 to 25" << std::endl;
+    std::vector<int> path = api.getNodePath(9, 25);
+
+    std::cout << "PATH: " << std::dec;
+    std::copy(path.begin(), path.end(), std::ostream_iterator<int>(std::cout, " "));
+    std::cout << std::endl;
+
+    expected = {9, 10, 1, 0, 4, 24, 25};
+    TEST_ASSERT_EQUAL_INT_ARRAY(expected.data(), path.data(), expected.size());
+
+    std::cout << "33 to 2" << std::endl;
+    path = api.getNodePath(33, 2);
+    expected = {33, 34, 6, 1, 2};
+    std::cout << "PATH: " << std::dec;
+    std::copy(path.begin(), path.end(), std::ostream_iterator<int>(std::cout, " "));
+    std::cout << std::endl;
+    TEST_ASSERT_EQUAL_INT_ARRAY(expected.data(), path.data(), expected.size());
+
+    std::cout << "35 to 9" << std::endl;
+    path = api.getNodePath(35, 19);
+    expected = {35, 34, 6, 0, 3, 20, 19};
+
+    std::cout << "PATH: " << std::dec;
+    std::copy(path.begin(), path.end(), std::ostream_iterator<int>(std::cout, " "));
+    std::cout << std::endl;
+    TEST_ASSERT_EQUAL_INT_ARRAY(expected.data(), path.data(), expected.size());
 }
 
 int run_basic_api_tests(int argc, char **argv) {

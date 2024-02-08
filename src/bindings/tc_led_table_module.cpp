@@ -2,8 +2,9 @@
 #include <pybind11/stl.h>
 
 #include "LedTableApi.h"
+#include "config/led_table_config.h"
 #include "config/make_cluster_config.h"
-#include "config/make_mqtt_config.h"
+// #include "config/make_mqtt_config.h"
 #include "core/ClusterManager.h"
 #include "core/ClusterMessageManager.h"
 
@@ -11,14 +12,16 @@ namespace py = pybind11;
 
 // Assuming these functions are defined in their respective .cpp files
 void init_coordinate_bindings(py::module_ &);
-// void init_led_table_api_bindings(py::module_ &);
 
 std::shared_ptr<LedTableApi> init() {
-    static auto mqttClient = makeMQTTClientConfig("LedTableController");
-    static ClusterMessageManager clusterMessageManager(mqttClient.get());
     static ClusterManager clusterManager(makeClusterConfigs());
-    static LedTableApi api(clusterManager, &clusterMessageManager);
-    return std::make_shared<LedTableApi>(api);
+
+    LedTableConfig config;
+    config.mqttConfig.brokerAddress = "tcp://192.168.1.49";
+    config.enableMessaging = true;
+
+    static auto apiSharedPtr = std::make_shared<LedTableApi>(clusterManager, config);
+    return apiSharedPtr;
 }
 
 void bootstrap() {
@@ -27,7 +30,6 @@ void bootstrap() {
 
 PYBIND11_MODULE(tc_led_table, m) {
     init_coordinate_bindings(m); // Initialize coordinate bindings
-    // init_led_table_api_bindings(m); // Initialize LedTableApi bindings
 
     m.def("init", &bootstrap, "Function to initialize and get the API instance");
     m.def(
@@ -61,7 +63,6 @@ PYBIND11_MODULE(tc_led_table, m) {
         api->fillNode(nodeId, colors, padcolor);
     });
     m.def("fillNode", [](const RingCoordinate &coordinate, const std::vector<WRGB> &colors, WRGB padcolor) {
-        std::cout << "------------------------------------------------" << std::endl;
         auto api = init();
         api->fillNode(coordinate, colors, padcolor);
     });
@@ -179,7 +180,6 @@ PYBIND11_MODULE(tc_led_table, m) {
         return api->getNodePixelBuffer(coordinate);
     });
 
-
     // getNodePath methods
     m.def("getNodePath", [](int nodeIdA, int nodeIdB) -> std::vector<int> {
         auto api = init();
@@ -197,7 +197,6 @@ PYBIND11_MODULE(tc_led_table, m) {
         auto api = init();
         return api->getNodePath(coordinateA, coordinateB);
     });
-
 
     // getNodeNeighbors methods
     m.def("getNodeNeighbors", [](int nodeId) -> std::vector<int> {
@@ -218,23 +217,22 @@ PYBIND11_MODULE(tc_led_table, m) {
     });
 
     // getFacingPixelIndexes methods
-    m.def("getFacingPixelIndexes", [](int nodeIdA, int nodeIdB) -> std::tuple<int,int> {
+    m.def("getFacingPixelIndexes", [](int nodeIdA, int nodeIdB) -> std::tuple<int, int> {
         auto api = init();
         return api->getFacingPixelIndexes(nodeIdA, nodeIdB);
     });
-    m.def("getFacingPixelIndexes", [](const RingCoordinate &coordinateA, const RingCoordinate &coordinateB) -> std::tuple<int,int> {
+    m.def("getFacingPixelIndexes", [](const RingCoordinate &coordinateA, const RingCoordinate &coordinateB) -> std::tuple<int, int> {
         auto api = init();
         return api->getFacingPixelIndexes(coordinateA, coordinateB);
     });
-    m.def("getFacingPixelIndexes", [](const Cartesian2dCoordinate &coordinateA, const Cartesian2dCoordinate &coordinateB) -> std::tuple<int,int> {
+    m.def("getFacingPixelIndexes", [](const Cartesian2dCoordinate &coordinateA, const Cartesian2dCoordinate &coordinateB) -> std::tuple<int, int> {
         auto api = init();
         return api->getFacingPixelIndexes(coordinateA, coordinateB);
     });
-    m.def("getFacingPixelIndexes", [](const CubeCoordinate &coordinateA, const CubeCoordinate &coordinateB) -> std::tuple<int,int> {
+    m.def("getFacingPixelIndexes", [](const CubeCoordinate &coordinateA, const CubeCoordinate &coordinateB) -> std::tuple<int, int> {
         auto api = init();
         return api->getFacingPixelIndexes(coordinateA, coordinateB);
     });
-
 
     m.def("reset", []() {
         auto api = init();

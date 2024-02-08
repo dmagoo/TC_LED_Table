@@ -1,25 +1,15 @@
 #include "make_mqtt_config.h"
 #include <iostream>
 
-std::unique_ptr<mqtt::async_client> makeMQTTClientConfig(const std::string& clientId) {
-    auto client = std::make_unique<mqtt::async_client>("tcp://192.168.1.49", clientId);
-std::cout << clientId << std::endl;
-    try {
-        // Try to connect the client
-         mqtt::connect_options connOpts;
-        connOpts.set_keep_alive_interval(20);
-        connOpts.set_clean_session(true);
-
-        client->connect(connOpts)->wait();
-        std::cout << "Connected to MQTT broker." << std::endl;
-    } catch (const mqtt::exception& exc) {
-        std::cerr << "Error connecting to MQTT broker: " << exc.what() << std::endl;
-        // Handle the connection failure (e.g., by returning a nullptr or rethrowing the exception)
-        // For this example, we'll return a nullptr to indicate the connection failure.
-        return nullptr;
-    }
-
-    // Return the connected client
+// Function to create and configure an MQTT client
+std::unique_ptr<mqtt::async_client> createMQTTClient(const MQTTConfig& config) {
+    auto client = std::make_unique<mqtt::async_client>(config.brokerAddress, config.clientId);
+    std::cout << "MQTT Client Created: " << config.clientId << std::endl;
+    // Additional client configuration can be done here if needed
     return client;
- }
+}
 
+MQTTConfig::MQTTConfig(const std::string& broker, const std::string& id)
+    : brokerAddress(broker), clientId(id) {
+    // Constructor implementation (can be empty if there's nothing to initialize besides the member initializer list)
+}

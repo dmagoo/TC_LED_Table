@@ -290,7 +290,6 @@ void LedTableApi::reset() {
         command.execute(cluster);
         if (!suppressMessages) {
             if (this->clusterMessageManager != nullptr) { // Use `this->` to access class members
-
                 this->clusterMessageManager->sendClusterCommand(cluster.getId(), command);
             }
         }

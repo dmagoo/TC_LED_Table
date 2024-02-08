@@ -1,6 +1,7 @@
 #ifndef LEDTABLEAPI_H
 #define LEDTABLEAPI_H
 
+#include "config/led_table_config.h"
 #include "core/ClusterCommands.h"
 #include "core/ClusterManager.h"
 #include "core/ClusterMessageManager.h"
@@ -12,7 +13,9 @@ class LedTableApi {
 
 private:
     ClusterManager &clusterManager;
-    ClusterMessageManager *clusterMessageManager = nullptr;
+    // ClusterMessageManager *clusterMessageManager = nullptr;
+    std::unique_ptr<ClusterMessageManager> clusterMessageManager;
+
     bool suppressMessages = false;
 
     template <typename CoordinateType>
@@ -32,12 +35,13 @@ public:
     // }
     //  OLDLedTableApi(ClusterManager& clusterManager,ClusterMessageManager& clusterMessageManager) : clusterManager(clusterManager), clusterMessageManager(clusterMessageManager) {}
     // LedTableApi(ClusterManager& clusterManager) : clusterManager(clusterManager) {}
-    explicit LedTableApi(ClusterManager &clusterManager)
-        : clusterManager(clusterManager), suppressMessages(true) { // Messaging is suppressed by default
-    }
-
-    LedTableApi(ClusterManager &clusterManager, ClusterMessageManager *clusterMessageManager)
-        : clusterManager(clusterManager), clusterMessageManager(clusterMessageManager), suppressMessages(clusterMessageManager == nullptr) {
+    explicit LedTableApi(ClusterManager &clusterManager, const LedTableConfig &config = LedTableConfig())
+        : clusterManager(clusterManager), suppressMessages(!config.enableMessaging) {
+        if (config.enableMessaging) {
+            clusterMessageManager = std::make_unique<ClusterMessageManager>(config);
+        } else {
+            clusterMessageManager = nullptr; // Explicitly set to nullptr when omitted
+        }
     }
 
     void setSuppressMessages(bool newValue);
@@ -97,7 +101,6 @@ public:
     std::tuple<int, int> getFacingPixelIndexes(RingCoordinate coordinateA, RingCoordinate coordinateB);
     std::tuple<int, int> getFacingPixelIndexes(Cartesian2dCoordinate coordinateA, Cartesian2dCoordinate coordinateB);
     std::tuple<int, int> getFacingPixelIndexes(CubeCoordinate coordinateA, CubeCoordinate coordinateB);
-
 
     // contacts all clusters, asking them to fill their buffers black, could any color fill?
     void reset();

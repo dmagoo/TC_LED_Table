@@ -1,4 +1,5 @@
 #include "api/LedTableApi.h"
+#include "config/led_table_config.h"
 #include "config/make_cluster_config.h"
 #include "config/make_mqtt_config.h"
 #include "core/Cluster.h"
@@ -74,7 +75,12 @@ public:
 void runReceiver() {
     signal(SIGINT, intHandler); // Register the signal handler
 
-    auto mqttClient = makeMQTTClientConfig("LedTableMonitor");
+    LedTableConfig config;
+    config.mqttConfig.brokerAddress = "tcp://192.168.1.49";
+
+    auto mqttClient = createMQTTClient(config.mqttConfig); // This returns a std::unique_ptr<mqtt::async_client>
+
+    // auto mqttClient = makeMQTTClientConfig("LedTableMonitor");
     mqttClient->subscribe("my_topic", 1)->wait();
 
     simple_callback cb{};
@@ -96,10 +102,18 @@ void runReceiver() {
 void runSender() {
     signal(SIGINT, intHandler); // Register the signal handler
 
-    auto mqttClient = makeMQTTClientConfig("LedTableController");
-    ClusterMessageManager clusterMessageManager(mqttClient.get());
     ClusterManager clusterManager(makeClusterConfig(0));
-    LedTableApi api(clusterManager, &clusterMessageManager);
+std::cout << "made manager" << std::endl;
+    // In the context of using this configuration
+    LedTableConfig config;
+    config.mqttConfig.brokerAddress = "tcp://192.168.1.49";
+    config.enableMessaging = true;
+std::cout << "made conf" << std::endl;
+    LedTableApi api(clusterManager, config);
+std::cout << "made api" << std::endl;
+    //    auto mqttClient = makeMQTTClientConfig("LedTableController");
+    //  ClusterMessageManager clusterMessageManager(mqttClient.get());
+    //    LedTableApi api(clusterManager, &clusterMessageManager);
 
     api.setSuppressMessages(USE_REFRESH);
 
@@ -114,18 +128,22 @@ void runSender() {
     std::vector<WRGB> nodeColors(NUM_NODES, 0x00000000); // Initialize all nodes to black
 
     int currentColorIndex = 0;
-int i = 0;
+    int i = 0;
     while (keepRunning) {
 
         if (USE_REFRESH) {
+std::cout << "calling refresh" << std::endl;
             api.refresh();
         }
 
-if(++i % 5) { continue; }
+        if (++i % 5) {
+            continue;
+        }
 
         // Shift colors across nodes
         for (int nodeId = NUM_NODES - 1; nodeId > 0; --nodeId) {
             nodeColors[nodeId] = nodeColors[nodeId - 1];
+std::cout << "filling a node" << std::endl;
             api.fillNode(nodeId, nodeColors[nodeId]);
         }
 
@@ -165,8 +183,6 @@ if(++i % 5) { continue; }
 
         usleep(DELAY_MS * 1000); // Delay
 #endif
-
-
     }
     api.setSuppressMessages(false);
 
@@ -176,7 +192,7 @@ if(++i % 5) { continue; }
 
     // this works
     //    api.refresh();
-    mqttClient->disconnect();
+    //    mqttClient->disconnect();
 }
 
 int main(int argc, char *argv[]) {
@@ -188,7 +204,7 @@ int main(int argc, char *argv[]) {
             return 0; // Exit after receiver runs
         }
     }
-
+std::cout << "STARTING UP!";
     runSender();
     return 0;
 }

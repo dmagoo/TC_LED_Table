@@ -6,7 +6,8 @@
 #include "../test_utils.h"
 #include "api/LedTableApi.h"
 #include "config/make_cluster_config.h"
-#include "config/make_mqtt_config.h"
+// #include "config/make_mqtt_config.h"
+#include "config/led_table_config.h"
 #include "core/Cluster.h"
 #include "core/ClusterCommands.h"
 #include "core/ClusterManager.h"
@@ -19,10 +20,22 @@ void test_basic_api_overloading() {
     // coordinate systems
     ClusterManager clusterManager(makeClusterConfigs());
 
-    auto mqttClient = makeMQTTClientConfig();
-    ClusterMessageManager clusterMessageManager(mqttClient.get());
+//    auto mqttClient = makeMQTTClientConfig();
+//    ClusterMessageManager clusterMessageManager(mqttClient.get());
 
-    LedTableApi api(clusterManager, &clusterMessageManager);
+//    LedTableApi api(clusterManager, &clusterMessageManager);
+
+
+    // In the context of using this configuration
+    LedTableConfig config;
+    config.mqttConfig.brokerAddress = "tcp://192.168.1.49";
+    config.enableMessaging = true;
+
+    LedTableApi api(clusterManager, config);
+
+    // we can circumvent messaging all together by omitting the message manager: LedTableApi api(clusterManager);
+
+    // we can temporarily disable messages, so we can push out led state in a more organized manner
     api.setSuppressMessages(true);
     RingCoordinate coordinate(0, 0);
     int nodeId = clusterManager.getNodeId(coordinate);

@@ -1,22 +1,23 @@
 // ClusterMessageManager.h
 #ifndef CLUSTERMESSAGEMANAGER_H
 #define CLUSTERMESSAGEMANAGER_H
-#include "mqtt/async_client.h"
-
 #include "ClusterCommands.h"
 #include "ClusterMessage.h"
+#include "config/led_table_config.h"
+#include "mqtt/async_client.h"
 #include <sstream>
 
 class ClusterMessageManager {
 private:
     int lastSequenceNumber = 0;
     bool connected = false;
-    mqtt::async_client *mqttClient;
-
-    void connect();
+    std::unique_ptr<mqtt::async_client> mqttClient;
+    mqtt::connect_options mqttConnOpts;
+    void connectMessagingClient();
 
 public:
-    ClusterMessageManager(mqtt::async_client *client) : mqttClient(client){};
+    explicit ClusterMessageManager(const LedTableConfig &config);
+
     template <typename CommandType>
     void sendClusterCommand(int clusterId, const CommandType &command);
 };
@@ -30,6 +31,9 @@ void ClusterMessageManager::sendClusterCommand(int clusterId, const CommandType 
     std::string payload(serialized.begin(), serialized.end());
     std::ostringstream topic;
     topic << "ledtable/cluster/" << clusterId << "/command";
+    if (!connected) {
+        connectMessagingClient();
+    }
     mqttClient->publish(topic.str(), payload.data(), payload.size(), 0, false)->wait();
 }
 

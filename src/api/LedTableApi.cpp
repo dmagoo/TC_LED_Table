@@ -3,9 +3,6 @@
 #include "core/node_geometry.h"
 #include <iostream>
 
-
-// #include <vector>
-
 template <typename CommandType, typename... Args>
 void LedTableApi::performClusterOperationReturningVoid(int nodeId, Args... args) {
     int clusterId = clusterManager.getClusterIdFromNodeId(nodeId);
@@ -42,6 +39,23 @@ WRGB LedTableApi::performClusterOperationReturningColor(int nodeId, Args... args
     } else {
         // Handle the case where the cluster is not found
         return 0;
+    }
+}
+
+LedTableApi::LedTableApi(ClusterManager &clusterManager, const LedTableConfig &config)
+    : clusterManager(clusterManager), suppressMessages(!config.enableMQTTMessaging), artnetClient(nullptr, artnet_deleter) {
+    if (config.enableMQTTMessaging || config.enableArtnetMessaging) {
+        clusterMessageManager = std::make_unique<ClusterMessageManager>(config);
+    } else {
+        clusterMessageManager = nullptr; // Explicitly set to nullptr when omitted
+    }
+
+    if (config.enableArtnetMessaging) {
+        std::cout << "setting it up!" << std::endl;
+        initArtnetClient(nullptr); // Replace with actual IP address or config value as needed
+        int val = artnet_start(artnetClient.get());
+        std::cout << val << std::endl;
+        // TODO check for ARTNET_EOK return value
     }
 }
 
@@ -213,7 +227,7 @@ std::vector<WRGB> LedTableApi::getNodePixelBuffer(CubeCoordinate coordinate) {
     return getNodePixelBuffer(nodeId);
 }
 
-std::vector<int> LedTableApi::getNodePath(int nodeIdA, int nodeIdB) { 
+std::vector<int> LedTableApi::getNodePath(int nodeIdA, int nodeIdB) {
     std::vector<int> values = node_geometry::get_node_path(nodeIdA, nodeIdB, clusterManager);
     return values;
 }
@@ -280,6 +294,7 @@ void LedTableApi::refresh() {
         if (this->clusterMessageManager != nullptr) { // Use `this->` to access class members
             BlitBufferCommand command(buffer, 0x00000000);
             this->clusterMessageManager->sendClusterCommand(cluster.getId(), command);
+            this->sendClusterArtnet(cluster.getId(), cluster.getPixelBuffer());
         }
     });
 }
@@ -291,7 +306,45 @@ void LedTableApi::reset() {
         if (!suppressMessages) {
             if (this->clusterMessageManager != nullptr) { // Use `this->` to access class members
                 this->clusterMessageManager->sendClusterCommand(cluster.getId(), command);
+                this->sendClusterArtnet(cluster.getId(), cluster.getPixelBuffer());
             }
         }
     });
+}
+
+void LedTableApi::initArtnetClient(const char *ip) {
+    artnet_node raw_ptr = artnet_new(ip, 1); // Assuming 0 is a valid 'verbose' value
+    if (raw_ptr != nullptr) {
+        artnetClient.reset(raw_ptr);
+        clusterManager.forEachCluster([this](Cluster &cluster) {
+            if (artnet_set_port_addr(this->artnetClient.get(), cluster.getId(), ARTNET_INPUT_PORT, cluster.getId()) != ARTNET_EOK) {
+                // Handle error
+                std::cerr << "failed to map artnet port" << std::endl;
+            }
+        });
+        artnet_dump_config(artnetClient.get());
+    } else {
+        std::cerr << "Error" << artnet_strerror() << std::endl;
+        // Handle the case where artnet_new fails
+        // For example, log an error or throw an exception
+    }
+}
+
+void LedTableApi::sendClusterArtnet(int clusterId, const std::vector<WRGB> buffer) {
+    if (artnetClient) {
+        std::vector<uint8_t> dmxData;
+        dmxData.reserve(buffer.size() * 4); // Assuming WRGB to RGB conversion
+        for (WRGB color : buffer) {
+            dmxData.push_back((color >> 24) & 0xFF); // White
+            dmxData.push_back((color >> 16) & 0xFF); // Red
+            dmxData.push_back((color >> 8) & 0xFF);  // Green
+            dmxData.push_back(color & 0xFF);         // Blue
+            // White component is ignored, or handle if needed
+        }
+        if (artnet_send_dmx(artnetClient.get(), clusterId, dmxData.size(), dmxData.data()) != ARTNET_EOK) {
+            std::cerr << "Error" << artnet_strerror() << std::endl;
+        }
+    } else {
+        std::cout << "NO ART NET" << std::endl;
+    }
 }

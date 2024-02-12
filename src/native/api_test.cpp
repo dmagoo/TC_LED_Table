@@ -14,12 +14,12 @@
 #else
 #include <unistd.h> // For sleep function
 #endif
+
+#include "mqtt/async_client.h"
 #include <iostream>
 #include <signal.h>
 #include <string>
 #include <vector>
-
-#include "mqtt/async_client.h"
 
 // #include <string>
 
@@ -101,20 +101,16 @@ void runReceiver() {
 
 void runSender() {
     signal(SIGINT, intHandler); // Register the signal handler
+    // ClusterManager clusterManager(makeClusterConfig(0));
+    ClusterManager clusterManager(makeClusterConfigs());
 
-    ClusterManager clusterManager(makeClusterConfig(0));
-std::cout << "made manager" << std::endl;
     // In the context of using this configuration
     LedTableConfig config;
     config.mqttConfig.brokerAddress = "tcp://192.168.1.49";
-    config.enableMessaging = true;
-std::cout << "made conf" << std::endl;
-    LedTableApi api(clusterManager, config);
-std::cout << "made api" << std::endl;
-    //    auto mqttClient = makeMQTTClientConfig("LedTableController");
-    //  ClusterMessageManager clusterMessageManager(mqttClient.get());
-    //    LedTableApi api(clusterManager, &clusterMessageManager);
+    config.enableMQTTMessaging = false;
+    config.enableArtnetMessaging = true;
 
+    LedTableApi api(clusterManager, config);
     api.setSuppressMessages(USE_REFRESH);
 
     const Cluster *cluster = clusterManager.getClusterById(0);
@@ -132,7 +128,6 @@ std::cout << "made api" << std::endl;
     while (keepRunning) {
 
         if (USE_REFRESH) {
-std::cout << "calling refresh" << std::endl;
             api.refresh();
         }
 
@@ -143,7 +138,6 @@ std::cout << "calling refresh" << std::endl;
         // Shift colors across nodes
         for (int nodeId = NUM_NODES - 1; nodeId > 0; --nodeId) {
             nodeColors[nodeId] = nodeColors[nodeId - 1];
-std::cout << "filling a node" << std::endl;
             api.fillNode(nodeId, nodeColors[nodeId]);
         }
 
@@ -204,7 +198,6 @@ int main(int argc, char *argv[]) {
             return 0; // Exit after receiver runs
         }
     }
-std::cout << "STARTING UP!";
     runSender();
     return 0;
 }

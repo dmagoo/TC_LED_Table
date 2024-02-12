@@ -25,6 +25,7 @@ target_link_libraries(tc_led_table PRIVATE
     LedTableApi 
     ${PAHO_MQTT_C_LIBRARIES} 
     ${PAHO_MQTT_CPP_LIBRARIES}
+    ${ARTNET_LIBRARIES} 
     Ws2_32  # Add this to link against the Winsock library
 )
 

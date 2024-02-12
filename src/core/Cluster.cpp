@@ -30,7 +30,7 @@ void Cluster::initializePixelBuffer() {
     for (const auto &node : nodes) {
         totalPixels += node.getPixelCount();
     }
-    pixelBuffer.resize(totalPixels, 0); // Initialize pixelBuffer with default color (0) and fixed size
+    pixelBuffer.resize(totalPixels, 0x00000000); // Initialize pixelBuffer with default color (0) and fixed size
 }
 
 void Cluster::setNodePixel(int nodeId, int ledIndex, WRGB color) {

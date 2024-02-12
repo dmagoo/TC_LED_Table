@@ -18,7 +18,7 @@ std::shared_ptr<LedTableApi> init() {
 
     LedTableConfig config;
     config.mqttConfig.brokerAddress = "tcp://192.168.1.49";
-    config.enableMessaging = true;
+    config.enableMQTTMessaging = true;
 
     static auto apiSharedPtr = std::make_shared<LedTableApi>(clusterManager, config);
     return apiSharedPtr;

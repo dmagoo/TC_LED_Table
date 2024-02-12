@@ -20,20 +20,13 @@ void test_basic_api_overloading() {
     // coordinate systems
     ClusterManager clusterManager(makeClusterConfigs());
 
-//    auto mqttClient = makeMQTTClientConfig();
-//    ClusterMessageManager clusterMessageManager(mqttClient.get());
-
-//    LedTableApi api(clusterManager, &clusterMessageManager);
-
-
     // In the context of using this configuration
     LedTableConfig config;
     config.mqttConfig.brokerAddress = "tcp://192.168.1.49";
-    config.enableMessaging = true;
+    config.enableMQTTMessaging = false;
+    config.enableArtnetMessaging = false;
 
     LedTableApi api(clusterManager, config);
-
-    // we can circumvent messaging all together by omitting the message manager: LedTableApi api(clusterManager);
 
     // we can temporarily disable messages, so we can push out led state in a more organized manner
     api.setSuppressMessages(true);
@@ -205,105 +198,77 @@ void test_node_geometry() {
     std::cout << std::endl;
     TEST_ASSERT_EQUAL_INT_ARRAY(expected.data(), path.data(), expected.size());
 
-
     std::tuple<int, int> result = api.getFacingPixelIndexes(RingCoordinate(0, 0), RingCoordinate(3, 0));
-    int pixelIndexA = std::get<0>(result);  // Access first element
-    int pixelIndexB = std::get<1>(result);  // Access second element
+    int pixelIndexA = std::get<0>(result); // Access first element
+    int pixelIndexB = std::get<1>(result); // Access second element
     std::cout << "pixel: " << pixelIndexA << " faces " << pixelIndexB << std::endl;
 
     result = api.getFacingPixelIndexes(RingCoordinate(0, 0), RingCoordinate(1, 0));
-    pixelIndexA = std::get<0>(result);  // Access first element
-    pixelIndexB = std::get<1>(result);  // Access second element
+    pixelIndexA = std::get<0>(result); // Access first element
+    pixelIndexB = std::get<1>(result); // Access second element
     TEST_ASSERT_EQUAL_INT(0, pixelIndexA);
     TEST_ASSERT_EQUAL_INT(4, pixelIndexB);
 
-
     result = api.getFacingPixelIndexes(RingCoordinate(0, 0), RingCoordinate(1, 1));
-    pixelIndexA = std::get<0>(result);  // Access first element
-    pixelIndexB = std::get<1>(result);  // Access second element
+    pixelIndexA = std::get<0>(result); // Access first element
+    pixelIndexB = std::get<1>(result); // Access second element
     TEST_ASSERT_EQUAL_INT(1, pixelIndexA);
     TEST_ASSERT_EQUAL_INT(5, pixelIndexB);
 
     result = api.getFacingPixelIndexes(RingCoordinate(0, 0), RingCoordinate(1, 2));
-    pixelIndexA = std::get<0>(result);  // Access first element
-    pixelIndexB = std::get<1>(result);  // Access second element
+    pixelIndexA = std::get<0>(result); // Access first element
+    pixelIndexB = std::get<1>(result); // Access second element
     TEST_ASSERT_EQUAL_INT(3, pixelIndexA);
     TEST_ASSERT_EQUAL_INT(7, pixelIndexB);
 
     result = api.getFacingPixelIndexes(RingCoordinate(0, 0), RingCoordinate(1, 3));
-    pixelIndexA = std::get<0>(result);  // Access first element
-    pixelIndexB = std::get<1>(result);  // Access second element
+    pixelIndexA = std::get<0>(result); // Access first element
+    pixelIndexB = std::get<1>(result); // Access second element
     TEST_ASSERT_EQUAL_INT(4, pixelIndexA);
     TEST_ASSERT_EQUAL_INT(0, pixelIndexB);
 
     result = api.getFacingPixelIndexes(RingCoordinate(0, 0), RingCoordinate(1, 4));
-    pixelIndexA = std::get<0>(result);  // Access first element
-    pixelIndexB = std::get<1>(result);  // Access second element
+    pixelIndexA = std::get<0>(result); // Access first element
+    pixelIndexB = std::get<1>(result); // Access second element
     TEST_ASSERT_EQUAL_INT(5, pixelIndexA);
     TEST_ASSERT_EQUAL_INT(1, pixelIndexB);
 
     result = api.getFacingPixelIndexes(RingCoordinate(0, 0), RingCoordinate(1, 5));
-    pixelIndexA = std::get<0>(result);  // Access first element
-    pixelIndexB = std::get<1>(result);  // Access second element
+    pixelIndexA = std::get<0>(result); // Access first element
+    pixelIndexB = std::get<1>(result); // Access second element
     TEST_ASSERT_EQUAL_INT(7, pixelIndexA);
     TEST_ASSERT_EQUAL_INT(3, pixelIndexB);
-    
+
     result = api.getFacingPixelIndexes(RingCoordinate(0, 0), RingCoordinate(2, 3));
-    pixelIndexA = std::get<0>(result);  // Access first element
-    pixelIndexB = std::get<1>(result);  // Access second element
+    pixelIndexA = std::get<0>(result); // Access first element
+    pixelIndexB = std::get<1>(result); // Access second element
     TEST_ASSERT_EQUAL_INT(2, pixelIndexA);
     TEST_ASSERT_EQUAL_INT(6, pixelIndexB);
 
-
     result = api.getFacingPixelIndexes(RingCoordinate(3, 4), RingCoordinate(2, 7));
-    pixelIndexA = std::get<0>(result);  // Access first element
-    pixelIndexB = std::get<1>(result);  // Access second element
+    pixelIndexA = std::get<0>(result); // Access first element
+    pixelIndexB = std::get<1>(result); // Access second element
     TEST_ASSERT_EQUAL_INT(5, pixelIndexA);
     TEST_ASSERT_EQUAL_INT(1, pixelIndexB);
 
     result = api.getFacingPixelIndexes(RingCoordinate(2, 7), RingCoordinate(3, 4));
-    pixelIndexA = std::get<0>(result);  // Access first element
-    pixelIndexB = std::get<1>(result);  // Access second element
+    pixelIndexA = std::get<0>(result); // Access first element
+    pixelIndexB = std::get<1>(result); // Access second element
     TEST_ASSERT_EQUAL_INT(1, pixelIndexA);
     TEST_ASSERT_EQUAL_INT(5, pixelIndexB);
 
     // longer distances
     result = api.getFacingPixelIndexes(RingCoordinate(3, 0), RingCoordinate(3, 8));
-    pixelIndexA = std::get<0>(result);  // Access first element
-    pixelIndexB = std::get<1>(result);  // Access second element
+    pixelIndexA = std::get<0>(result); // Access first element
+    pixelIndexB = std::get<1>(result); // Access second element
     TEST_ASSERT_EQUAL_INT(4, pixelIndexA);
     TEST_ASSERT_EQUAL_INT(0, pixelIndexB);
 
     result = api.getFacingPixelIndexes(RingCoordinate(3, 2), RingCoordinate(3, 10));
-    pixelIndexA = std::get<0>(result);  // Access first element
-    pixelIndexB = std::get<1>(result);  // Access second element
+    pixelIndexA = std::get<0>(result); // Access first element
+    pixelIndexB = std::get<1>(result); // Access second element
     TEST_ASSERT_EQUAL_INT(5, pixelIndexA);
     TEST_ASSERT_EQUAL_INT(1, pixelIndexB);
-
-
-
-    /*
-    result = api.getFacingPixelIndexes(RingCoordinate(0, 0), RingCoordinate(1, 0));
-    pixelIndexA = std::get<0>(result);  // Access first element
-    pixelIndexB = std::get<1>(result);  // Access second element
-    std::cout << "pixel: " << pixelIndexA << " faces " << pixelIndexB << std::endl;
-
-    result = api.getFacingPixelIndexes(0, 9);
-    pixelIndexA = std::get<0>(result);  // Access first element
-    pixelIndexB = std::get<1>(result);  // Access second element
-    std::cout << "0,9 pixel: " << pixelIndexA << " faces " << pixelIndexB << std::endl;
-
-    result = api.getFacingPixelIndexes(0, 2);
-    pixelIndexA = std::get<0>(result);  // Access first element
-    pixelIndexB = std::get<1>(result);  // Access second element
-    std::cout << "0,2 pixel: " << pixelIndexA << " faces " << pixelIndexB << std::endl;
-
-    result = api.getFacingPixelIndexes(0, 3);
-    pixelIndexA = std::get<0>(result);  // Access first element
-    pixelIndexB = std::get<1>(result);  // Access second element
-    std::cout << "0,3 pixel: " << pixelIndexA << " faces " << pixelIndexB << std::endl;
-*/
-
 }
 
 int run_basic_api_tests(int argc, char **argv) {

@@ -25,9 +25,10 @@ if(WIN32)
     add_definitions(-DWIN64)
 
     # Specify Windows-specific include and library paths if not using standard installation paths
-    include_directories("C:/DevTools/installed/paho.mqtt.c/include" "C:/DevTools/installed/paho.mqtt.cpp/include")
+    include_directories("C:/DevTools/installed/paho.mqtt.c/include" "C:/DevTools/installed/paho.mqtt.cpp/include" "C:/DevTools/libartnet" "C:/DevTools/libartnet/artnet")
     set(PAHO_MQTT_C_LIBRARIES "C:/DevTools/installed/paho.mqtt.c/lib/paho-mqtt3a-static.lib")
     set(PAHO_MQTT_CPP_LIBRARIES "C:/DevTools/installed/paho.mqtt.cpp/lib/paho-mqttpp3-static.lib")
+    set(ARTNET_LIBRARIES "C:/DevTools/libartnet/msvc/libartnet/x64/Release/libartnet.lib")
 endif()
 
 add_subdirectory(src/api)
@@ -74,7 +75,7 @@ target_link_libraries(test_app PRIVATE
     ConfigLib
     CoreLib
     nanopb
-    $<$<PLATFORM_ID:Windows>:WinLib ${PAHO_MQTT_C_LIBRARIES} ${PAHO_MQTT_CPP_LIBRARIES} ws2_32>
+    $<$<PLATFORM_ID:Windows>:WinLib ${PAHO_MQTT_C_LIBRARIES} ${PAHO_MQTT_CPP_LIBRARIES}  ${ARTNET_LIBRARIES} ws2_32>
     $<$<NOT:$<PLATFORM_ID:Windows>>:PahoMqttCpp::paho-mqttpp3-static>
 )
 
@@ -86,7 +87,7 @@ target_link_libraries(api_test PRIVATE
     CoreLib
     ConfigLib
     nanopb
-    $<$<PLATFORM_ID:Windows>:WinLib ${PAHO_MQTT_C_LIBRARIES} ${PAHO_MQTT_CPP_LIBRARIES} ws2_32>
+    $<$<PLATFORM_ID:Windows>:WinLib ${PAHO_MQTT_C_LIBRARIES} ${PAHO_MQTT_CPP_LIBRARIES}  ${ARTNET_LIBRARIES} ws2_32>
     $<$<NOT:$<PLATFORM_ID:Windows>>:PahoMqttCpp::paho-mqttpp3-static>
 )
 
@@ -96,9 +97,12 @@ target_link_libraries(LedTableApi PRIVATE
     CoreLib
     ConfigLib
     nanopb
-    $<$<PLATFORM_ID:Windows>:WinLib  ${PAHO_MQTT_C_LIBRARIES} ${PAHO_MQTT_CPP_LIBRARIES} ws2_32>
+    $<$<PLATFORM_ID:Windows>:WinLib  ${PAHO_MQTT_C_LIBRARIES} ${PAHO_MQTT_CPP_LIBRARIES} ${ARTNET_LIBRARIES} ws2_32>
     $<$<NOT:$<PLATFORM_ID:Windows>>:PahoMqttCpp::paho-mqttpp3-static>
 )
+
+
+
 
 # Platform-specific definitions and libraries
 if(WIN32)

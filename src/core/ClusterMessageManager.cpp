@@ -1,12 +1,11 @@
 #include "ClusterMessageManager.h"
 
 ClusterMessageManager::ClusterMessageManager(const LedTableConfig &config) {
-    if (config.enableMessaging) {
+    if (config.enableMQTTMessaging) {
         mqttClient = createMQTTClient(config.mqttConfig);
         mqttConnOpts.set_keep_alive_interval(20);
         mqttConnOpts.set_clean_session(true);
     }
-
 }
 
 void ClusterMessageManager::connectMessagingClient() {
@@ -37,4 +36,3 @@ void ClusterMessageManager::connectMessagingClient() {
         std::cerr << "Unknown error occurred while connecting to MQTT broker." << std::endl;
     }
 }
-

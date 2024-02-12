@@ -9,12 +9,21 @@
 #include "core/coordinates/CubeCoordinate.h"
 #include "core/coordinates/RingCoordinate.h"
 
+#include <artnet.h>
+
+static void artnet_deleter(void *ptr) {
+    if (ptr) {
+        artnet_destroy(ptr); // Assuming artnet_destroy is compatible with void* argument
+    }
+}
+
 class LedTableApi {
 
 private:
     ClusterManager &clusterManager;
-    // ClusterMessageManager *clusterMessageManager = nullptr;
+
     std::unique_ptr<ClusterMessageManager> clusterMessageManager;
+    std::unique_ptr<void, void (*)(void *)> artnetClient;
 
     bool suppressMessages = false;
 
@@ -27,22 +36,11 @@ private:
     template <typename CommandType, typename... Args>
     WRGB performClusterOperationReturningColor(int nodeId, Args... args);
 
+    void sendClusterArtnet(int clusterId, const std::vector<WRGB> buffer);
+    void initArtnetClient(const char *ip);
+
 public:
-    // if (clusterMessageManager) {
-    //     // Messaging is enabled, so use clusterMessageManager for operations
-    // } else {
-    //     // Messaging is disabled; handle accordingly
-    // }
-    //  OLDLedTableApi(ClusterManager& clusterManager,ClusterMessageManager& clusterMessageManager) : clusterManager(clusterManager), clusterMessageManager(clusterMessageManager) {}
-    // LedTableApi(ClusterManager& clusterManager) : clusterManager(clusterManager) {}
-    explicit LedTableApi(ClusterManager &clusterManager, const LedTableConfig &config = LedTableConfig())
-        : clusterManager(clusterManager), suppressMessages(!config.enableMessaging) {
-        if (config.enableMessaging) {
-            clusterMessageManager = std::make_unique<ClusterMessageManager>(config);
-        } else {
-            clusterMessageManager = nullptr; // Explicitly set to nullptr when omitted
-        }
-    }
+    explicit LedTableApi(ClusterManager &clusterManager, const LedTableConfig &config = LedTableConfig());
 
     void setSuppressMessages(bool newValue);
 

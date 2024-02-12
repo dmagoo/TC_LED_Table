@@ -12,26 +12,35 @@ namespace py = pybind11;
 
 // Assuming these functions are defined in their respective .cpp files
 void init_coordinate_bindings(py::module_ &);
+void init_led_table_config_bindings(py::module_ &);
 
-std::shared_ptr<LedTableApi> init() {
+std::shared_ptr<LedTableApi> init(LedTableConfig *config = nullptr) {
     static ClusterManager clusterManager(makeClusterConfigs());
 
-    LedTableConfig config;
-    config.mqttConfig.brokerAddress = "tcp://192.168.1.49";
-    config.enableMQTTMessaging = true;
+    LedTableConfig effectiveConfig;
+    if (config != nullptr) {
+        effectiveConfig = *config;
+    } else {
+        // Default configuration
+        effectiveConfig.mqttConfig.brokerAddress = "tcp://192.168.1.49";
+        effectiveConfig.enableMQTTMessaging = true;
+        // Set defaults for other configs as needed
+    }
 
-    static auto apiSharedPtr = std::make_shared<LedTableApi>(clusterManager, config);
+    static auto apiSharedPtr = std::make_shared<LedTableApi>(clusterManager, effectiveConfig);
+//    static auto apiSharedPtr = std::make_shared<LedTableApi>(clusterManager, config);
     return apiSharedPtr;
 }
 
-void bootstrap() {
-    init();
+void bootstrap(LedTableConfig *config = nullptr) {
+    init(config);
 }
 
 PYBIND11_MODULE(tc_led_table, m) {
-    init_coordinate_bindings(m); // Initialize coordinate bindings
+    init_coordinate_bindings(m);
+    init_led_table_config_bindings(m);
 
-    m.def("init", &bootstrap, "Function to initialize and get the API instance");
+    m.def("init", &bootstrap, py::arg("config") = nullptr, "Function to initialize and get the API instance with an optional configuration");
     m.def(
         "setSuppressMessages", [](bool suppress) {
             auto api = init();

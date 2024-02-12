@@ -5,6 +5,7 @@ set(pybind11_DIR "${CMAKE_SOURCE_DIR}/lib/pybind11/share/cmake/pybind11")
 pybind11_add_module(tc_led_table 
     tc_led_table_module.cpp
     coordinate_bindings.cpp
+    config_bindings.cpp
 )
 
 
@@ -16,6 +17,7 @@ set_target_properties(tc_led_table PROPERTIES
 target_include_directories(tc_led_table PRIVATE
     ${CMAKE_SOURCE_DIR}/src
     ${CMAKE_SOURCE_DIR}/src/core
+    ${CMAKE_SOURCE_DIR}/src/config
     ${CMAKE_SOURCE_DIR}/src/api
 )
 

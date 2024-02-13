@@ -138,9 +138,6 @@ void Cluster::fillNode(int nodeId, const std::vector<WRGB> &colors, WRGB padColo
 #ifdef DEBUG
     std::cout << "blitting node: " << nodeId << " in cluster " << id;
 #endif
-    // std::cout << " using padding color 0x" << std::hex << std::setw(8) << std::setfill('0') << padColor << std::endl;
-    // std::cout << std::dec;
-
     fillNode(nodeId, colors, padColor, true);
 }
 

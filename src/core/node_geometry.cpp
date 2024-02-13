@@ -117,13 +117,8 @@ std::tuple<int, int> node_geometry::get_facing_pixel_indexes(int nodeIdA, int no
     Cartesian2dCoordinate coordB = clusterManager.getCartesian2dCoordinate(nodeIdB);
 
     double angle = calculate_angle_between_coordinates(coordA, coordB);
-std::cout << " angle: " << angle << std::endl;
-
-
-
     // Ensure angle is normalized to [0, 360) if calculate_angle_between_coordinates doesn't already do this
-    // angle = fmod(angle + 360.0, 360.0);
-//std::cout << "angle: " << angle << std::endl;
+
     int pixelIndexA = static_cast<int>((angle + NODE_PIXEL_HALF_ANGLE_OFFSET) / NODE_PIXEL_ANGLE) % NODE_NUM_PIXELS;
     // Dynamically determine the opposite pixel, considering even number of pixels
     int pixelIndexB = (pixelIndexA + NODE_NUM_PIXELS / 2) % NODE_NUM_PIXELS;

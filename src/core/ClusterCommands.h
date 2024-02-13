@@ -25,12 +25,12 @@
  ***/
 
 enum class ClusterCommandType {
-    FillNode = 0,       // Matches FILL_NODE
-    BlitNode = 1,       // Matches BLIT_NODE
-    FillBuffer = 2,     // Matches FILL_BUFFER (Note the skip to align with the protobuf enum)
-    BlitBuffer = 3,     // Matches BLIT_BUFFER
-    SetNodePixel = 4,   // Matches SET_NODE_PIXEL
-    QueueNodePixel = 5, // Matches QUEUE_NODE_PIXEL
+    FillNode = 0,        // Matches FILL_NODE
+    BlitNode = 1,        // Matches BLIT_NODE
+    FillBuffer = 2,      // Matches FILL_BUFFER (Note the skip to align with the protobuf enum)
+    BlitBuffer = 3,      // Matches BLIT_BUFFER
+    SetNodePixel = 4,    // Matches SET_NODE_PIXEL
+    QueueNodePixel = 5,  // Matches QUEUE_NODE_PIXEL
     DequeueNodePixel = 6 // Matches DEQUEUE_NODE_PIXEL
 };
 
@@ -66,8 +66,7 @@ using CommandParamsVariant = std::variant<
     BlitNodeParams,
     NodeWithPixelIndexParams,
     FillBufferParams,
-    BlitBufferParams
->;
+    BlitBufferParams>;
 
 // Command interfaces
 class ClusterCommandReturningVoid {
@@ -91,11 +90,6 @@ public:
         : nodeId(nodeId), color(color) {}
 
     void execute(Cluster &cluster) override {
-#ifdef DEBUG
-        std::cout << "filling node: " << nodeId << " with color: 0x"
-                  << std::hex << static_cast<WRGB>(color) << std::endl;
-        std::cout << std::dec;
-#endif
         cluster.fillNode(nodeId, color);
     }
 

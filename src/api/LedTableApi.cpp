@@ -51,10 +51,8 @@ LedTableApi::LedTableApi(ClusterManager &clusterManager, const LedTableConfig &c
     }
 
     if (config.enableArtnetMessaging) {
-        std::cout << "setting it up!" << std::endl;
         initArtnetClient(nullptr); // Replace with actual IP address or config value as needed
         int val = artnet_start(artnetClient.get());
-        std::cout << val << std::endl;
         // TODO check for ARTNET_EOK return value
     }
 }
@@ -83,7 +81,6 @@ int LedTableApi::convertToNodeId<CubeCoordinate>(const CubeCoordinate &coordinat
 }
 
 void LedTableApi::fillNode(int nodeId, WRGB color) {
-    //////std::couttt << "in root fill with node: " << nodeId << std::endl;
     performClusterOperationReturningVoid<FillNodeCommand>(nodeId, color);
 }
 
@@ -94,13 +91,11 @@ void LedTableApi::fillNode(RingCoordinate coordinate, WRGB color) {
 
 void LedTableApi::fillNode(CubeCoordinate coordinate, WRGB color) {
     int nodeId = convertToNodeId(coordinate);
-    //////std::couttt << "in cube fill with node: " << nodeId << std::endl;
     performClusterOperationReturningVoid<FillNodeCommand>(nodeId, color);
 }
 
 void LedTableApi::fillNode(Cartesian2dCoordinate coordinate, WRGB color) {
     int nodeId = convertToNodeId(coordinate);
-    ////std::coutt << "in cart2d fill with node: " << nodeId << std::endl;
     performClusterOperationReturningVoid<FillNodeCommand>(nodeId, color);
 }
 
@@ -110,8 +105,6 @@ void LedTableApi::fillNode(int nodeId, const std::vector<WRGB> &colors, WRGB pad
 
 void LedTableApi::fillNode(RingCoordinate coordinate, const std::vector<WRGB> &colors, WRGB padColor) {
     int nodeId = convertToNodeId(coordinate);
-    ////std::couttt << "api call with ringcoord to fillNode: ";
-    ////std::couttt << std::hex << static_cast<WRGB>(padColor) << std::endl;
     performClusterOperationReturningVoid<BlitNodeCommand>(nodeId, colors, padColor);
 }
 
@@ -313,7 +306,7 @@ void LedTableApi::reset() {
 }
 
 void LedTableApi::initArtnetClient(const char *ip) {
-    artnet_node raw_ptr = artnet_new(ip, 1); // Assuming 0 is a valid 'verbose' value
+    artnet_node raw_ptr = artnet_new(ip, 0); // 0 is a "verbose" flag
     if (raw_ptr != nullptr) {
         artnetClient.reset(raw_ptr);
         clusterManager.forEachCluster([this](Cluster &cluster) {
@@ -345,6 +338,6 @@ void LedTableApi::sendClusterArtnet(int clusterId, const std::vector<WRGB> buffe
             std::cerr << "Error" << artnet_strerror() << std::endl;
         }
     } else {
-        std::cout << "NO ART NET" << std::endl;
+        std::cerr << "NO ART NET" << std::endl;
     }
 }

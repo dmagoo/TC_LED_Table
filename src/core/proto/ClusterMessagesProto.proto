@@ -2,7 +2,7 @@
 // build when new commands are added
 // with nano pb:
 // python C:\DevTools\nanopb\generator\nanopb_generator.py .\src\core\proto\ClusterMessagesProto.proto
-// THen I modify the .dc file so the .h include is filebame only
+// Then I modify the .c file so the .h include is filename only
 // in .h, after #include <pb.h>, I add the following:
 /*
 #include "pb_encode.h"

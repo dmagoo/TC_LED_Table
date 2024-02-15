@@ -7,7 +7,7 @@
 #include "mqtt/async_client.h"
 #include <sstream>
 
-#include <memory>  // For std::unique_ptr
+#include <memory>
 
 class ClusterMessageManager {
     // using CommandCallback = std::function<void(int clusterId, ClusterCommandType commandType, std::any params)>;
@@ -20,7 +20,6 @@ private:
     mqtt::connect_options mqttConnOpts;
     void connectMessagingClient();
 
-  
 public:
     explicit ClusterMessageManager(const LedTableConfig &config);
 

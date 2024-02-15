@@ -1,5 +1,6 @@
 #include "core/ClusterCommands.h"
 #include "core/ClusterMessage.h"
+#include "core/SensorMessage.h"
 #include <iostream>
 #include <unity.h>
 #include <variant>
@@ -32,6 +33,7 @@ void test_node_color_buffer_message() {
     WRGB padColor = std::get<BlitNodeParams>(params).padColor;
     TEST_ASSERT_EQUAL_UINT32(padColor, PAD_COLOR);
 }
+
 void test_cluster_color_buffer_message() {
     WRGB PAD_COLOR = 0x87654321;
     std::vector<WRGB> clusterFill(80, 0x12345678);
@@ -50,24 +52,20 @@ void test_cluster_color_buffer_message() {
     TEST_ASSERT_EQUAL_UINT32(padColor, PAD_COLOR);
 }
 
-void test_refresh_message() {
-    // FillNodeCommand fillNodeCommand(0, 0x11111111);
-    // ClusterMessage clusterMessage(0, FillNodeCommand::getType(), fillNodeCommand.getParams());
-    //    BlitBufferCommand clusterCommand(buffer, 0x00000000);
-    //    ClusterMessage clusterMessage(1, BlitNodeCommand::getType(), nodeCommand.getParams());
-    //    clusterManager.forEachCluster([this](Cluster& cluster) {  // Capture `this` to access class members
-    //        std::vector<WRGB> buffer = cluster.getPixelBuffer();
-    //        if (this->clusterMessageManager != nullptr) {  // Use `this->` to access class members
-    //            BlitBufferCommand command(buffer, 0x00000000);
-    //            this->clusterMessageManager->sendClusterCommand(cluster.getId(), command);
-    //        }
-    //    });
+void test_sensor_message() {
+    TouchEventMessage message;
+    message.setSensorData(1, 100, true);
+    std::vector<uint8_t> serialized = message.serialize();
+    std::unique_ptr<SensorMessage> sensorMessage = deserializeSensorMessage(serialized);
+    const SensorEventDataProto payload = sensorMessage->getPayload();
+    TEST_ASSERT_EQUAL(payload.event_type, SensorEventDataProto_EventType_TOUCH_EVENT);
+    TEST_ASSERT_EQUAL_UINT32(1, payload.sensor_data.node_id);
 }
 
 int run_basic_message_tests(int argc, char **argv) {
     RUN_TEST(test_basic_message_creation);
     RUN_TEST(test_node_color_buffer_message);
     RUN_TEST(test_cluster_color_buffer_message);
-    //    RUN_TEST(test_refresh_message);
+    RUN_TEST(test_sensor_message);
     return 0;
 }

@@ -1,0 +1,43 @@
+// commands.proto
+// build when new commands are added
+// with nano pb:
+// python C:\DevTools\nanopb\generator\nanopb_generator.py .\src\core\proto\SensorDataProto.proto
+// THen I modify the .dc file so the .h include is filename only
+// in .h, after #include <pb.h>, I add the following:
+/*
+#include "pb_encode.h"
+#include "pb_decode.h"
+#include "pb_common.h"
+*/
+//
+// in SensorDataProto.pb.c I change:
+// #include "src/core/proto/SensorDataProto.pb.h"
+// to:
+// #include "SensorDataProto.pb.h"
+syntax = "proto3";
+
+// Message definition for sensor data
+message SensorDataProto {
+  // Data sent always
+  uint32 node_id = 1;
+  uint32 current_value = 2;
+  bool touched = 3;
+
+  // Data sent periodically
+  uint32 threshold_off = 4;
+  uint32 threshold_on = 5;
+}
+
+// Message to differentiate touch event vs. periodic notification
+message SensorEventDataProto {
+  // Whether the message is a result of a touch event or a periodic notification
+  enum EventType {
+    TOUCH_EVENT = 0;
+    PERIODIC_NOTIFICATION = 1;
+  }
+
+  // Type of event
+  EventType event_type = 1;
+  // Sensor data associated with the event
+  SensorDataProto sensor_data = 2;
+}

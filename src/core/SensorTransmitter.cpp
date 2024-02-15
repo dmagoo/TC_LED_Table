@@ -43,10 +43,10 @@ bool SensorTransmitter::sendTouchSensorEvent(int nodeId, int value, bool touched
 
     if (mqttClient) {
         TouchEventMessage message;
-        message.setSensorData(1, 100, true);
+        message.setSensorData(nodeId, value, touched);
         std::vector<uint8_t> serialized = message.serialize();
         std::string payload(serialized.begin(), serialized.end());
-
+        std::cout << "payload" << payload << std::endl;
         if (!connected) {
             connect();
         }

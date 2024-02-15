@@ -32,8 +32,8 @@ PYBIND11_MODULE(tc_sensor_transmitter, m) {
     m.def("init", &bootstrap, py::arg("config") = nullptr, "Function to initialize and get the Sensor Transmitter instance with an optional configuration");
     // fillNode methods
 
-    m.def("sendTouchSensorEvent", [](int nodeId, int value, bool touched) {
+    m.def("sendTouchSensorEvent", [](int nodeId, int value, bool touched) -> bool {
         auto sender = init();
-        sender->sendTouchSensorEvent(nodeId, value, touched);
+        return sender->sendTouchSensorEvent(nodeId, value, touched);
     });
 }

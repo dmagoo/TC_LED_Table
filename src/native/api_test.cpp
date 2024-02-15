@@ -24,12 +24,12 @@
 // #include <string>
 
 // max? #define DELAY_MS 75
-#define DELAY_MS 75
+#define DELAY_MS 500
 
 #define NUM_NODES 7
 
 bool USE_REFRESH = true;
-
+bool SHOW_ASCII = false;
 // Global flag to control loop termination
 volatile sig_atomic_t keepRunning = 1;
 
@@ -107,8 +107,10 @@ void runSender() {
     // In the context of using this configuration
     LedTableConfig config;
     config.mqttConfig.brokerAddress = "tcp://192.168.1.49";
+    config.mqttConfig.clientId = "apiTest";
     config.enableMQTTMessaging = false;
     config.enableArtnetMessaging = true;
+    config.enableMQTTSubscriptions = true;
 
     LedTableApi api(clusterManager, config);
     api.setSuppressMessages(USE_REFRESH);
@@ -131,10 +133,6 @@ void runSender() {
             api.refresh();
         }
 
-        if (++i % 5) {
-            continue;
-        }
-
         // Shift colors across nodes
         for (int nodeId = NUM_NODES - 1; nodeId > 0; --nodeId) {
             nodeColors[nodeId] = nodeColors[nodeId - 1];
@@ -147,37 +145,41 @@ void runSender() {
         currentColorIndex = (currentColorIndex + 1) % colors.size();
 
 #ifdef WIN64
-        for (int nodeId = 0; nodeId < NUM_NODES; nodeId++) {
-            std::string asciiArt = nodeBufferToAscii(*cluster, nodeId);
-            std::cout << asciiArt;
+        if (SHOW_ASCII) {
+            for (int nodeId = 0; nodeId < NUM_NODES; nodeId++) {
+                std::string asciiArt = nodeBufferToAscii(*cluster, nodeId);
+                std::cout << asciiArt;
+            }
         }
-
         Sleep(DELAY_MS); // Delay
 #else
-        //  posix:
-        std::ostringstream asciiArt;
-        for (int nodeId = 0; nodeId < NUM_NODES; nodeId++) {
-            auto nodeBuffer = cluster->getNodePixelBuffer(nodeId);
-            asciiArt << std::setw(3) << (nodeBuffer[7] ? 'x' : 'o') << " ";
-            asciiArt << std::setw(3) << (nodeBuffer[0] ? 'x' : 'o') << " ";
-            asciiArt << std::setw(3) << (nodeBuffer[1] ? 'x' : 'o') << "\n";
+        if (SHOW_ASCII) {
+            //  posix:
+            std::ostringstream asciiArt;
+            for (int nodeId = 0; nodeId < NUM_NODES; nodeId++) {
+                auto nodeBuffer = cluster->getNodePixelBuffer(nodeId);
+                asciiArt << std::setw(3) << (nodeBuffer[7] ? 'x' : 'o') << " ";
+                asciiArt << std::setw(3) << (nodeBuffer[0] ? 'x' : 'o') << " ";
+                asciiArt << std::setw(3) << (nodeBuffer[1] ? 'x' : 'o') << "\n";
 
-            // Middle row (West, Node ID, East)
-            asciiArt << std::setw(3) << (nodeBuffer[6] ? 'x' : 'o') << " ";
-            asciiArt << std::setw(3) << nodeId << " ";
-            asciiArt << std::setw(3) << (nodeBuffer[2] ? 'x' : 'o') << "\n";
+                // Middle row (West, Node ID, East)
+                asciiArt << std::setw(3) << (nodeBuffer[6] ? 'x' : 'o') << " ";
+                asciiArt << std::setw(3) << nodeId << " ";
+                asciiArt << std::setw(3) << (nodeBuffer[2] ? 'x' : 'o') << "\n";
 
-            // Bottom row (South-West, South, South-East)
-            asciiArt << std::setw(3) << (nodeBuffer[5] ? 'x' : 'o') << " ";
-            asciiArt << std::setw(3) << (nodeBuffer[4] ? 'x' : 'o') << " ";
-            asciiArt << std::setw(3) << (nodeBuffer[3] ? 'x' : 'o') << "\n";
+                // Bottom row (South-West, South, South-East)
+                asciiArt << std::setw(3) << (nodeBuffer[5] ? 'x' : 'o') << " ";
+                asciiArt << std::setw(3) << (nodeBuffer[4] ? 'x' : 'o') << " ";
+                asciiArt << std::setw(3) << (nodeBuffer[3] ? 'x' : 'o') << "\n";
 
-            std::cout << asciiArt.str();
+                std::cout << asciiArt.str();
+            }
         }
 
         usleep(DELAY_MS * 1000); // Delay
 #endif
     }
+
     api.setSuppressMessages(false);
 
     // this doesn't seem to be sending messages when suppressMessages is false

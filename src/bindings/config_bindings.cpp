@@ -17,7 +17,8 @@ void init_mqtt_config_bindings(py::module_ &m) {
 void init_artnet_config_bindings(py::module_ &m) {
     py::class_<ArtnetConfig>(m, "ArtnetConfig")
         .def(py::init<const std::string &, const std::string &>(),
-             py::arg("broker") = "tcp://localhost", py::arg("id") = "LEDTableController")
+        // TODO: these do not belong here, they are mqtt specific
+        py::arg("broker") = "tcp://localhost", py::arg("id") = "LEDTableController")
         .def_readwrite("brokerAddress", &ArtnetConfig::brokerAddress)
         .def_readwrite("clientId", &ArtnetConfig::clientId);
 }
@@ -30,5 +31,6 @@ void init_led_table_config_bindings(py::module_ &m) {
         .def_readwrite("mqttConfig", &LedTableConfig::mqttConfig)
         .def_readwrite("artnetConfig", &LedTableConfig::artnetConfig)
         .def_readwrite("enableMQTTMessaging", &LedTableConfig::enableMQTTMessaging)
+        .def_readwrite("enableMQTTSubscriptions", &LedTableConfig::enableMQTTSubscriptions)
         .def_readwrite("enableArtnetMessaging", &LedTableConfig::enableArtnetMessaging);
 }

@@ -15,6 +15,7 @@
  * Represents a cluster of nodes, each containing a segment of a pixel buffer.
  */
 class Cluster {
+private:
     int id;
     std::vector<Node> nodes; // Stores all nodes within the cluster
 
@@ -25,7 +26,7 @@ class Cluster {
 
     std::vector<WRGB> pixelBuffer;                 // Buffer for pixel colors
     std::unordered_map<int, size_t> nodeIdToIndex; // Fast lookup for nodes by their ID
-private:
+
     void initializePixelBuffer();
     void fillNode(int nodeId, const std::vector<WRGB> &colors, WRGB padColor, bool pad);
 
@@ -145,6 +146,10 @@ public:
      * @param nodeId The ID of the node.
      */
     std::vector<WRGB> getNodePixelBuffer(int nodeId) const;
+
+    bool getTouchState(int nodeId);
+
+    std::vector<int> getTouchedNodeIds();
 
     /**
      * Returns a string representation of a single node

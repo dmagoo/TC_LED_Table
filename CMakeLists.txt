@@ -91,6 +91,17 @@ target_link_libraries(api_test PRIVATE
     $<$<NOT:$<PLATFORM_ID:Windows>>:PahoMqttCpp::paho-mqttpp3-static>
 )
 
+add_executable(sensor_test
+    ${PROJECT_SOURCE_DIR}/src/native/sensor_test.cpp
+)
+target_link_libraries(sensor_test PRIVATE
+    CoreLib
+    ConfigLib
+    nanopb
+    $<$<PLATFORM_ID:Windows>:WinLib ${PAHO_MQTT_C_LIBRARIES} ${PAHO_MQTT_CPP_LIBRARIES}  ${ARTNET_LIBRARIES} ws2_32>
+    $<$<NOT:$<PLATFORM_ID:Windows>>:PahoMqttCpp::paho-mqttpp3-static>
+)
+
 add_library(LedTableApi "${PROJECT_SOURCE_DIR}/src/api/LedTableApi.cpp")
 target_link_libraries(LedTableApi PRIVATE
     ApiLib
@@ -100,9 +111,6 @@ target_link_libraries(LedTableApi PRIVATE
     $<$<PLATFORM_ID:Windows>:WinLib  ${PAHO_MQTT_C_LIBRARIES} ${PAHO_MQTT_CPP_LIBRARIES} ${ARTNET_LIBRARIES} ws2_32>
     $<$<NOT:$<PLATFORM_ID:Windows>>:PahoMqttCpp::paho-mqttpp3-static>
 )
-
-
-
 
 # Platform-specific definitions and libraries
 if(WIN32)

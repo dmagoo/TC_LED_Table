@@ -28,7 +28,7 @@ std::shared_ptr<LedTableApi> init(LedTableConfig *config = nullptr) {
     }
 
     static auto apiSharedPtr = std::make_shared<LedTableApi>(clusterManager, effectiveConfig);
-//    static auto apiSharedPtr = std::make_shared<LedTableApi>(clusterManager, config);
+
     return apiSharedPtr;
 }
 

@@ -8,6 +8,7 @@ struct LedTableConfig {
     MQTTConfig mqttConfig;
     ArtnetConfig artnetConfig;
     bool enableMQTTMessaging;
+    bool enableMQTTSubscriptions;
     bool enableArtnetMessaging;
 };
 

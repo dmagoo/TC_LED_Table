@@ -44,10 +44,24 @@ WRGB LedTableApi::performClusterOperationReturningColor(int nodeId, Args... args
 
 LedTableApi::LedTableApi(ClusterManager &clusterManager, const LedTableConfig &config)
     : clusterManager(clusterManager), suppressMessages(!config.enableMQTTMessaging), artnetClient(nullptr, artnet_deleter) {
+
     if (config.enableMQTTMessaging || config.enableArtnetMessaging) {
         clusterMessageManager = std::make_unique<ClusterMessageManager>(config);
     } else {
         clusterMessageManager = nullptr; // Explicitly set to nullptr when omitted
+    }
+
+    // Initialize SensorListener if MQTT subscriptions are enabled
+    if (config.enableMQTTSubscriptions) {
+        std::cout << "creating sensor listener";
+        sensorListener = std::make_unique<SensorListener>(config);
+        sensorListener->setSensorDataCallback([this](const SensorData &data) {
+            std::cout << "Received touch event!" << std::endl;
+            // Handle sensor data
+        });
+
+    } else {
+        sensorListener = nullptr; // Explicitly set to nullptr when omitted
     }
 
     if (config.enableArtnetMessaging) {

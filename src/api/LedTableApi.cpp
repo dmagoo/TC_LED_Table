@@ -53,11 +53,20 @@ LedTableApi::LedTableApi(ClusterManager &clusterManager, const LedTableConfig &c
 
     // Initialize SensorListener if MQTT subscriptions are enabled
     if (config.enableMQTTSubscriptions) {
-        std::cout << "creating sensor listener";
         sensorListener = std::make_unique<SensorListener>(config);
-        sensorListener->setSensorDataCallback([this](const SensorData &data) {
-            std::cout << "Received touch event!" << std::endl;
-            // Handle sensor data
+        sensorListener->setTouchSensorDataCallback([this](int nodeId, int sensorValue, bool touched) {
+            int clusterId = this->clusterManager.getClusterIdFromNodeId(nodeId);
+            const Cluster *clusterPtr = this->clusterManager.getClusterById(clusterId);
+            if (clusterPtr != nullptr) {
+                Cluster &cluster = *const_cast<Cluster *>(clusterPtr); // Cast to non-const reference
+                bool touchResult = cluster.setNodeTouchValue(nodeId, sensorValue);
+
+                if (touchResult != touched) {
+                    std::cerr << "touch state mismatch for node: " << nodeId << std::endl;
+                }
+            } else {
+                // todo: throw error?
+            }
         });
 
     } else {
@@ -289,8 +298,37 @@ std::tuple<int, int> LedTableApi::getFacingPixelIndexes(CubeCoordinate coordinat
     return getFacingPixelIndexes(nodeIdA, nodeIdB);
 }
 
+bool LedTableApi::getTouchState(int nodeId) {
+    int clusterId = clusterManager.getClusterIdFromNodeId(nodeId);
+    const Cluster *clusterPtr = clusterManager.getClusterById(clusterId);
+    return clusterPtr->getTouchState(nodeId);
+}
+bool LedTableApi::getTouchState(RingCoordinate coordinate) {
+    int nodeId = convertToNodeId(coordinate);
+    return getTouchState(nodeId);
+}
+
+bool LedTableApi::getTouchState(Cartesian2dCoordinate coordinate) {
+    int nodeId = convertToNodeId(coordinate);
+    return getTouchState(nodeId);
+}
+bool LedTableApi::getTouchState(CubeCoordinate coordinate) {
+    int nodeId = convertToNodeId(coordinate);
+    return getTouchState(nodeId);
+}
+
 void LedTableApi::setSuppressMessages(bool newValue) {
     suppressMessages = newValue;
+}
+
+std::vector<int> LedTableApi::getAllTouchedNodeIds() {
+    std::vector<int> allTouchedNodeIds;
+    std::cout << "ledtableapi::getalltouchedids" << std::endl;
+    clusterManager.forEachCluster([&allTouchedNodeIds](Cluster &cluster) { // Capture allTouchedNodeIds by reference
+        auto touchedNodeIds = cluster.getTouchedNodeIds();
+        allTouchedNodeIds.insert(allTouchedNodeIds.end(), touchedNodeIds.begin(), touchedNodeIds.end());
+    });
+    return allTouchedNodeIds;
 }
 
 // ignores suppressMessges, as this is an explicit command to send a message

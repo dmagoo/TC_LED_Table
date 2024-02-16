@@ -1,5 +1,6 @@
 #include "SensorMessage.h"
 #include <stdexcept>
+#include <vector>
 
 std::vector<uint8_t> SensorMessage::serialize() const {
     uint8_t buffer[1024]; // Adjust the buffer size as necessary
@@ -25,6 +26,7 @@ void TouchEventMessage::setSensorData(uint32_t nodeId, uint32_t currentValue, bo
     sensorData.node_id = nodeId;
     sensorData.current_value = currentValue;
     sensorData.touched = touched;
+    sensorEventData_.has_sensor_data = true;
     sensorEventData_.sensor_data = sensorData;
 }
 
@@ -37,8 +39,10 @@ void PeriodicNotificationMessage::setSensorStatus(uint32_t nodeId, uint32_t thre
     sensorData.node_id = nodeId;
     sensorData.threshold_off = thresholdOff;
     sensorData.threshold_on = thresholdOn;
+    sensorEventData_.has_sensor_data = true;
     sensorEventData_.sensor_data = sensorData;
 }
+
 
 std::unique_ptr<SensorMessage> deserializeSensorMessage(const std::vector<uint8_t> &buffer) {
     SensorEventDataProto proto_msg = SensorEventDataProto_init_zero;
@@ -66,4 +70,11 @@ std::unique_ptr<SensorMessage> deserializeSensorMessage(const std::vector<uint8_
     }
 
     return nullptr; // In case none of the conditions are met, return nullptr
+}
+
+
+// Helper function to deserialize from string
+std::unique_ptr<SensorMessage> deserializeSensorMessage(const std::string &bufferString) {
+    std::vector<uint8_t> bufferVector(bufferString.begin(), bufferString.end());
+    return deserializeSensorMessage(bufferVector);
 }

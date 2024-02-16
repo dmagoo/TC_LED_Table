@@ -102,6 +102,16 @@ public:
     std::tuple<int, int> getFacingPixelIndexes(Cartesian2dCoordinate coordinateA, Cartesian2dCoordinate coordinateB);
     std::tuple<int, int> getFacingPixelIndexes(CubeCoordinate coordinateA, CubeCoordinate coordinateB);
 
+    // takes a nodeId or coordinate and returns boolean
+    // indicated if the node is currently being touched
+    bool getTouchState(int nodeId);
+    bool getTouchState(RingCoordinate coordinate);
+    bool getTouchState(Cartesian2dCoordinate coordinate);
+    bool getTouchState(CubeCoordinate coordinate);
+
+    // returns a list of all node ids that are currently being touched
+    std::vector<int> getAllTouchedNodeIds();
+
     // contacts all clusters, asking them to fill their buffers black, could any color fill?
     void reset();
 

@@ -271,11 +271,33 @@ void test_node_geometry() {
     TEST_ASSERT_EQUAL_INT(1, pixelIndexB);
 }
 
+void test_sensor_interaction() {
+    ClusterManager clusterManager(makeClusterConfigs());
+    LedTableApi api(clusterManager);
+    std::vector<int> touchedNodes = api.getAllTouchedNodeIds();
+    std::vector<int> expected = {};
+
+    // test empty default case
+    TEST_ASSERT_EQUAL_INT(touchedNodes.size(), 0);
+    Cluster *clusterPtr = const_cast<Cluster *>(clusterManager.getClusterById(0));
+    clusterPtr->setNodeTouchValue(0, 99);
+    clusterPtr->setNodeTouchValue(1, 99);
+    clusterPtr = const_cast<Cluster *>(clusterManager.getClusterById(1));
+    clusterPtr->setNodeTouchValue(10, 99);
+    clusterPtr->setNodeTouchValue(11, 99);
+
+    // test all-values case
+    expected = {0, 1, 10, 11};
+    touchedNodes = api.getAllTouchedNodeIds();
+    TEST_ASSERT_EQUAL_INT_ARRAY(expected.data(), touchedNodes.data(), expected.size());
+}
+
 int run_basic_api_tests(int argc, char **argv) {
     RUN_TEST(test_basic_api_overloading);
     RUN_TEST(test_set_pixel);
     RUN_TEST(test_fill_node);
     RUN_TEST(test_reset_cluster);
     RUN_TEST(test_node_geometry);
+    RUN_TEST(test_sensor_interaction);
     return 0;
 }

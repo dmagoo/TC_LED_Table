@@ -184,6 +184,37 @@ std::vector<WRGB> Cluster::getNodePixelBuffer(int nodeId) const {
     return std::vector<WRGB>();
 }
 
+bool Cluster::getTouchState(int nodeId) const {
+    auto it = nodeIdToIndex.find(nodeId);
+    if (it != nodeIdToIndex.end()) {
+        const Node &node = nodes[it->second];
+        return node.touchSensor.getTouchedState();
+    }
+    // Todo: Throw?
+    return false;
+}
+
+std::vector<int> Cluster::getTouchedNodeIds() {
+    std::vector<int> touchedNodeIds;
+    for (const auto &[nodeId, index] : nodeIdToIndex) {
+        const Node &node = nodes[index];
+        if (node.touchSensor.getTouchedState()) {
+            touchedNodeIds.push_back(nodeId);
+        }
+    }
+    return touchedNodeIds;
+}
+
+bool Cluster::setNodeTouchValue(int nodeId, int sensorValue) {
+    auto it = nodeIdToIndex.find(nodeId);
+    if (it != nodeIdToIndex.end()) {
+        Node &node = nodes[it->second];
+        return node.touchSensor.setValue(sensorValue);
+    }
+    // Todo: Throw?
+    return false;
+}
+
 // for debugging, output a string representing a node state
 std::string Cluster::nodeAscii(int nodeId) const {
     auto it = nodeIdToIndex.find(nodeId);

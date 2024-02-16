@@ -40,3 +40,4 @@ public:
 };
 
 std::unique_ptr<SensorMessage> deserializeSensorMessage(const std::vector<uint8_t> &data);
+std::unique_ptr<SensorMessage> deserializeSensorMessage(const std::string &bufferString);

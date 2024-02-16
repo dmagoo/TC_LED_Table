@@ -1,4 +1,5 @@
 #include "SensorListener.h"
+#include "SensorMessage.h"
 
 SensorListener::SensorListener(const LedTableConfig &config) {
     if (config.enableMQTTSubscriptions) {
@@ -48,13 +49,14 @@ void SensorListener::connectSubscriptionClient() {
 void SensorListener::on_message(const mqtt::message &msg) {
     // Convert the payload to a string (assuming it's text-based for this example)
     std::string payload = msg.to_string();
-    std::cout << "ON MESSAGE!" << std::endl;
-    std::cout << payload << std::endl;
-    // Convert the payload to SensorData - this will need to be adapted based on your actual data format
-    //    SensorData data{payload};
 
-    // Trigger the callback with the received SensorData
-    //    if (onSensorDataReceived) {
-    //        onSensorDataReceived(data);
-    //  }
+    std::unique_ptr<SensorMessage> sensorMessage = deserializeSensorMessage(payload);
+
+    const SensorEventDataProto protoPayload = sensorMessage->getPayload();
+    if (protoPayload.event_type == SensorEventDataProto_EventType_TOUCH_EVENT) {
+        // Trigger the callback with the received SensorData
+        if (onTouchSensorDataReceived) {
+            onTouchSensorDataReceived(protoPayload.sensor_data.node_id, protoPayload.sensor_data.current_value, protoPayload.sensor_data.touched);
+        }
+    }
 }

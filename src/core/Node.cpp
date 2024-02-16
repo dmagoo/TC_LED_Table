@@ -1,7 +1,7 @@
 #include "Node.h"
 
 Node::Node(int id, int startIdx, int count) 
-    : id(id), startIndex(startIdx), pixelCount(count) {
+    : id(id), startIndex(startIdx), pixelCount(count), touchSensor(id) {
 }
 
 int Node::getStartIndex() const {

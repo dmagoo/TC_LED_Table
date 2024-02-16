@@ -147,9 +147,25 @@ public:
      */
     std::vector<WRGB> getNodePixelBuffer(int nodeId) const;
 
-    bool getTouchState(int nodeId);
+    /**
+     * Returns an indication of the current sensors touch state
+     *  true if touched, false if not
+     * @param nodeId The ID of the node.
+     */
+    bool getTouchState(int nodeId) const;
 
+    /**
+     * Returns a list of sensors with touched status of true
+     */
     std::vector<int> getTouchedNodeIds();
+
+    /**
+     * Takes a sensor value and returns an indication of the
+     *  current sensors touch state
+     *  true if touched, false if not
+     * @param nodeId The ID of the node.
+     */
+    bool setNodeTouchValue(int nodeId, int sensorValue);
 
     /**
      * Returns a string representation of a single node

@@ -2,6 +2,8 @@
 #include <vector>
 #include <cstdint>
 
+#include "sensors/TouchSensor.h"
+
 /**
  * Represents a node within a cluster, containing a segment of the pixel buffer.
  */
@@ -12,6 +14,8 @@ private:
     int pixelCount; // Number of pixels in this node
 
 public:
+    TouchSensor touchSensor;
+
     /**
      * Constructor for the Node.
      * 

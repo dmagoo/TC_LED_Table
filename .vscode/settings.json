@@ -68,7 +68,8 @@
         "regex": "cpp",
         "set": "cpp",
         "future": "cpp",
-        "typeindex": "cpp"
+        "typeindex": "cpp",
+        "csignal": "cpp"
     },
     "configurations": [
         {

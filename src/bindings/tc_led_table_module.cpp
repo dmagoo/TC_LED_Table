@@ -243,6 +243,30 @@ PYBIND11_MODULE(tc_led_table, m) {
         return api->getFacingPixelIndexes(coordinateA, coordinateB);
     });
 
+
+    // getTouchState methods
+    m.def("getTouchState", [](int nodeId) -> bool {
+        auto api = init();
+        return api->getTouchState(nodeId);
+    });
+    m.def("getTouchState", [](const RingCoordinate &coordinate) -> bool {
+        auto api = init();
+        return api->getTouchState(coordinate);
+    });
+    m.def("getTouchState", [](const Cartesian2dCoordinate &coordinate) -> bool {
+        auto api = init();
+        return api->getTouchState(coordinate);
+    });
+    m.def("getTouchState", [](const CubeCoordinate &coordinate) -> bool {
+        auto api = init();
+        return api->getTouchState(coordinate);
+    });
+
+    m.def("getAllTouchedNodeIds", []() -> std::vector<int> {
+        auto api = init();
+        return api->getAllTouchedNodeIds();
+    });
+
     m.def("reset", []() {
         auto api = init();
         api->reset();

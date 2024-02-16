@@ -323,7 +323,6 @@ void LedTableApi::setSuppressMessages(bool newValue) {
 
 std::vector<int> LedTableApi::getAllTouchedNodeIds() {
     std::vector<int> allTouchedNodeIds;
-    std::cout << "ledtableapi::getalltouchedids" << std::endl;
     clusterManager.forEachCluster([&allTouchedNodeIds](Cluster &cluster) { // Capture allTouchedNodeIds by reference
         auto touchedNodeIds = cluster.getTouchedNodeIds();
         allTouchedNodeIds.insert(allTouchedNodeIds.end(), touchedNodeIds.begin(), touchedNodeIds.end());

@@ -1,6 +1,6 @@
 #pragma once
-#include <vector>
 #include <cstdint>
+#include <vector>
 
 #include "sensors/TouchSensor.h"
 
@@ -9,7 +9,7 @@
  */
 class Node {
 private:
-    int id; // Unique identifier for the node
+    int id;         // Unique identifier for the node
     int startIndex; // Starting index in the pixel buffer
     int pixelCount; // Number of pixels in this node
 
@@ -18,7 +18,7 @@ public:
 
     /**
      * Constructor for the Node.
-     * 
+     *
      * @param id The ID of the node.
      * @param startIdx The starting index of this node in the cluster's pixel buffer.
      * @param pixelCount The number of pixels in this node.

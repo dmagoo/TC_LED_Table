@@ -12,7 +12,7 @@ namespace node_geometry {
 std::vector<int> get_node_path(int nodeIdA, int nodeIdB, const ClusterManager &clusterManager);
 
 /* Retrieves the IDs of neighboring nodes for a given node, including both valid and invalid neighbors to maintain their positions starting from the North direction. */
-std::vector<int> get_node_neighbors(int nodeId, const ClusterManager &clusterManager);
+std::vector<int> get_node_neighbors(int nodeId, const ClusterManager &clusterManager, int level = 1);
 
 // returns a tuple of two pixel indexes, indicating which pixel faces the other node
 std::tuple<int, int> get_facing_pixel_indexes(int nodeIdA, int nodeIdB, ClusterManager &ClusterManager);

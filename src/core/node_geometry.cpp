@@ -53,21 +53,19 @@ double node_geometry::calculate_angle_between_coordinates(const Cartesian2dCoord
     float ya = coordinateA.getY();
     float xb = coordinateB.getX();
     float yb = coordinateB.getY();
-    //std::cout << "====================" << std::endl;
 
-    //std::cout << " xa: " << xa << " ya: " << ya <<" xb: " <<  xb <<" yb: " <<  yb << std::endl;
     float deltaX = xb - xa;
     float deltaY = yb - ya;
-    //double angleInRadians = std::atan2(deltaY, deltaX);
-    // this seems to orient it beter so we go clockwise
+
+    // this seems to orient it better so we go clockwise
     double angleInRadians = std::atan2(deltaX, deltaY);
-    //std::cout << "radians: " << angleInRadians << std::endl;
+
     // Convert radians to degrees
     double angleInDegrees = angleInRadians * (180.0 / M_PI);
-//std::cout << " degrees " << angleInDegrees << std::endl;
+
     // Normalize the angle to [0, 360) range if necessary
     double normalizedAngle = fmod(angleInDegrees + 360.0, 360.0);
-//std::cout << " normalized " << normalizedAngle << std::endl;
+
     return normalizedAngle;
 }
 
@@ -88,7 +86,44 @@ std::vector<int> node_geometry::get_node_path(int nodeIdA, int nodeIdB, const Cl
     return result;
 }
 
-std::vector<int> node_geometry::get_node_neighbors(int nodeId, const ClusterManager &clusterManager) {
+std::vector<int> get_node_neighbors_at_level(int nodeId, const ClusterManager &clusterManager, int level) {
+    if (level == 0) return {nodeId};
+
+    std::vector<int> result;
+    // Calculate expected size based on level and reserve space in vector
+    int perimeterSize = 6 * level; // Adjust this formula based on your grid's geometry
+    result.reserve(perimeterSize);
+
+    CubeCoordinate current = clusterManager.getCubeCoordinate(nodeId);
+
+    for(int i = 0; i < level; i++) {
+        current = current + CubeCoordinate::North();
+    }
+    //    CubeCoordinate current = start;
+    std::vector<CubeCoordinate> directions = {CubeCoordinate::SouthEast(), CubeCoordinate::South(), CubeCoordinate::SouthWest(), CubeCoordinate::NorthWest(), CubeCoordinate::North(), CubeCoordinate::NorthEast()};
+    
+    // Iterate over each direction
+    for (const auto &direction : directions) {
+        int neighborId = clusterManager.getNodeId(current);
+
+        // Walk 'level' steps in the current direction
+        for (int i = 0; i < level; ++i) {
+            result.push_back(neighborId);
+            current = current + direction;
+            neighborId = clusterManager.getNodeId(current);
+            // Add to result, using placeholder for invalid nodes
+            //result.push_back(neighborId);
+        }
+    }
+
+    return result;
+}
+
+std::vector<int> node_geometry::get_node_neighbors(int nodeId, const ClusterManager &clusterManager, int level) {
+    return get_node_neighbors_at_level(nodeId, clusterManager, level);
+}
+/*
+std::vector<int> node_geometry::get_node_neighbors_v1(int nodeId, const ClusterManager &clusterManager, int level) {
     CubeCoordinate start = clusterManager.getCubeCoordinate(nodeId);
     std::vector<int> result;
     result.reserve(6);
@@ -111,7 +146,7 @@ std::vector<int> node_geometry::get_node_neighbors(int nodeId, const ClusterMana
 
     return result;
 }
-
+*/
 std::tuple<int, int> node_geometry::get_facing_pixel_indexes(int nodeIdA, int nodeIdB, ClusterManager &clusterManager) {
     Cartesian2dCoordinate coordA = clusterManager.getCartesian2dCoordinate(nodeIdA);
     Cartesian2dCoordinate coordB = clusterManager.getCartesian2dCoordinate(nodeIdB);

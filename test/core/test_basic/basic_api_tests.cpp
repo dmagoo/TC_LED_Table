@@ -166,9 +166,25 @@ void test_node_geometry() {
     neighbors = api.getNodeNeighbors(23);
     expected = {22, 21, -1, -1, 25, 24};
     TEST_ASSERT_EQUAL_INT_ARRAY(expected.data(), neighbors.data(), expected.size());
-    std::cout << std::dec;
+
     neighbors = api.getNodeNeighbors(9);
     expected = {-1, -1, 11, 10, 8, -1};
+    TEST_ASSERT_EQUAL_INT_ARRAY(expected.data(), neighbors.data(), expected.size());
+
+    neighbors = api.getNodeNeighbors(0, 2);
+    expected = {10, 12, 14, 17, 20, 22, 24, 27, 30, 32, 34, 7};
+    TEST_ASSERT_EQUAL_INT_ARRAY(expected.data(), neighbors.data(), expected.size());
+
+    neighbors = api.getNodeNeighbors(0, 3);
+    expected = {9, 11, 13, 15, 16, 18, 19, 21, 23, 25, 26, 28, 29, 31, 33, 35, 36, 8};
+    TEST_ASSERT_EQUAL_INT_ARRAY(expected.data(), neighbors.data(), expected.size());
+
+    neighbors = api.getNodeNeighbors(0, 4);
+    expected.assign(24, -1);
+    TEST_ASSERT_EQUAL_INT_ARRAY(expected.data(), neighbors.data(), expected.size());
+
+    neighbors = api.getNodeNeighbors(25, 4);
+    expected = {1, 2, 17, 18, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 31, 32, 6};
     TEST_ASSERT_EQUAL_INT_ARRAY(expected.data(), neighbors.data(), expected.size());
 
     std::cout << "9 to 25" << std::endl;

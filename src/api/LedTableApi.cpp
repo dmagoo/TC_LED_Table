@@ -263,20 +263,20 @@ std::vector<int> LedTableApi::getNodePath(CubeCoordinate coordinateA, CubeCoordi
     return {};
 }
 
-std::vector<int> LedTableApi::getNodeNeighbors(int nodeId) {
-    return node_geometry::get_node_neighbors(nodeId, clusterManager);
+std::vector<int> LedTableApi::getNodeNeighbors(int nodeId, int level) {
+    return node_geometry::get_node_neighbors(nodeId, clusterManager, level);
 }
-std::vector<int> LedTableApi::getNodeNeighbors(RingCoordinate coordinate) {
+std::vector<int> LedTableApi::getNodeNeighbors(RingCoordinate coordinate, int level) {
     int nodeId = convertToNodeId(coordinate);
-    return getNodeNeighbors(nodeId);
+    return getNodeNeighbors(nodeId, level);
 }
-std::vector<int> LedTableApi::getNodeNeighbors(Cartesian2dCoordinate coordinate) {
+std::vector<int> LedTableApi::getNodeNeighbors(Cartesian2dCoordinate coordinate, int level) {
     int nodeId = convertToNodeId(coordinate);
-    return getNodeNeighbors(nodeId);
+    return getNodeNeighbors(nodeId, level);
 }
-std::vector<int> LedTableApi::getNodeNeighbors(CubeCoordinate coordinate) {
+std::vector<int> LedTableApi::getNodeNeighbors(CubeCoordinate coordinate, int level) {
     int nodeId = convertToNodeId(coordinate);
-    return getNodeNeighbors(nodeId);
+    return getNodeNeighbors(nodeId, level);
 }
 
 std::tuple<int, int> LedTableApi::getFacingPixelIndexes(int nodeIdA, int nodeIdB) {

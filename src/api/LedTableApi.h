@@ -92,10 +92,10 @@ public:
     std::vector<int> getNodePath(Cartesian2dCoordinate coordinateA, Cartesian2dCoordinate coordinateB);
     std::vector<int> getNodePath(CubeCoordinate coordinateA, CubeCoordinate coordinateB);
 
-    std::vector<int> getNodeNeighbors(int nodeId);
-    std::vector<int> getNodeNeighbors(RingCoordinate coordinate);
-    std::vector<int> getNodeNeighbors(Cartesian2dCoordinate coordinate);
-    std::vector<int> getNodeNeighbors(CubeCoordinate coordinate);
+    std::vector<int> getNodeNeighbors(int nodeId, int level = 1);
+    std::vector<int> getNodeNeighbors(RingCoordinate coordinate, int level = 1);
+    std::vector<int> getNodeNeighbors(Cartesian2dCoordinate coordinate, int level = 1);
+    std::vector<int> getNodeNeighbors(CubeCoordinate coordinate, int level = 1);
 
     std::tuple<int, int> getFacingPixelIndexes(int nodeIdA, int nodeIdB);
     std::tuple<int, int> getFacingPixelIndexes(RingCoordinate coordinateA, RingCoordinate coordinateB);

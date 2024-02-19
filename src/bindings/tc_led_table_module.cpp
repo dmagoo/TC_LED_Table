@@ -208,21 +208,21 @@ PYBIND11_MODULE(tc_led_table, m) {
     });
 
     // getNodeNeighbors methods
-    m.def("getNodeNeighbors", [](int nodeId) -> std::vector<int> {
+    m.def("getNodeNeighbors", [](int nodeId, int level) -> std::vector<int> {
         auto api = init();
-        return api->getNodeNeighbors(nodeId);
+        return api->getNodeNeighbors(nodeId, level);
     });
-    m.def("getNodeNeighbors", [](const RingCoordinate &coordinate) -> std::vector<int> {
+    m.def("getNodeNeighbors", [](const RingCoordinate &coordinate, int level) -> std::vector<int> {
         auto api = init();
-        return api->getNodeNeighbors(coordinate);
+        return api->getNodeNeighbors(coordinate, level);
     });
-    m.def("getNodeNeighbors", [](const Cartesian2dCoordinate &coordinate) -> std::vector<int> {
+    m.def("getNodeNeighbors", [](const Cartesian2dCoordinate &coordinate, int level) -> std::vector<int> {
         auto api = init();
-        return api->getNodeNeighbors(coordinate);
+        return api->getNodeNeighbors(coordinate, level);
     });
-    m.def("getNodeNeighbors", [](const CubeCoordinate &coordinate) -> std::vector<int> {
+    m.def("getNodeNeighbors", [](const CubeCoordinate &coordinate, int level) -> std::vector<int> {
         auto api = init();
-        return api->getNodeNeighbors(coordinate);
+        return api->getNodeNeighbors(coordinate, level);
     });
 
     // getFacingPixelIndexes methods

@@ -16,11 +16,11 @@ public:
     int getR() const;
     int getS() const;
 
-    CubeCoordinate CubeCoordinate::operator+(const CubeCoordinate &other) const {
+    CubeCoordinate operator+(const CubeCoordinate &other) const {
         return CubeCoordinate(this->q_ + other.q_, this->r_ + other.r_, this->s_ + other.s_);
     }
 
-    CubeCoordinate CubeCoordinate::operator-(const CubeCoordinate &other) const {
+    CubeCoordinate operator-(const CubeCoordinate &other) const {
         return CubeCoordinate(this->q_ - other.q_, this->r_ - other.r_, this->s_ - other.s_);
     }
 

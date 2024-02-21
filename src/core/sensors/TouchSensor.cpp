@@ -1,4 +1,4 @@
-#include "touchSensor.h"
+#include "TouchSensor.h"
 #include <cassert>
 
 TouchSensor::TouchSensor(int nodeId, int thresholdOff, int thresholdOn)

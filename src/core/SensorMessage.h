@@ -13,7 +13,6 @@ public:
     virtual ~SensorMessage() {}
     std::vector<uint8_t> serialize() const;
     const SensorEventDataProto getPayload() const;
-    uint32_t SensorMessage::debug() const;
 
 protected:
     SensorEventDataProto sensorEventData_;

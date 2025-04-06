@@ -22,7 +22,7 @@ std::shared_ptr<LedTableApi> init(LedTableConfig *config = nullptr) {
         effectiveConfig = *config;
     } else {
         // Default configuration
-        effectiveConfig.mqttConfig.brokerAddress = "tcp://192.168.1.49";
+        effectiveConfig.mqttConfig.brokerAddress = "tcp://192.168.1.50";
         effectiveConfig.enableMQTTMessaging = true;
         // Set defaults for other configs as needed
     }

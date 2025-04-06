@@ -3,6 +3,27 @@
 #include "core/node_geometry.h"
 #include <iostream>
 
+// Private method to convert WRGB color to the specified format
+std::array<uint8_t, 4> LedTableApi::convertColor(WRGB color, ARTNET_PACKET_FORMAT format) {
+    // Extract individual components from the WRGB color
+    uint8_t w = (color >> 24) & 0xFF;
+    uint8_t r = (color >> 16) & 0xFF;
+    uint8_t g = (color >> 8) & 0xFF;
+    uint8_t b = color & 0xFF;
+    
+    // Convert to the specified format
+    switch (format) {
+        case ARTNET_PACKET_FORMAT::WRGB:
+            return {w, r, g, b};
+        case ARTNET_PACKET_FORMAT::GRBW:
+            return {g, r, b, w};
+        case ARTNET_PACKET_FORMAT::RGBW:
+            return {r, g, b, w};
+    }
+    // Default to WRGB if format is not recognized
+    return {w, r, g, b};
+}
+
 template <typename CommandType, typename... Args>
 void LedTableApi::performClusterOperationReturningVoid(int nodeId, Args... args) {
     int clusterId = clusterManager.getClusterIdFromNodeId(nodeId);
@@ -379,11 +400,14 @@ void LedTableApi::sendClusterArtnet(int clusterId, const std::vector<WRGB> buffe
         std::vector<uint8_t> dmxData;
         dmxData.reserve(buffer.size() * 4); // Assuming WRGB to RGB conversion
         for (WRGB color : buffer) {
-            dmxData.push_back((color >> 24) & 0xFF); // White
-            dmxData.push_back((color >> 16) & 0xFF); // Red
-            dmxData.push_back((color >> 8) & 0xFF);  // Green
-            dmxData.push_back(color & 0xFF);         // Blue
-            // White component is ignored, or handle if needed
+            //    dmxData.push_back((color >> 24) & 0xFF); // White
+            //    dmxData.push_back((color >> 16) & 0xFF); // Red
+            //    dmxData.push_back((color >> 8) & 0xFF);  // Green
+            //    dmxData.push_back(color & 0xFF);         // Blue
+            std::array<uint8_t, 4> convertedColor = convertColor(color, ARTNET_PACKET_FORMAT::GRBW);
+            // Append the converted color to the DMX data
+            dmxData.insert(dmxData.end(), convertedColor.begin(), convertedColor.end());
+
         }
         if (artnet_send_dmx(artnetClient.get(), clusterId, dmxData.size(), dmxData.data()) != ARTNET_EOK) {
             std::cerr << "Error" << artnet_strerror() << std::endl;
@@ -392,3 +416,6 @@ void LedTableApi::sendClusterArtnet(int clusterId, const std::vector<WRGB> buffe
         std::cerr << "NO ART NET" << std::endl;
     }
 }
+
+
+

@@ -106,7 +106,7 @@ void runSender() {
 
     // In the context of using this configuration
     LedTableConfig config;
-    config.mqttConfig.brokerAddress = "tcp://192.168.1.49";
+    config.mqttConfig.brokerAddress = "tcp://192.168.1.50";
     config.mqttConfig.clientId = "apiTest";
     config.enableMQTTMessaging = false;
     config.enableArtnetMessaging = true;

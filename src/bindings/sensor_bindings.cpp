@@ -14,7 +14,7 @@ std::shared_ptr<SensorTransmitter> init(LedTableConfig *config = nullptr) {
         effectiveConfig = *config;
     } else {
         // Default configuration
-        effectiveConfig.mqttConfig.brokerAddress = "tcp://192.168.1.49";
+        effectiveConfig.mqttConfig.brokerAddress = "tcp://192.168.1.50";
         effectiveConfig.mqttConfig.clientId = "pythonSensorTransmitter";
         effectiveConfig.enableMQTTMessaging = true;
     }

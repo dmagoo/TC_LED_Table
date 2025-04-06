@@ -12,6 +12,13 @@
 
 #include <artnet.h>
 
+// Define enum for color formats
+enum class ARTNET_PACKET_FORMAT {
+    RGBW,
+    WRGB,
+    GRBW
+};
+
 static void artnet_deleter(void *ptr) {
     if (ptr) {
         artnet_destroy(ptr); // Assuming artnet_destroy is compatible with void* argument
@@ -28,6 +35,8 @@ private:
     std::unique_ptr<void, void (*)(void *)> artnetClient;
 
     bool suppressMessages = false;
+
+    std::array<uint8_t, 4> convertColor(WRGB color, ARTNET_PACKET_FORMAT format);
 
     template <typename CoordinateType>
     int convertToNodeId(const CoordinateType &coordinate);

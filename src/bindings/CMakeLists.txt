@@ -23,10 +23,8 @@ target_include_directories(tc_led_table PRIVATE
 # Link the Python bindings module with the LedTableApi library and MQTT Paho libraries
 target_link_libraries(tc_led_table PRIVATE 
     LedTableApi 
-    ${PAHO_MQTT_C_LIBRARIES} 
-    ${PAHO_MQTT_CPP_LIBRARIES}
-    ${ARTNET_LIBRARIES} 
-    Ws2_32  # Add this to link against the Winsock library
+    $<$<PLATFORM_ID:Windows>:WinLib ${PAHO_MQTT_C_LIBRARIES} ${PAHO_MQTT_CPP_LIBRARIES}  ${ARTNET_LIBRARIES} ws2_32>
+    $<$<NOT:$<PLATFORM_ID:Windows>>:PahoMqttCpp::paho-mqttpp3-static ${LIBARTNET_LIBRARY}>
 )
 
 # Link the main C++ project library
@@ -51,9 +49,8 @@ target_include_directories(tc_sensor_transmitter PRIVATE
 # Link the Python bindings module with the LedTableApi library and MQTT Paho libraries
 target_link_libraries(tc_sensor_transmitter PRIVATE 
     LedTableApi 
-    ${PAHO_MQTT_C_LIBRARIES} 
-    ${PAHO_MQTT_CPP_LIBRARIES}
-    Ws2_32  # Add this to link against the Winsock library
+    $<$<PLATFORM_ID:Windows>:WinLib ${PAHO_MQTT_C_LIBRARIES} ${PAHO_MQTT_CPP_LIBRARIES}  ws2_32>
+    $<$<NOT:$<PLATFORM_ID:Windows>>:PahoMqttCpp::paho-mqttpp3-static>
 )
 
 # Link the main C++ project library

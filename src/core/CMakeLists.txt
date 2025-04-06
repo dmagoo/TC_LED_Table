@@ -17,5 +17,6 @@ add_library(CoreLib
     proto/ClusterMessagesProto.pb.c
     proto/SensorDataProto.pb.c
     )
+set_target_properties(CoreLib PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 target_include_directories(CoreLib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

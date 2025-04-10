@@ -29,6 +29,9 @@ if(WIN32)
     set(PAHO_MQTT_C_LIBRARIES "C:/DevTools/installed/paho.mqtt.c/lib/paho-mqtt3a-static.lib")
     set(PAHO_MQTT_CPP_LIBRARIES "C:/DevTools/installed/paho.mqtt.cpp/lib/paho-mqttpp3-static.lib")
     set(ARTNET_LIBRARIES "C:/DevTools/libartnet/msvc/libartnet/x64/Release/libartnet.lib")
+else()
+    set(LIBARTNET_INCLUDE_DIR "/usr/local/include/artnet")
+    include_directories(${LIBARTNET_INCLUDE_DIR})
 endif()
 
 add_subdirectory(src/api)
@@ -42,12 +45,33 @@ add_library(nanopb STATIC
     ${PROJECT_SOURCE_DIR}/lib/nanopb/pb_encode.c
 )
 target_include_directories(nanopb PUBLIC ${PROJECT_SOURCE_DIR}/lib/nanopb)
+set_target_properties(nanopb PROPERTIES POSITION_INDEPENDENT_CODE ON)
+
 
 # Source files
 file(GLOB_RECURSE TEST_SOURCES "${PROJECT_SOURCE_DIR}/test/core/test_basic/*.cpp")
 
 # Set the output directory for the executable
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
+
+# Platform-specific definitions and libraries
+if(WIN32)
+else()
+    # Find Paho MQTT C and C++ libraries installed in standard locations
+    #temporary fix for weird setup.. should probably make this some kind of env var or flag
+    find_package(eclipse-paho-mqtt-c REQUIRED)
+    find_package(PahoMqttCpp REQUIRED)
+    # Include the libartnet headers
+    find_path(LIBARTNET_INCLUDE_DIR NAMES artnet.h)
+    find_library(LIBARTNET_LIBRARY NAMES artnet libartnet)
+    
+    if(LIBARTNET_INCLUDE_DIR AND LIBARTNET_LIBRARY)
+        include_directories(${LIBARTNET_INCLUDE_DIR})
+    else()
+        message(FATAL_ERROR "libartnet not found")
+    endif()
+endif()
+
 
 add_test(NAME unity_test COMMAND test_app)
 
@@ -60,8 +84,10 @@ target_link_libraries(demo
     CoreLib
     nanopb
     $<$<PLATFORM_ID:Windows>:${PAHO_MQTT_C_LIBRARIES} ${PAHO_MQTT_CPP_LIBRARIES} ws2_32>
-    $<$<NOT:$<PLATFORM_ID:Windows>>:PahoMqttCpp::paho-mqttpp3-static>
+    $<$<NOT:$<PLATFORM_ID:Windows>>:PahoMqttCpp::paho-mqttpp3-static ${LIBARTNET_LIBRARY}>
+
 )
+set_target_properties(demo PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 add_executable(test_app
     ${TEST_SOURCES}
@@ -76,8 +102,9 @@ target_link_libraries(test_app PRIVATE
     CoreLib
     nanopb
     $<$<PLATFORM_ID:Windows>:WinLib ${PAHO_MQTT_C_LIBRARIES} ${PAHO_MQTT_CPP_LIBRARIES}  ${ARTNET_LIBRARIES} ws2_32>
-    $<$<NOT:$<PLATFORM_ID:Windows>>:PahoMqttCpp::paho-mqttpp3-static>
+    $<$<NOT:$<PLATFORM_ID:Windows>>:PahoMqttCpp::paho-mqttpp3-static ${LIBARTNET_LIBRARY}>
 )
+set_target_properties(test_app PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 add_executable(api_test
     ${PROJECT_SOURCE_DIR}/src/native/api_test.cpp
@@ -88,8 +115,9 @@ target_link_libraries(api_test PRIVATE
     ConfigLib
     nanopb
     $<$<PLATFORM_ID:Windows>:WinLib ${PAHO_MQTT_C_LIBRARIES} ${PAHO_MQTT_CPP_LIBRARIES}  ${ARTNET_LIBRARIES} ws2_32>
-    $<$<NOT:$<PLATFORM_ID:Windows>>:PahoMqttCpp::paho-mqttpp3-static>
+    $<$<NOT:$<PLATFORM_ID:Windows>>:PahoMqttCpp::paho-mqttpp3-static ${LIBARTNET_LIBRARY}>
 )
+set_target_properties(api_test PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 add_executable(sensor_test
     ${PROJECT_SOURCE_DIR}/src/native/sensor_test.cpp
@@ -99,8 +127,9 @@ target_link_libraries(sensor_test PRIVATE
     ConfigLib
     nanopb
     $<$<PLATFORM_ID:Windows>:WinLib ${PAHO_MQTT_C_LIBRARIES} ${PAHO_MQTT_CPP_LIBRARIES}  ${ARTNET_LIBRARIES} ws2_32>
-    $<$<NOT:$<PLATFORM_ID:Windows>>:PahoMqttCpp::paho-mqttpp3-static>
+    $<$<NOT:$<PLATFORM_ID:Windows>>:PahoMqttCpp::paho-mqttpp3-static ${LIBARTNET_LIBRARY}>
 )
+set_target_properties(sensor_test PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 add_library(LedTableApi "${PROJECT_SOURCE_DIR}/src/api/LedTableApi.cpp")
 target_link_libraries(LedTableApi PRIVATE
@@ -109,17 +138,9 @@ target_link_libraries(LedTableApi PRIVATE
     ConfigLib
     nanopb
     $<$<PLATFORM_ID:Windows>:WinLib  ${PAHO_MQTT_C_LIBRARIES} ${PAHO_MQTT_CPP_LIBRARIES} ${ARTNET_LIBRARIES} ws2_32>
-    $<$<NOT:$<PLATFORM_ID:Windows>>:PahoMqttCpp::paho-mqttpp3-static>
+    $<$<NOT:$<PLATFORM_ID:Windows>>:PahoMqttCpp::paho-mqttpp3-static ${LIBARTNET_LIBRARY}>
 )
-
-# Platform-specific definitions and libraries
-if(WIN32)
-else()
-    # Find Paho MQTT C and C++ libraries installed in standard locations
-    #temporary fix for weird setup.. should probably make this some kind of env var or flag
-    find_package(eclipse-paho-mqtt-c REQUIRED)
-    find_package(PahoMqttCpp REQUIRED)
-endif()
+set_target_properties(LedTableApi PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 add_subdirectory(lib/pybind11)
 add_subdirectory(src/bindings)

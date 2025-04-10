@@ -19,6 +19,7 @@ def parse_config_csv(file_input):
                 node_data = {
                     "nodeId": int(row['nodeId']),
                     "ledCount": int(row['ledCount']),
+                    "touchSensorGPIOPin": int(row['touchSensorGPIOPin']),
                     "ringCoordinates": [int(x) for x in row['ringCoordinates'].split(',') if x],
                     "cubeCoordinates": [int(x) for x in row['cubeCoordinates'].split(',') if x],
                     "cartesian2dCoordinates": [float(x) for x in row['cartesian2dCoordinates'].split(',') if x]

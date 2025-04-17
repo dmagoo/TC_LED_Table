@@ -95,7 +95,9 @@ LedTableApi::LedTableApi(ClusterManager &clusterManager, const LedTableConfig &c
     }
 
     if (config.enableArtnetMessaging) {
-        initArtnetClient(nullptr); // Replace with actual IP address or config value as needed
+        std::cerr << "has ip!: " << config.artnetConfig.brokerAddress.c_str() << std::endl;
+        // initArtnetClient(nullptr); // Replace with actual IP address or config value as needed
+        initArtnetClient(config.artnetConfig.brokerAddress.c_str()); // Replace with actual IP address or config value as needed
         int val = artnet_start(artnetClient.get());
         // TODO check for ARTNET_EOK return value
     }

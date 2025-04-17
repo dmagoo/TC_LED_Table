@@ -3,7 +3,8 @@
 #include <LittleFS.h>
 
 #define MAX_SENSORS 10
-#define CONFIG_MAGIC 0x544F5543  // 'TOUC' - used to verify config validity
+#define CONFIG_MAGIC 0x544F5543  // 'TOUC'
+#define CONFIG_STATUS_INTERVAL 5000  // ms
 
 struct NodeConfig {
   int nodeId;
@@ -22,6 +23,7 @@ ClusterConfig config;
 bool configLoaded = false;
 unsigned long lastPeriodic;
 unsigned long nextIntervalMs = 60000;
+unsigned long lastConfigStatusSent = 0;
 FS* filesystem = &LittleFS;
 
 void setNextInterval() {
@@ -30,37 +32,31 @@ void setNextInterval() {
   lastPeriodic = millis();
 }
 
-void sendInfo(const char* msg) {
-  StaticJsonDocument<256> doc;
-  doc["eventType"] = "info";
-  doc["clusterId"] = configLoaded ? config.clusterId : 0;
-  doc["message"] = msg;
+void sendStatus(const char* status) {
+  StaticJsonDocument<128> doc;
+  doc["eventType"] = "config_status";
+  doc["status"] = status;
+  if (configLoaded) {
+    doc["clusterId"] = config.clusterId;
+  } else {
+    doc["clusterId"] = nullptr;
+  }
+
   serializeJson(doc, Serial);
   Serial.println();
 }
 
 bool loadConfigFromFlash() {
-  if (!filesystem->begin()) {
-    sendInfo("LittleFS mount failed");
-    return false;
-  }
+  if (!filesystem->begin()) return false;
   File f = filesystem->open("/config.bin", "r");
-  if (!f) {
-    sendInfo("config not found");
-    return false;
-  }
+  if (!f) return false;
   f.read((uint8_t*)&config, sizeof(config));
   f.close();
-  if (config.magic != CONFIG_MAGIC) {
-    sendInfo("config not found");
-    return false;
-  }
-  sendInfo("config found");
-  return true;
+  return config.magic == CONFIG_MAGIC;
 }
 
 void saveConfigToFlash() {
-  config.magic = CONFIG_MAGIC;  // Mark data as valid
+  config.magic = CONFIG_MAGIC;
   File f = filesystem->open("/config.bin", "w");
   if (!f) return;
   f.write((const uint8_t*)&config, sizeof(config));
@@ -112,9 +108,8 @@ void parseConfig(const char* json) {
   saveConfigToFlash();
   configLoaded = true;
   setNextInterval();
-  sendInfo("config received");
+  sendStatus("config_received");
   sendPeriodicStatus();
-    sendInfo(configLoaded ? "configLoaded is TRUE" : "configLoaded is FALSE");
 }
 
 void handleIncomingSerial() {
@@ -125,9 +120,7 @@ void handleIncomingSerial() {
     char ch = Serial.read();
     if ((ch == '\n' || ch == '\r') || idx >= 1023) {
       buf[idx] = 0;
-      //sendInfo(buf);
       parseConfig(buf);
-      sendInfo("input received");  // Short, static message
       idx = 0;
     } else {
       buf[idx++] = ch;
@@ -136,31 +129,29 @@ void handleIncomingSerial() {
 }
 
 void setup() {
-  sendInfo("setup() starting");
   Serial.begin(115200);
+  while (!Serial);
   delay(500);
-  sendInfo("initializing");
 
   if (loadConfigFromFlash()) {
     configLoaded = true;
     setNextInterval();
+    sendStatus("config_loaded");
     sendPeriodicStatus();
+  } else {
+    sendStatus("config_missing");
+    lastConfigStatusSent = millis();
   }
 }
 
 void loop() {
-  /*
-  static unsigned long lastDebug = 0;
-
-  if (millis() - lastDebug > 1000) {
-    lastDebug = millis();
-    bool pinState = digitalRead(4);
-    sendInfo(pinState ? "GPIO4 HIGH" : "GPIO4 LOW");
-  }
-*/
   handleIncomingSerial();
 
   if (!configLoaded) {
+    if (millis() - lastConfigStatusSent > CONFIG_STATUS_INTERVAL) {
+      sendStatus("config_missing");
+      lastConfigStatusSent = millis();
+    }
     delay(10);
     return;
   }
@@ -181,5 +172,4 @@ void loop() {
   delay(10);
 }
 // sample payload to send via serial: {"clusterId":1,"nodes":[{"nodeId":6,"touchSensorGPIOPin":4}]}\n
-
 //{"clusterId":1,"nodes":[{"nodeId":7,"touchSensorGPIOPin":4},{"nodeId":8,"touchSensorGPIOPin":5},{"nodeId":9,"touchSensorGPIOPin":6},{"nodeId":10,"touchSensorGPIOPin":7},{"nodeId":11,"touchSensorGPIOPin":8},{"nodeId":12,"touchSensorGPIOPin":9},{"nodeId":13,"touchSensorGPIOPin":10},{"nodeId":14,"touchSensorGPIOPin":11},{"nodeId":15,"touchSensorGPIOPin":12},{"nodeId":16,"touchSensorGPIOPin":13}]}
